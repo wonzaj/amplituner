@@ -1,4 +1,4 @@
-# Project_amplituner_FINAL_ver.0.91
+# Audio amplituner
 
 Audio amplituner with display, bass, middle, treble control. It has:
 
