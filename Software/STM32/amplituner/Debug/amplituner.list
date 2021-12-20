@@ -20289,42 +20289,42 @@ int main(void)
   /* Initialize interrupts */
   MX_NVIC_Init();
  8009750:	f000 f8ba 	bl	80098c8 <MX_NVIC_Init>
-	//dodać generowanie sinusoidy z wybieraną HZ
-	//zasygnalizować wyłączenie urządzenia
-	//przy starcie systemu glośność stopniowo zwiększać
-	//możliwość włączania i wyłączania maksymalnie z częstotliwością 0,5s
-	//przełączanie przekaźnika z back do słuchawek
-	HAL_TIM_OC_Start_IT(&htim15, TIM_CHANNEL_1);
+  //dodać generowanie sinusoidy z wybieraną HZ
+  //zasygnalizować wyłączenie urządzenia
+  //przy starcie systemu glośność stopniowo zwiększać
+  //możliwość włączania i wyłączania maksymalnie z częstotliwością 0,5s
+  //przełączanie przekaźnika z back do słuchawek
+  HAL_TIM_OC_Start_IT(&htim15, TIM_CHANNEL_1);
  8009754:	2100      	movs	r1, #0
  8009756:	4815      	ldr	r0, [pc, #84]	; (80097ac <main+0xb8>)
  8009758:	f00a fa08 	bl	8013b6c <HAL_TIM_OC_Start_IT>
-	display_init_on_start(DisplayOLEDBuffer);
+  display_init_on_start(DisplayOLEDBuffer);
  800975c:	4814      	ldr	r0, [pc, #80]	; (80097b0 <main+0xbc>)
  800975e:	f7f8 ff7f 	bl	8002660 <display_init_on_start>
-	set_init_values();
+  set_init_values();
  8009762:	f000 f9bf 	bl	8009ae4 <set_init_values>
-	encoders_init();
+  encoders_init();
  8009766:	f7fd f839 	bl	80067dc <encoders_init>
-	TDA7719_init();
+  TDA7719_init();
  800976a:	f7fd fea1 	bl	80074b0 <TDA7719_init>
-	RDA5807_Init();
+  RDA5807_Init();
  800976e:	f7fd fa9f 	bl	8006cb0 <RDA5807_Init>
-	RDA5807_PowerOff();
+  RDA5807_PowerOff();
  8009772:	f7fd fadf 	bl	8006d34 <RDA5807_PowerOff>
 
-	HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, SET);
+  HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, SET);
  8009776:	2201      	movs	r2, #1
  8009778:	2108      	movs	r1, #8
  800977a:	480e      	ldr	r0, [pc, #56]	; (80097b4 <main+0xc0>)
  800977c:	f006 f84a 	bl	800f814 <HAL_GPIO_WritePin>
-	// HAL_GPIO_WritePin(CS43L21_RESET_GPIO_Port, CS43L21_RESET_Pin, SET);
-	arm_rfft_fast_init_f32(&FFTHandler, FFT_SAMPLES);
+  // HAL_GPIO_WritePin(CS43L21_RESET_GPIO_Port, CS43L21_RESET_Pin, SET);
+  arm_rfft_fast_init_f32(&FFTHandler, FFT_SAMPLES);
  8009780:	f44f 6100 	mov.w	r1, #2048	; 0x800
  8009784:	480c      	ldr	r0, [pc, #48]	; (80097b8 <main+0xc4>)
  8009786:	f7f8 fd85 	bl	8002294 <arm_rfft_fast_init_f32>
-	read_user_settings_on_init();
+  read_user_settings_on_init();
  800978a:	f7fd f807 	bl	800679c <read_user_settings_on_init>
-	HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
+  HAL_TIM_PWM_Start(&htim16, TIM_CHANNEL_1);
  800978e:	2100      	movs	r1, #0
  8009790:	480a      	ldr	r0, [pc, #40]	; (80097bc <main+0xc8>)
  8009792:	f00a fc85 	bl	80140a0 <HAL_TIM_PWM_Start>
@@ -20333,17 +20333,17 @@ int main(void)
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-		change_power_led_brigh();
+    change_power_led_brigh();
  8009796:	f000 fa6d 	bl	8009c74 <change_power_led_brigh>
-		check_FFT_flag(); //if fft flag == 0 then do fft
+    check_FFT_flag(); //if fft flag == 0 then do fft
  800979a:	f000 fc3b 	bl	800a014 <check_FFT_flag>
-		//if(refresh_display_time_delay == true)
-		Refresh_display(SSD1322_Screen_State);
+    //if(refresh_display_time_delay == true)
+    Refresh_display(SSD1322_Screen_State);
  800979e:	4b08      	ldr	r3, [pc, #32]	; (80097c0 <main+0xcc>)
  80097a0:	781b      	ldrb	r3, [r3, #0]
  80097a2:	4618      	mov	r0, r3
  80097a4:	f7f9 fb94 	bl	8002ed0 <Refresh_display>
-		change_power_led_brigh();
+    change_power_led_brigh();
  80097a8:	e7f5      	b.n	8009796 <main+0xa2>
  80097aa:	bf00      	nop
  80097ac:	200079b8 	.word	0x200079b8
@@ -20742,62 +20742,62 @@ static void MX_NVIC_Init(void)
  * - TIM17 - Used for debouncing all buttons
  */
 void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
-    {
+{
  8009a10:	b580      	push	{r7, lr}
  8009a12:	b082      	sub	sp, #8
  8009a14:	af00      	add	r7, sp, #0
  8009a16:	6078      	str	r0, [r7, #4]
-	/* Interupt callback after timer counts 3 secs.
+  /* Interupt callback after timer counts 3 secs.
 	 * Timer is started when any encoder is moved
 	 * Refresh display timer or change display mode timer
 	 */
-	if (htim->Instance == TIM15)
+  if (htim->Instance == TIM15)
  8009a18:	687b      	ldr	r3, [r7, #4]
  8009a1a:	681b      	ldr	r3, [r3, #0]
  8009a1c:	4a0f      	ldr	r2, [pc, #60]	; (8009a5c <HAL_TIM_OC_DelayElapsedCallback+0x4c>)
  8009a1e:	4293      	cmp	r3, r2
  8009a20:	d111      	bne.n	8009a46 <HAL_TIM_OC_DelayElapsedCallback+0x36>
-	    {
+  {
 
-		/* Check if interupt is from change display */
-		if (htim->ChannelState[0] == HAL_TIM_CHANNEL_STATE_BUSY)
+    /* Check if interupt is from change display */
+    if (htim->ChannelState[0] == HAL_TIM_CHANNEL_STATE_BUSY)
  8009a22:	687b      	ldr	r3, [r7, #4]
  8009a24:	f893 303e 	ldrb.w	r3, [r3, #62]	; 0x3e
  8009a28:	b2db      	uxtb	r3, r3
  8009a2a:	2b02      	cmp	r3, #2
  8009a2c:	d102      	bne.n	8009a34 <HAL_TIM_OC_DelayElapsedCallback+0x24>
-		    {
-			change_display_state(htim);
+    {
+      change_display_state(htim);
  8009a2e:	6878      	ldr	r0, [r7, #4]
  8009a30:	f7fb ff60 	bl	80058f4 <change_display_state>
-		    }
+    }
 
-		/* Check if interupt is from return to last saved display state */
-		if (htim->ChannelState[1] == HAL_TIM_CHANNEL_STATE_BUSY)
+    /* Check if interupt is from return to last saved display state */
+    if (htim->ChannelState[1] == HAL_TIM_CHANNEL_STATE_BUSY)
  8009a34:	687b      	ldr	r3, [r7, #4]
  8009a36:	f893 303f 	ldrb.w	r3, [r3, #63]	; 0x3f
  8009a3a:	b2db      	uxtb	r3, r3
  8009a3c:	2b02      	cmp	r3, #2
  8009a3e:	d102      	bne.n	8009a46 <HAL_TIM_OC_DelayElapsedCallback+0x36>
-		    {
-			set_saved_display(htim);
+    {
+      set_saved_display(htim);
  8009a40:	6878      	ldr	r0, [r7, #4]
  8009a42:	f7fb fedf 	bl	8005804 <set_saved_display>
-		    }
-	    }
+    }
+  }
 
-	/* Routine after getting a interupt from GPIO ports */
-	if (htim->Instance == TIM17) //timer 17 is used only for debouncing
+  /* Routine after getting a interupt from GPIO ports */
+  if (htim->Instance == TIM17) //timer 17 is used only for debouncing
  8009a46:	687b      	ldr	r3, [r7, #4]
  8009a48:	681b      	ldr	r3, [r3, #0]
  8009a4a:	4a05      	ldr	r2, [pc, #20]	; (8009a60 <HAL_TIM_OC_DelayElapsedCallback+0x50>)
  8009a4c:	4293      	cmp	r3, r2
  8009a4e:	d101      	bne.n	8009a54 <HAL_TIM_OC_DelayElapsedCallback+0x44>
-	    {
-		any_buttons_pressed_routine();
+  {
+    any_buttons_pressed_routine();
  8009a50:	f002 f816 	bl	800ba80 <any_buttons_pressed_routine>
-	    }
-    }
+  }
+}
  8009a54:	bf00      	nop
  8009a56:	3708      	adds	r7, #8
  8009a58:	46bd      	mov	sp, r7
@@ -20811,89 +20811,89 @@ void HAL_TIM_OC_DelayElapsedCallback(TIM_HandleTypeDef *htim)
  * Is called whenever any encoder change it's position (expect for radio encoder)
  */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
-    {
+{
  8009a64:	b580      	push	{r7, lr}
  8009a66:	b082      	sub	sp, #8
  8009a68:	af00      	add	r7, sp, #0
  8009a6a:	6078      	str	r0, [r7, #4]
-	display_on_standby_mode();
+  display_on_standby_mode();
  8009a6c:	f7f8 fe22 	bl	80026b4 <display_on_standby_mode>
-	check_volumes_ranges();
+  check_volumes_ranges();
  8009a70:	f7fe fcf6 	bl	8008460 <check_volumes_ranges>
 
-	/* Volume front encoder */
-	if (htim->Instance == TIM2)
+  /* Volume front encoder */
+  if (htim->Instance == TIM2)
  8009a74:	687b      	ldr	r3, [r7, #4]
  8009a76:	681b      	ldr	r3, [r3, #0]
  8009a78:	f1b3 4f80 	cmp.w	r3, #1073741824	; 0x40000000
  8009a7c:	d101      	bne.n	8009a82 <HAL_TIM_IC_CaptureCallback+0x1e>
-	    {
-		volume_front_encoder_used();
+  {
+    volume_front_encoder_used();
  8009a7e:	f7fc fecf 	bl	8006820 <volume_front_encoder_used>
-	    }
-	/* Volume back encoder */
-	if (htim->Instance == TIM8)
+  }
+  /* Volume back encoder */
+  if (htim->Instance == TIM8)
  8009a82:	687b      	ldr	r3, [r7, #4]
  8009a84:	681b      	ldr	r3, [r3, #0]
  8009a86:	4a12      	ldr	r2, [pc, #72]	; (8009ad0 <HAL_TIM_IC_CaptureCallback+0x6c>)
  8009a88:	4293      	cmp	r3, r2
  8009a8a:	d101      	bne.n	8009a90 <HAL_TIM_IC_CaptureCallback+0x2c>
-	    {
-		volume_back_encoder_used();
+  {
+    volume_back_encoder_used();
  8009a8c:	f7fc ff60 	bl	8006950 <volume_back_encoder_used>
-	    }
-	/* Loundness encoder */
-	if (htim->Instance == TIM1)
+  }
+  /* Loundness encoder */
+  if (htim->Instance == TIM1)
  8009a90:	687b      	ldr	r3, [r7, #4]
  8009a92:	681b      	ldr	r3, [r3, #0]
  8009a94:	4a0f      	ldr	r2, [pc, #60]	; (8009ad4 <HAL_TIM_IC_CaptureCallback+0x70>)
  8009a96:	4293      	cmp	r3, r2
  8009a98:	d101      	bne.n	8009a9e <HAL_TIM_IC_CaptureCallback+0x3a>
-	    {
-		loudness_encoder_used();
+  {
+    loudness_encoder_used();
  8009a9a:	f7fc ffbd 	bl	8006a18 <loudness_encoder_used>
-	    }
+  }
 
-	/* Bass encoder */
-	if (htim->Instance == TIM4)
+  /* Bass encoder */
+  if (htim->Instance == TIM4)
  8009a9e:	687b      	ldr	r3, [r7, #4]
  8009aa0:	681b      	ldr	r3, [r3, #0]
  8009aa2:	4a0d      	ldr	r2, [pc, #52]	; (8009ad8 <HAL_TIM_IC_CaptureCallback+0x74>)
  8009aa4:	4293      	cmp	r3, r2
  8009aa6:	d101      	bne.n	8009aac <HAL_TIM_IC_CaptureCallback+0x48>
-	    {
-		bass_encoder_used();
+  {
+    bass_encoder_used();
  8009aa8:	f7fd f802 	bl	8006ab0 <bass_encoder_used>
-	    }
+  }
 
-	/* Middle encoder */
-	if (htim->Instance == TIM3)
+  /* Middle encoder */
+  if (htim->Instance == TIM3)
  8009aac:	687b      	ldr	r3, [r7, #4]
  8009aae:	681b      	ldr	r3, [r3, #0]
  8009ab0:	4a0a      	ldr	r2, [pc, #40]	; (8009adc <HAL_TIM_IC_CaptureCallback+0x78>)
  8009ab2:	4293      	cmp	r3, r2
  8009ab4:	d101      	bne.n	8009aba <HAL_TIM_IC_CaptureCallback+0x56>
-	    {
-		middle_encoder_used();
+  {
+    middle_encoder_used();
  8009ab6:	f7fd f83d 	bl	8006b34 <middle_encoder_used>
-	    }
+  }
 
-	/* Treble encoder */
-	if (htim->Instance == TIM5)
+  /* Treble encoder */
+  if (htim->Instance == TIM5)
  8009aba:	687b      	ldr	r3, [r7, #4]
  8009abc:	681b      	ldr	r3, [r3, #0]
  8009abe:	4a08      	ldr	r2, [pc, #32]	; (8009ae0 <HAL_TIM_IC_CaptureCallback+0x7c>)
  8009ac0:	4293      	cmp	r3, r2
  8009ac2:	d101      	bne.n	8009ac8 <HAL_TIM_IC_CaptureCallback+0x64>
-	    {
-		treble_encoder_used();
+  {
+    treble_encoder_used();
  8009ac4:	f7fd f874 	bl	8006bb0 <treble_encoder_used>
-	/* Radio  encoder */
-	//if(htim->Instance == TIM1)
-	{
-	    //radio_encoder_used();
-	}
-    }
+  /* Radio  encoder */
+  //if(htim->Instance == TIM1)
+  {
+    //radio_encoder_used();
+  }
+}
  8009ac8:	bf00      	nop
  8009aca:	3708      	adds	r7, #8
  8009acc:	46bd      	mov	sp, r7
@@ -20907,137 +20907,132 @@ void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 08009ae4 <set_init_values>:
 
 // Set init values to specified variables
+// temporary function used while prototyping
 void set_init_values()
-    {
+{
  8009ae4:	b480      	push	{r7}
  8009ae6:	af00      	add	r7, sp, #0
-	SSD1322_Screen_State = SSD1322_SCREEN_TIME;
+  SSD1322_Screen_State = SSD1322_SCREEN_TIME;
  8009ae8:	4b30      	ldr	r3, [pc, #192]	; (8009bac <set_init_values+0xc8>)
  8009aea:	2201      	movs	r2, #1
  8009aec:	701a      	strb	r2, [r3, #0]
-	AlarmDataChange = 1;
+  AlarmDataChange = 1;
  8009aee:	4b30      	ldr	r3, [pc, #192]	; (8009bb0 <set_init_values+0xcc>)
  8009af0:	2201      	movs	r2, #1
  8009af2:	701a      	strb	r2, [r3, #0]
-	Clock_Data_Time = 1;
+  Clock_Data_Time = 1;
  8009af4:	4b2f      	ldr	r3, [pc, #188]	; (8009bb4 <set_init_values+0xd0>)
  8009af6:	2201      	movs	r2, #1
  8009af8:	701a      	strb	r2, [r3, #0]
-	RTC_typeOfAlarm = 1;
+  RTC_typeOfAlarm = 1;
  8009afa:	4b2f      	ldr	r3, [pc, #188]	; (8009bb8 <set_init_values+0xd4>)
  8009afc:	2201      	movs	r2, #1
  8009afe:	701a      	strb	r2, [r3, #0]
-	Alarm.AlarmDateWeekDay = 1;
+  Alarm.AlarmDateWeekDay = 1;
  8009b00:	4b2e      	ldr	r3, [pc, #184]	; (8009bbc <set_init_values+0xd8>)
  8009b02:	2201      	movs	r2, #1
  8009b04:	f883 2028 	strb.w	r2, [r3, #40]	; 0x28
-	encoderVolFront.audioOutputState = MASTER;
+  encoderVolFront.audioOutputState = MASTER;
  8009b08:	4b2d      	ldr	r3, [pc, #180]	; (8009bc0 <set_init_values+0xdc>)
  8009b0a:	2200      	movs	r2, #0
  8009b0c:	719a      	strb	r2, [r3, #6]
-	encoderVolBack.audioOutputState = NORMAL;
+  encoderVolBack.audioOutputState = NORMAL;
  8009b0e:	4b2d      	ldr	r3, [pc, #180]	; (8009bc4 <set_init_values+0xe0>)
  8009b10:	2203      	movs	r2, #3
  8009b12:	719a      	strb	r2, [r3, #6]
-	encoderVolFront.volumeMaster = 79;
+  encoderVolFront.volumeMaster = 79;
  8009b14:	4b2a      	ldr	r3, [pc, #168]	; (8009bc0 <set_init_values+0xdc>)
  8009b16:	224f      	movs	r2, #79	; 0x4f
  8009b18:	701a      	strb	r2, [r3, #0]
-	encoderVolFront.volumeLeftRight = 79;
+  encoderVolFront.volumeLeftRight = 79;
  8009b1a:	4b29      	ldr	r3, [pc, #164]	; (8009bc0 <set_init_values+0xdc>)
  8009b1c:	224f      	movs	r2, #79	; 0x4f
  8009b1e:	705a      	strb	r2, [r3, #1]
-	encoderVolFront.volumeLeft = 79;
+  encoderVolFront.volumeLeft = 79;
  8009b20:	4b27      	ldr	r3, [pc, #156]	; (8009bc0 <set_init_values+0xdc>)
  8009b22:	224f      	movs	r2, #79	; 0x4f
  8009b24:	709a      	strb	r2, [r3, #2]
-	encoderVolFront.volumeRight = 79;
+  encoderVolFront.volumeRight = 79;
  8009b26:	4b26      	ldr	r3, [pc, #152]	; (8009bc0 <set_init_values+0xdc>)
  8009b28:	224f      	movs	r2, #79	; 0x4f
  8009b2a:	70da      	strb	r2, [r3, #3]
-	encoderVolBack.volumeLeftRight = 79;
+  encoderVolBack.volumeLeftRight = 79;
  8009b2c:	4b25      	ldr	r3, [pc, #148]	; (8009bc4 <set_init_values+0xe0>)
  8009b2e:	224f      	movs	r2, #79	; 0x4f
  8009b30:	705a      	strb	r2, [r3, #1]
-	encoderVolBack.volumeLeft = 79;
+  encoderVolBack.volumeLeft = 79;
  8009b32:	4b24      	ldr	r3, [pc, #144]	; (8009bc4 <set_init_values+0xe0>)
  8009b34:	224f      	movs	r2, #79	; 0x4f
  8009b36:	709a      	strb	r2, [r3, #2]
-	encoderVolBack.volumeRight = 79;
+  encoderVolBack.volumeRight = 79;
  8009b38:	4b22      	ldr	r3, [pc, #136]	; (8009bc4 <set_init_values+0xe0>)
  8009b3a:	224f      	movs	r2, #79	; 0x4f
  8009b3c:	70da      	strb	r2, [r3, #3]
-	encoderFilterLoudness.gain = 15;
+  encoderFilterLoudness.gain = 15;
  8009b3e:	4b22      	ldr	r3, [pc, #136]	; (8009bc8 <set_init_values+0xe4>)
  8009b40:	220f      	movs	r2, #15
  8009b42:	705a      	strb	r2, [r3, #1]
-	encoderFilterLoudness.buttonControl = SET_GAIN;
+  encoderFilterLoudness.buttonControl = SET_GAIN;
  8009b44:	4b20      	ldr	r3, [pc, #128]	; (8009bc8 <set_init_values+0xe4>)
  8009b46:	2200      	movs	r2, #0
  8009b48:	701a      	strb	r2, [r3, #0]
-	encoderFilterTreble.gain = 10;
+  encoderFilterTreble.gain = 10;
  8009b4a:	4b20      	ldr	r3, [pc, #128]	; (8009bcc <set_init_values+0xe8>)
  8009b4c:	220a      	movs	r2, #10
  8009b4e:	705a      	strb	r2, [r3, #1]
-	encoderFilterTreble.buttonControl = SET_GAIN;
+  encoderFilterTreble.buttonControl = SET_GAIN;
  8009b50:	4b1e      	ldr	r3, [pc, #120]	; (8009bcc <set_init_values+0xe8>)
  8009b52:	2200      	movs	r2, #0
  8009b54:	701a      	strb	r2, [r3, #0]
-	encoderFilterMiddle.gain = 10;
+  encoderFilterMiddle.gain = 10;
  8009b56:	4b1e      	ldr	r3, [pc, #120]	; (8009bd0 <set_init_values+0xec>)
  8009b58:	220a      	movs	r2, #10
  8009b5a:	705a      	strb	r2, [r3, #1]
-	encoderFilterMiddle.buttonControl = SET_GAIN;
+  encoderFilterMiddle.buttonControl = SET_GAIN;
  8009b5c:	4b1c      	ldr	r3, [pc, #112]	; (8009bd0 <set_init_values+0xec>)
  8009b5e:	2200      	movs	r2, #0
  8009b60:	701a      	strb	r2, [r3, #0]
-	TDA7719_config.set_input_front = JACK_1;
+  TDA7719_config.set_input_front = JACK_1;
  8009b62:	4b1c      	ldr	r3, [pc, #112]	; (8009bd4 <set_init_values+0xf0>)
  8009b64:	2201      	movs	r2, #1
  8009b66:	701a      	strb	r2, [r3, #0]
-	TDA7719_config.set_input_back = JACK_2;
+  TDA7719_config.set_input_back = JACK_2;
  8009b68:	4b1a      	ldr	r3, [pc, #104]	; (8009bd4 <set_init_values+0xf0>)
  8009b6a:	2202      	movs	r2, #2
  8009b6c:	705a      	strb	r2, [r3, #1]
-//	savedUserSettings.radio_freq = 958;
-//	savedUserSettings.stationSaved_1 = 923;
-//	savedUserSettings.stationSaved_2 = 1021;
-//	savedUserSettings.stationSaved_3 = 875;
-	savedUserSettings.displayRefreshTime = 100;
+  savedUserSettings.displayRefreshTime = 100;
  8009b6e:	4b1a      	ldr	r3, [pc, #104]	; (8009bd8 <set_init_values+0xf4>)
  8009b70:	2264      	movs	r2, #100	; 0x64
  8009b72:	811a      	strh	r2, [r3, #8]
-	RADIO_IS_ON_front_flag = false;
+  RADIO_IS_ON_front_flag = false;
  8009b74:	4b19      	ldr	r3, [pc, #100]	; (8009bdc <set_init_values+0xf8>)
  8009b76:	2200      	movs	r2, #0
  8009b78:	701a      	strb	r2, [r3, #0]
-	RADIO_IS_ON_back_flag = false;
+  RADIO_IS_ON_back_flag = false;
  8009b7a:	4b19      	ldr	r3, [pc, #100]	; (8009be0 <set_init_values+0xfc>)
  8009b7c:	2200      	movs	r2, #0
  8009b7e:	701a      	strb	r2, [r3, #0]
-	SettingsUserMenu.AlarmSource_A = JACK_1;
+  SettingsUserMenu.AlarmSource_A = JACK_1;
  8009b80:	4b18      	ldr	r3, [pc, #96]	; (8009be4 <set_init_values+0x100>)
  8009b82:	2201      	movs	r2, #1
  8009b84:	709a      	strb	r2, [r3, #2]
-	SettingsUserMenu.AlarmSource_B = RADIO;
+  SettingsUserMenu.AlarmSource_B = RADIO;
  8009b86:	4b17      	ldr	r3, [pc, #92]	; (8009be4 <set_init_values+0x100>)
  8009b88:	2205      	movs	r2, #5
  8009b8a:	70da      	strb	r2, [r3, #3]
-	SettingsUserMenu.RefreshScreenTime = 65535;
+  SettingsUserMenu.RefreshScreenTime = 65535;
  8009b8c:	4b15      	ldr	r3, [pc, #84]	; (8009be4 <set_init_values+0x100>)
  8009b8e:	f64f 72ff 	movw	r2, #65535	; 0xffff
  8009b92:	801a      	strh	r2, [r3, #0]
-	SettingsUserMenu.Power_LED = 5;
+  SettingsUserMenu.Power_LED = 5;
  8009b94:	4b13      	ldr	r3, [pc, #76]	; (8009be4 <set_init_values+0x100>)
  8009b96:	2205      	movs	r2, #5
  8009b98:	715a      	strb	r2, [r3, #5]
-	SettingsUserMenu.Display_mode = 1;
+  SettingsUserMenu.Display_mode = 1;
  8009b9a:	4b12      	ldr	r3, [pc, #72]	; (8009be4 <set_init_values+0x100>)
  8009b9c:	2201      	movs	r2, #1
  8009b9e:	711a      	strb	r2, [r3, #4]
-
-
-    }
+}
  8009ba0:	bf00      	nop
  8009ba2:	46bd      	mov	sp, r7
  8009ba4:	f85d 7b04 	ldr.w	r7, [sp], #4
@@ -21068,13 +21063,13 @@ float calc_pwm(float val)
  8009bea:	b084      	sub	sp, #16
  8009bec:	af00      	add	r7, sp, #0
  8009bee:	ed87 0a01 	vstr	s0, [r7, #4]
-    const float k = 0.1f;
+  const float k = 0.1f;
  8009bf2:	4b1d      	ldr	r3, [pc, #116]	; (8009c68 <calc_pwm+0x80>)
  8009bf4:	60fb      	str	r3, [r7, #12]
-    const float x0 = 60.0f;
+  const float x0 = 60.0f;
  8009bf6:	4b1d      	ldr	r3, [pc, #116]	; (8009c6c <calc_pwm+0x84>)
  8009bf8:	60bb      	str	r3, [r7, #8]
-    return 300.0f / (1.0f + exp(-k * (val - x0)));
+  return 300.0f / (1.0f + exp(-k * (val - x0)));
  8009bfa:	edd7 7a03 	vldr	s15, [r7, #12]
  8009bfe:	eeb1 7a67 	vneg.f32	s14, s15
  8009c02:	edd7 6a01 	vldr	s13, [r7, #4]
@@ -21119,15 +21114,15 @@ float calc_pwm(float val)
 
 // change power led brightness according to settings
 void change_power_led_brigh(void)
-    {
+{
  8009c74:	b580      	push	{r7, lr}
  8009c76:	af00      	add	r7, sp, #0
-	//static uint32_t timer_counter;
-	static float r;
+  //static uint32_t timer_counter;
+  static float r;
 
-	//dodać hal_gettick();
+  //add timer from SysTick
 
-	switch (SettingsUserMenu.Power_LED)
+  switch (SettingsUserMenu.Power_LED)
  8009c78:	4b30      	ldr	r3, [pc, #192]	; (8009d3c <change_power_led_brigh+0xc8>)
  8009c7a:	795b      	ldrb	r3, [r3, #5]
  8009c7c:	3b01      	subs	r3, #1
@@ -21140,30 +21135,30 @@ void change_power_led_brigh(void)
  8009c90:	08009c9d 	.word	0x08009c9d
  8009c94:	08009ca7 	.word	0x08009ca7
  8009c98:	08009cb1 	.word	0x08009cb1
-//			__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, calc_pwm(r));
-//			led_counter++;
-		}
-		break;
-	    case Always_OFF:
-		__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 0);
+      //			__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, calc_pwm(r));
+      //			led_counter++;
+    }
+    break;
+  case Always_OFF:
+    __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 0);
  8009c9c:	4b28      	ldr	r3, [pc, #160]	; (8009d40 <change_power_led_brigh+0xcc>)
  8009c9e:	681b      	ldr	r3, [r3, #0]
  8009ca0:	2200      	movs	r2, #0
  8009ca2:	635a      	str	r2, [r3, #52]	; 0x34
-		break;
+    break;
  8009ca4:	e048      	b.n	8009d38 <change_power_led_brigh+0xc4>
 
-	    case Always_ON:
-		__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 255);
+  case Always_ON:
+    __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, 255);
  8009ca6:	4b26      	ldr	r3, [pc, #152]	; (8009d40 <change_power_led_brigh+0xcc>)
  8009ca8:	681b      	ldr	r3, [r3, #0]
  8009caa:	22ff      	movs	r2, #255	; 0xff
  8009cac:	635a      	str	r2, [r3, #52]	; 0x34
-		break;
+    break;
  8009cae:	e043      	b.n	8009d38 <change_power_led_brigh+0xc4>
 
-	    case Change_brigh:
-		 r = 50 * (1.0f + sin(led_counter / 100.0f));
+  case Change_brigh:
+    r = 50 * (1.0f + sin(led_counter / 100.0f));
  8009cb0:	4b24      	ldr	r3, [pc, #144]	; (8009d44 <change_power_led_brigh+0xd0>)
  8009cb2:	681b      	ldr	r3, [r3, #0]
  8009cb4:	ee07 3a90 	vmov	s15, r3
@@ -21195,7 +21190,7 @@ void change_power_led_brigh(void)
  8009d04:	4603      	mov	r3, r0
  8009d06:	4a13      	ldr	r2, [pc, #76]	; (8009d54 <change_power_led_brigh+0xe0>)
  8009d08:	6013      	str	r3, [r2, #0]
-		__HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, calc_pwm(r));
+    __HAL_TIM_SET_COMPARE(&htim16, TIM_CHANNEL_1, calc_pwm(r));
  8009d0a:	4b12      	ldr	r3, [pc, #72]	; (8009d54 <change_power_led_brigh+0xe0>)
  8009d0c:	edd3 7a00 	vldr	s15, [r3]
  8009d10:	eeb0 0a67 	vmov.f32	s0, s15
@@ -21206,21 +21201,21 @@ void change_power_led_brigh(void)
  8009d20:	eefc 7ae7 	vcvt.u32.f32	s15, s15
  8009d24:	ee17 2a90 	vmov	r2, s15
  8009d28:	635a      	str	r2, [r3, #52]	; 0x34
-		led_counter++;
+    led_counter++;
  8009d2a:	4b06      	ldr	r3, [pc, #24]	; (8009d44 <change_power_led_brigh+0xd0>)
  8009d2c:	681b      	ldr	r3, [r3, #0]
  8009d2e:	3301      	adds	r3, #1
  8009d30:	4a04      	ldr	r2, [pc, #16]	; (8009d44 <change_power_led_brigh+0xd0>)
  8009d32:	6013      	str	r3, [r2, #0]
 
-		break;
+    break;
  8009d34:	e000      	b.n	8009d38 <change_power_led_brigh+0xc4>
-		//może case gdzie użytkownik podaje parametr określający jasność
-	    default:
-		break;
+    //może case gdzie użytkownik podaje parametr określający jasność
+  default:
+    break;
  8009d36:	bf00      	nop
-	    }
-    }
+  }
+}
  8009d38:	bf00      	nop
  8009d3a:	bd80      	pop	{r7, pc}
  8009d3c:	20007c18 	.word	0x20007c18
@@ -21234,14 +21229,14 @@ void change_power_led_brigh(void)
 08009d58 <complexABS>:
 
 //
-float complexABS(float real, float compl)
-    {
+float complexABS(float real, float compl )
+{
  8009d58:	b580      	push	{r7, lr}
  8009d5a:	b082      	sub	sp, #8
  8009d5c:	af00      	add	r7, sp, #0
  8009d5e:	ed87 0a01 	vstr	s0, [r7, #4]
  8009d62:	edc7 0a00 	vstr	s1, [r7]
-	return sqrtf(real * real + compl * compl);
+  return sqrtf(real * real + compl *compl );
  8009d66:	edd7 7a01 	vldr	s15, [r7, #4]
  8009d6a:	ee27 7aa7 	vmul.f32	s14, s15, s15
  8009d6e:	edd7 7a00 	vldr	s15, [r7]
@@ -21250,7 +21245,7 @@ float complexABS(float real, float compl)
  8009d7a:	eeb0 0a67 	vmov.f32	s0, s15
  8009d7e:	f00c fcdb 	bl	8016738 <sqrtf>
  8009d82:	eef0 7a40 	vmov.f32	s15, s0
-    }
+}
  8009d86:	eeb0 0a67 	vmov.f32	s0, s15
  8009d8a:	3708      	adds	r7, #8
  8009d8c:	46bd      	mov	sp, r7
@@ -21265,39 +21260,39 @@ void CalculateFFT(void)
  8009d92:	f5ad 5d00 	sub.w	sp, sp, #8192	; 0x2000
  8009d96:	b084      	sub	sp, #16
  8009d98:	af00      	add	r7, sp, #0
-	FFT_calc_done = 1;
+  FFT_calc_done = 1;
  8009d9a:	4b99      	ldr	r3, [pc, #612]	; (800a000 <CalculateFFT+0x270>)
  8009d9c:	2201      	movs	r2, #1
  8009d9e:	701a      	strb	r2, [r3, #0]
 
-	arm_rfft_fast_f32(&FFTHandler, FFTInBuffer, FFTOutBuffer, 0);
+  arm_rfft_fast_f32(&FFTHandler, FFTInBuffer, FFTOutBuffer, 0);
  8009da0:	2300      	movs	r3, #0
  8009da2:	4a98      	ldr	r2, [pc, #608]	; (800a004 <CalculateFFT+0x274>)
  8009da4:	4998      	ldr	r1, [pc, #608]	; (800a008 <CalculateFFT+0x278>)
  8009da6:	4899      	ldr	r0, [pc, #612]	; (800a00c <CalculateFFT+0x27c>)
  8009da8:	f7f8 fa47 	bl	800223a <arm_rfft_fast_f32>
 
-	int Freqs[FFT_SAMPLES];
-	int FreqPoint = 0;
+  int Freqs[FFT_SAMPLES];
+  int FreqPoint = 0;
  8009dac:	2300      	movs	r3, #0
  8009dae:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
  8009db2:	f102 020c 	add.w	r2, r2, #12
  8009db6:	6013      	str	r3, [r2, #0]
-	int Offset = 60; // variable noise floor offset
+  int Offset = 60; // variable noise floor offset
  8009db8:	233c      	movs	r3, #60	; 0x3c
  8009dba:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
  8009dbe:	f102 0204 	add.w	r2, r2, #4
  8009dc2:	6013      	str	r3, [r2, #0]
 
-	// calculate abs values and linear-to-dB
-	for (int i = 0; i < FFT_SAMPLES; i = i+2)
+  // calculate abs values and linear-to-dB
+  for (int i = 0; i < FFT_SAMPLES; i = i + 2)
  8009dc4:	2300      	movs	r3, #0
  8009dc6:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
  8009dca:	f102 0208 	add.w	r2, r2, #8
  8009dce:	6013      	str	r3, [r2, #0]
  8009dd0:	e067      	b.n	8009ea2 <CalculateFFT+0x112>
-	{
-		Freqs[FreqPoint] = (int)(20*log10f(complexABS(FFTOutBuffer[i], FFTOutBuffer[i+1]))) - Offset;
+  {
+    Freqs[FreqPoint] = (int)(20 * log10f(complexABS(FFTOutBuffer[i], FFTOutBuffer[i + 1]))) - Offset;
  8009dd2:	4a8c      	ldr	r2, [pc, #560]	; (800a004 <CalculateFFT+0x274>)
  8009dd4:	f507 5300 	add.w	r3, r7, #8192	; 0x2000
  8009dd8:	f103 0308 	add.w	r3, r3, #8
@@ -21335,7 +21330,7 @@ void CalculateFFT(void)
  8009e42:	6812      	ldr	r2, [r2, #0]
  8009e44:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
 
-		if(Freqs[FreqPoint] < 0)
+    if (Freqs[FreqPoint] < 0)
  8009e48:	f107 0310 	add.w	r3, r7, #16
  8009e4c:	3b0c      	subs	r3, #12
  8009e4e:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
@@ -21344,8 +21339,8 @@ void CalculateFFT(void)
  8009e58:	f853 3022 	ldr.w	r3, [r3, r2, lsl #2]
  8009e5c:	2b00      	cmp	r3, #0
  8009e5e:	da0a      	bge.n	8009e76 <CalculateFFT+0xe6>
-		{
-			Freqs[FreqPoint] = 0;
+    {
+      Freqs[FreqPoint] = 0;
  8009e60:	f107 0310 	add.w	r3, r7, #16
  8009e64:	3b0c      	subs	r3, #12
  8009e66:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
@@ -21353,8 +21348,8 @@ void CalculateFFT(void)
  8009e6e:	6812      	ldr	r2, [r2, #0]
  8009e70:	2100      	movs	r1, #0
  8009e72:	f843 1022 	str.w	r1, [r3, r2, lsl #2]
-		}
-		FreqPoint++;
+    }
+    FreqPoint++;
  8009e76:	f507 5300 	add.w	r3, r7, #8192	; 0x2000
  8009e7a:	f103 030c 	add.w	r3, r3, #12
  8009e7e:	681b      	ldr	r3, [r3, #0]
@@ -21362,7 +21357,7 @@ void CalculateFFT(void)
  8009e82:	f507 5200 	add.w	r2, r7, #8192	; 0x2000
  8009e86:	f102 020c 	add.w	r2, r2, #12
  8009e8a:	6013      	str	r3, [r2, #0]
-	for (int i = 0; i < FFT_SAMPLES; i = i+2)
+  for (int i = 0; i < FFT_SAMPLES; i = i + 2)
  8009e8c:	f507 5300 	add.w	r3, r7, #8192	; 0x2000
  8009e90:	f103 0308 	add.w	r3, r3, #8
  8009e94:	681b      	ldr	r3, [r3, #0]
@@ -21375,152 +21370,152 @@ void CalculateFFT(void)
  8009eaa:	681b      	ldr	r3, [r3, #0]
  8009eac:	f5b3 6f00 	cmp.w	r3, #2048	; 0x800
  8009eb0:	db8f      	blt.n	8009dd2 <CalculateFFT+0x42>
-//	for (uint32_t k = 0;  k < 1024;  k++)
-//	    {
-//
-//	    }
+  //	for (uint32_t k = 0;  k < 1024;  k++)
+  //	    {
+  //
+  //	    }
 
-	OutFreqArray[0]  = (uint8_t)Freqs[1]; // 20 Hz
+  OutFreqArray[0] = (uint8_t)Freqs[1];    // 20 Hz
  8009eb2:	f107 0310 	add.w	r3, r7, #16
  8009eb6:	3b0c      	subs	r3, #12
  8009eb8:	685b      	ldr	r3, [r3, #4]
  8009eba:	b2da      	uxtb	r2, r3
  8009ebc:	4b54      	ldr	r3, [pc, #336]	; (800a010 <CalculateFFT+0x280>)
  8009ebe:	701a      	strb	r2, [r3, #0]
-	OutFreqArray[1]  = (uint8_t)Freqs[3]; // 50 Hz
+  OutFreqArray[1] = (uint8_t)Freqs[3];    // 50 Hz
  8009ec0:	f107 0310 	add.w	r3, r7, #16
  8009ec4:	3b0c      	subs	r3, #12
  8009ec6:	68db      	ldr	r3, [r3, #12]
  8009ec8:	b2da      	uxtb	r2, r3
  8009eca:	4b51      	ldr	r3, [pc, #324]	; (800a010 <CalculateFFT+0x280>)
  8009ecc:	705a      	strb	r2, [r3, #1]
-	OutFreqArray[2]  = (uint8_t)Freqs[4]; // 75 Hz
+  OutFreqArray[2] = (uint8_t)Freqs[4];    // 75 Hz
  8009ece:	f107 0310 	add.w	r3, r7, #16
  8009ed2:	3b0c      	subs	r3, #12
  8009ed4:	691b      	ldr	r3, [r3, #16]
  8009ed6:	b2da      	uxtb	r2, r3
  8009ed8:	4b4d      	ldr	r3, [pc, #308]	; (800a010 <CalculateFFT+0x280>)
  8009eda:	709a      	strb	r2, [r3, #2]
-	OutFreqArray[3]  = (uint8_t)Freqs[6]; // 125 Hz
+  OutFreqArray[3] = (uint8_t)Freqs[6];    // 125 Hz
  8009edc:	f107 0310 	add.w	r3, r7, #16
  8009ee0:	3b0c      	subs	r3, #12
  8009ee2:	699b      	ldr	r3, [r3, #24]
  8009ee4:	b2da      	uxtb	r2, r3
  8009ee6:	4b4a      	ldr	r3, [pc, #296]	; (800a010 <CalculateFFT+0x280>)
  8009ee8:	70da      	strb	r2, [r3, #3]
-	OutFreqArray[4]  = (uint8_t)Freqs[10]; // 200 Hz
+  OutFreqArray[4] = (uint8_t)Freqs[10];   // 200 Hz
  8009eea:	f107 0310 	add.w	r3, r7, #16
  8009eee:	3b0c      	subs	r3, #12
  8009ef0:	6a9b      	ldr	r3, [r3, #40]	; 0x28
  8009ef2:	b2da      	uxtb	r2, r3
  8009ef4:	4b46      	ldr	r3, [pc, #280]	; (800a010 <CalculateFFT+0x280>)
  8009ef6:	711a      	strb	r2, [r3, #4]
-	OutFreqArray[5]  = (uint8_t)Freqs[17]; // 1000 Hz
+  OutFreqArray[5] = (uint8_t)Freqs[17];   // 1000 Hz
  8009ef8:	f107 0310 	add.w	r3, r7, #16
  8009efc:	3b0c      	subs	r3, #12
  8009efe:	6c5b      	ldr	r3, [r3, #68]	; 0x44
  8009f00:	b2da      	uxtb	r2, r3
  8009f02:	4b43      	ldr	r3, [pc, #268]	; (800a010 <CalculateFFT+0x280>)
  8009f04:	715a      	strb	r2, [r3, #5]
-	OutFreqArray[6]  = (uint8_t)Freqs[24]; // 2200 Hz
+  OutFreqArray[6] = (uint8_t)Freqs[24];   // 2200 Hz
  8009f06:	f107 0310 	add.w	r3, r7, #16
  8009f0a:	3b0c      	subs	r3, #12
  8009f0c:	6e1b      	ldr	r3, [r3, #96]	; 0x60
  8009f0e:	b2da      	uxtb	r2, r3
  8009f10:	4b3f      	ldr	r3, [pc, #252]	; (800a010 <CalculateFFT+0x280>)
  8009f12:	719a      	strb	r2, [r3, #6]
-	OutFreqArray[7]  = (uint8_t)Freqs[35]; // 4500 Hz
+  OutFreqArray[7] = (uint8_t)Freqs[35];   // 4500 Hz
  8009f14:	f107 0310 	add.w	r3, r7, #16
  8009f18:	3b0c      	subs	r3, #12
  8009f1a:	f8d3 308c 	ldr.w	r3, [r3, #140]	; 0x8c
  8009f1e:	b2da      	uxtb	r2, r3
  8009f20:	4b3b      	ldr	r3, [pc, #236]	; (800a010 <CalculateFFT+0x280>)
  8009f22:	71da      	strb	r2, [r3, #7]
-	OutFreqArray[8]  = (uint8_t)Freqs[47]; // 9000 Hz
+  OutFreqArray[8] = (uint8_t)Freqs[47];   // 9000 Hz
  8009f24:	f107 0310 	add.w	r3, r7, #16
  8009f28:	3b0c      	subs	r3, #12
  8009f2a:	f8d3 30bc 	ldr.w	r3, [r3, #188]	; 0xbc
  8009f2e:	b2da      	uxtb	r2, r3
  8009f30:	4b37      	ldr	r3, [pc, #220]	; (800a010 <CalculateFFT+0x280>)
  8009f32:	721a      	strb	r2, [r3, #8]
-	OutFreqArray[9]  = (uint8_t)Freqs[59]; // 15000 Hz
+  OutFreqArray[9] = (uint8_t)Freqs[59];   // 15000 Hz
  8009f34:	f107 0310 	add.w	r3, r7, #16
  8009f38:	3b0c      	subs	r3, #12
  8009f3a:	f8d3 30ec 	ldr.w	r3, [r3, #236]	; 0xec
  8009f3e:	b2da      	uxtb	r2, r3
  8009f40:	4b33      	ldr	r3, [pc, #204]	; (800a010 <CalculateFFT+0x280>)
  8009f42:	725a      	strb	r2, [r3, #9]
-	OutFreqArray[10] = (uint8_t)Freqs[82]; //
+  OutFreqArray[10] = (uint8_t)Freqs[82];  //
  8009f44:	f107 0310 	add.w	r3, r7, #16
  8009f48:	3b0c      	subs	r3, #12
  8009f4a:	f8d3 3148 	ldr.w	r3, [r3, #328]	; 0x148
  8009f4e:	b2da      	uxtb	r2, r3
  8009f50:	4b2f      	ldr	r3, [pc, #188]	; (800a010 <CalculateFFT+0x280>)
  8009f52:	729a      	strb	r2, [r3, #10]
-	OutFreqArray[11] = (uint8_t)Freqs[117]; // 63 Hz
+  OutFreqArray[11] = (uint8_t)Freqs[117]; // 63 Hz
  8009f54:	f107 0310 	add.w	r3, r7, #16
  8009f58:	3b0c      	subs	r3, #12
  8009f5a:	f8d3 31d4 	ldr.w	r3, [r3, #468]	; 0x1d4
  8009f5e:	b2da      	uxtb	r2, r3
  8009f60:	4b2b      	ldr	r3, [pc, #172]	; (800a010 <CalculateFFT+0x280>)
  8009f62:	72da      	strb	r2, [r3, #11]
-	OutFreqArray[12] = (uint8_t)Freqs[186]; // 125 Hz
+  OutFreqArray[12] = (uint8_t)Freqs[186]; // 125 Hz
  8009f64:	f107 0310 	add.w	r3, r7, #16
  8009f68:	3b0c      	subs	r3, #12
  8009f6a:	f8d3 32e8 	ldr.w	r3, [r3, #744]	; 0x2e8
  8009f6e:	b2da      	uxtb	r2, r3
  8009f70:	4b27      	ldr	r3, [pc, #156]	; (800a010 <CalculateFFT+0x280>)
  8009f72:	731a      	strb	r2, [r3, #12]
-	OutFreqArray[13] = (uint8_t)Freqs[256]; // 250 Hz
+  OutFreqArray[13] = (uint8_t)Freqs[256]; // 250 Hz
  8009f74:	f107 0310 	add.w	r3, r7, #16
  8009f78:	3b0c      	subs	r3, #12
  8009f7a:	f8d3 3400 	ldr.w	r3, [r3, #1024]	; 0x400
  8009f7e:	b2da      	uxtb	r2, r3
  8009f80:	4b23      	ldr	r3, [pc, #140]	; (800a010 <CalculateFFT+0x280>)
  8009f82:	735a      	strb	r2, [r3, #13]
-	OutFreqArray[14] = (uint8_t)Freqs[326]; // 500 Hz
+  OutFreqArray[14] = (uint8_t)Freqs[326]; // 500 Hz
  8009f84:	f107 0310 	add.w	r3, r7, #16
  8009f88:	3b0c      	subs	r3, #12
  8009f8a:	f8d3 3518 	ldr.w	r3, [r3, #1304]	; 0x518
  8009f8e:	b2da      	uxtb	r2, r3
  8009f90:	4b1f      	ldr	r3, [pc, #124]	; (800a010 <CalculateFFT+0x280>)
  8009f92:	739a      	strb	r2, [r3, #14]
-	OutFreqArray[15] = (uint8_t)Freqs[372]; // 1000 Hz
+  OutFreqArray[15] = (uint8_t)Freqs[372]; // 1000 Hz
  8009f94:	f107 0310 	add.w	r3, r7, #16
  8009f98:	3b0c      	subs	r3, #12
  8009f9a:	f8d3 35d0 	ldr.w	r3, [r3, #1488]	; 0x5d0
  8009f9e:	b2da      	uxtb	r2, r3
  8009fa0:	4b1b      	ldr	r3, [pc, #108]	; (800a010 <CalculateFFT+0x280>)
  8009fa2:	73da      	strb	r2, [r3, #15]
-	OutFreqArray[16] = (uint8_t)Freqs[465]; // 2200 Hz
+  OutFreqArray[16] = (uint8_t)Freqs[465]; // 2200 Hz
  8009fa4:	f107 0310 	add.w	r3, r7, #16
  8009fa8:	3b0c      	subs	r3, #12
  8009faa:	f8d3 3744 	ldr.w	r3, [r3, #1860]	; 0x744
  8009fae:	b2da      	uxtb	r2, r3
  8009fb0:	4b17      	ldr	r3, [pc, #92]	; (800a010 <CalculateFFT+0x280>)
  8009fb2:	741a      	strb	r2, [r3, #16]
-	OutFreqArray[17] = (uint8_t)Freqs[558]; // 4500 Hz
+  OutFreqArray[17] = (uint8_t)Freqs[558]; // 4500 Hz
  8009fb4:	f107 0310 	add.w	r3, r7, #16
  8009fb8:	3b0c      	subs	r3, #12
  8009fba:	f8d3 38b8 	ldr.w	r3, [r3, #2232]	; 0x8b8
  8009fbe:	b2da      	uxtb	r2, r3
  8009fc0:	4b13      	ldr	r3, [pc, #76]	; (800a010 <CalculateFFT+0x280>)
  8009fc2:	745a      	strb	r2, [r3, #17]
-	OutFreqArray[18] = (uint8_t)Freqs[651]; // 9000 Hz
+  OutFreqArray[18] = (uint8_t)Freqs[651]; // 9000 Hz
  8009fc4:	f107 0310 	add.w	r3, r7, #16
  8009fc8:	3b0c      	subs	r3, #12
  8009fca:	f8d3 3a2c 	ldr.w	r3, [r3, #2604]	; 0xa2c
  8009fce:	b2da      	uxtb	r2, r3
  8009fd0:	4b0f      	ldr	r3, [pc, #60]	; (800a010 <CalculateFFT+0x280>)
  8009fd2:	749a      	strb	r2, [r3, #18]
-	OutFreqArray[19] = (uint8_t)Freqs[836]; // 15000 Hz
+  OutFreqArray[19] = (uint8_t)Freqs[836]; // 15000 Hz
  8009fd4:	f107 0310 	add.w	r3, r7, #16
  8009fd8:	3b0c      	subs	r3, #12
  8009fda:	f8d3 3d10 	ldr.w	r3, [r3, #3344]	; 0xd10
  8009fde:	b2da      	uxtb	r2, r3
  8009fe0:	4b0b      	ldr	r3, [pc, #44]	; (800a010 <CalculateFFT+0x280>)
  8009fe2:	74da      	strb	r2, [r3, #19]
-	OutFreqArray[20] = (uint8_t)Freqs[929]; // 15000 Hz
+  OutFreqArray[20] = (uint8_t)Freqs[929]; // 15000 Hz
  8009fe4:	f107 0310 	add.w	r3, r7, #16
  8009fe8:	3b0c      	subs	r3, #12
  8009fea:	f8d3 3e84 	ldr.w	r3, [r3, #3716]	; 0xe84
@@ -21543,28 +21538,28 @@ void CalculateFFT(void)
 
 //
 void check_FFT_flag(void)
-    {
+{
  800a014:	b580      	push	{r7, lr}
  800a016:	b082      	sub	sp, #8
  800a018:	af00      	add	r7, sp, #0
-	  if(Samples_ready == 1)
+  if (Samples_ready == 1)
  800a01a:	4b13      	ldr	r3, [pc, #76]	; (800a068 <check_FFT_flag+0x54>)
  800a01c:	781b      	ldrb	r3, [r3, #0]
  800a01e:	b2db      	uxtb	r3, r3
  800a020:	2b01      	cmp	r3, #1
  800a022:	d11c      	bne.n	800a05e <check_FFT_flag+0x4a>
-	  {
-		  Samples_ready = 0;
+  {
+    Samples_ready = 0;
  800a024:	4b10      	ldr	r3, [pc, #64]	; (800a068 <check_FFT_flag+0x54>)
  800a026:	2200      	movs	r2, #0
  800a028:	701a      	strb	r2, [r3, #0]
 
-		  for(uint32_t i = 0; i < FFT_SAMPLES; i++)
+    for (uint32_t i = 0; i < FFT_SAMPLES; i++)
  800a02a:	2300      	movs	r3, #0
  800a02c:	607b      	str	r3, [r7, #4]
  800a02e:	e010      	b.n	800a052 <check_FFT_flag+0x3e>
-		  {
-			  FFTInBuffer[i] =  (float)ADC_In[i];
+    {
+      FFTInBuffer[i] = (float)ADC_In[i];
  800a030:	4a0e      	ldr	r2, [pc, #56]	; (800a06c <check_FFT_flag+0x58>)
  800a032:	687b      	ldr	r3, [r7, #4]
  800a034:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
@@ -21575,19 +21570,19 @@ void check_FFT_flag(void)
  800a044:	009b      	lsls	r3, r3, #2
  800a046:	4413      	add	r3, r2
  800a048:	edc3 7a00 	vstr	s15, [r3]
-		  for(uint32_t i = 0; i < FFT_SAMPLES; i++)
+    for (uint32_t i = 0; i < FFT_SAMPLES; i++)
  800a04c:	687b      	ldr	r3, [r7, #4]
  800a04e:	3301      	adds	r3, #1
  800a050:	607b      	str	r3, [r7, #4]
  800a052:	687b      	ldr	r3, [r7, #4]
  800a054:	f5b3 6f00 	cmp.w	r3, #2048	; 0x800
  800a058:	d3ea      	bcc.n	800a030 <check_FFT_flag+0x1c>
-		  }
-
-		  CalculateFFT();
- 800a05a:	f7ff fe99 	bl	8009d90 <CalculateFFT>
-	  }
     }
+
+    CalculateFFT();
+ 800a05a:	f7ff fe99 	bl	8009d90 <CalculateFFT>
+  }
+}
  800a05e:	bf00      	nop
  800a060:	3708      	adds	r7, #8
  800a062:	46bd      	mov	sp, r7
@@ -21600,8 +21595,9 @@ void check_FFT_flag(void)
 0800a074 <map>:
 
 //
-uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
-    {
+uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min,
+             uint32_t out_max)
+{
  800a074:	b480      	push	{r7}
  800a076:	b085      	sub	sp, #20
  800a078:	af00      	add	r7, sp, #0
@@ -21609,7 +21605,7 @@ uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uin
  800a07c:	60b9      	str	r1, [r7, #8]
  800a07e:	607a      	str	r2, [r7, #4]
  800a080:	603b      	str	r3, [r7, #0]
-	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+  return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
  800a082:	68fa      	ldr	r2, [r7, #12]
  800a084:	68bb      	ldr	r3, [r7, #8]
  800a086:	1ad3      	subs	r3, r2, r3
@@ -21623,7 +21619,7 @@ uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uin
  800a098:	fbb2 f2f3 	udiv	r2, r2, r3
  800a09c:	683b      	ldr	r3, [r7, #0]
  800a09e:	4413      	add	r3, r2
-    }
+}
  800a0a0:	4618      	mov	r0, r3
  800a0a2:	3714      	adds	r7, #20
  800a0a4:	46bd      	mov	sp, r7
@@ -21634,7 +21630,7 @@ uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uin
 
 //
 int16_t SplitNumberToDignits(int16_t position, int16_t number)
-    {
+{
  800a0ac:	b480      	push	{r7}
  800a0ae:	b083      	sub	sp, #12
  800a0b0:	af00      	add	r7, sp, #0
@@ -21643,9 +21639,9 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
  800a0b6:	80fb      	strh	r3, [r7, #6]
  800a0b8:	4613      	mov	r3, r2
  800a0ba:	80bb      	strh	r3, [r7, #4]
-	while (position--)
+  while (position--)
  800a0bc:	e008      	b.n	800a0d0 <SplitNumberToDignits+0x24>
-	    number /= 10;
+    number /= 10;
  800a0be:	f9b7 3004 	ldrsh.w	r3, [r7, #4]
  800a0c2:	4a11      	ldr	r2, [pc, #68]	; (800a108 <SplitNumberToDignits+0x5c>)
  800a0c4:	fb82 1203 	smull	r1, r2, r2, r3
@@ -21653,7 +21649,7 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
  800a0ca:	17db      	asrs	r3, r3, #31
  800a0cc:	1ad3      	subs	r3, r2, r3
  800a0ce:	80bb      	strh	r3, [r7, #4]
-	while (position--)
+  while (position--)
  800a0d0:	f9b7 3006 	ldrsh.w	r3, [r7, #6]
  800a0d4:	b29a      	uxth	r2, r3
  800a0d6:	3a01      	subs	r2, #1
@@ -21661,7 +21657,7 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
  800a0da:	80fa      	strh	r2, [r7, #6]
  800a0dc:	2b00      	cmp	r3, #0
  800a0de:	d1ee      	bne.n	800a0be <SplitNumberToDignits+0x12>
-	return number % 10;
+  return number % 10;
  800a0e0:	f9b7 2004 	ldrsh.w	r2, [r7, #4]
  800a0e4:	4b08      	ldr	r3, [pc, #32]	; (800a108 <SplitNumberToDignits+0x5c>)
  800a0e6:	fb83 1302 	smull	r1, r3, r3, r2
@@ -21674,7 +21670,7 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
  800a0f6:	005b      	lsls	r3, r3, #1
  800a0f8:	1ad3      	subs	r3, r2, r3
  800a0fa:	b21b      	sxth	r3, r3
-    }
+}
  800a0fc:	4618      	mov	r0, r3
  800a0fe:	370c      	adds	r7, #12
  800a100:	46bd      	mov	sp, r7
@@ -21684,63 +21680,64 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
 
 0800a10c <HAL_ADC_ConvCpltCallback>:
 
-
 // Constains operations needed to calculate FFT and UVmeter - it's using ADC1 perph
 // ADC2 is used for monitoring battery voltage while disconnected from main power source
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
-    {
+{
  800a10c:	b580      	push	{r7, lr}
  800a10e:	b082      	sub	sp, #8
  800a110:	af00      	add	r7, sp, #0
  800a112:	6078      	str	r0, [r7, #4]
-	static uint16_t i = 0;
+  static uint16_t i = 0;
 
-	if(hadc->Instance == ADC1)
+  if (hadc->Instance == ADC1)
  800a114:	687b      	ldr	r3, [r7, #4]
  800a116:	681b      	ldr	r3, [r3, #0]
  800a118:	4a33      	ldr	r2, [pc, #204]	; (800a1e8 <HAL_ADC_ConvCpltCallback+0xdc>)
  800a11a:	4293      	cmp	r3, r2
  800a11c:	d160      	bne.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-	    {
+  {
 
-		if (SSD1322_Screen_State == SSD1322_SCREEN_UVMETER)
+    if (SSD1322_Screen_State == SSD1322_SCREEN_UVMETER)
  800a11e:	4b33      	ldr	r3, [pc, #204]	; (800a1ec <HAL_ADC_ConvCpltCallback+0xe0>)
  800a120:	781b      	ldrb	r3, [r3, #0]
  800a122:	2b04      	cmp	r3, #4
  800a124:	d111      	bne.n	800a14a <HAL_ADC_ConvCpltCallback+0x3e>
-		    {
-			if (UV_meter_front_back == UV_METER_FRONT)
+    {
+      if (UV_meter_front_back == UV_METER_FRONT)
  800a126:	4b32      	ldr	r3, [pc, #200]	; (800a1f0 <HAL_ADC_ConvCpltCallback+0xe4>)
  800a128:	781b      	ldrb	r3, [r3, #0]
  800a12a:	2b00      	cmp	r3, #0
  800a12c:	d104      	bne.n	800a138 <HAL_ADC_ConvCpltCallback+0x2c>
-			    {
-				ADC_calc_UV_value(ADC_CHANNEL_LEFT_FRONT, ADC_CHANNEL_RIGHT_FRONT);
+      {
+        ADC_calc_UV_value(ADC_CHANNEL_LEFT_FRONT,
  800a12e:	2102      	movs	r1, #2
  800a130:	2001      	movs	r0, #1
  800a132:	f000 f869 	bl	800a208 <ADC_calc_UV_value>
  800a136:	e053      	b.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-			    }
-			else if (UV_meter_front_back == UV_METER_BACK)
+                          ADC_CHANNEL_RIGHT_FRONT);
+      }
+      else if (UV_meter_front_back == UV_METER_BACK)
  800a138:	4b2d      	ldr	r3, [pc, #180]	; (800a1f0 <HAL_ADC_ConvCpltCallback+0xe4>)
  800a13a:	781b      	ldrb	r3, [r3, #0]
  800a13c:	2b01      	cmp	r3, #1
  800a13e:	d14f      	bne.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-			    {
-				ADC_calc_UV_value(ADC_CHANNEL_LEFT_BACK, ADC_CHANNEL_RIGHT_BACK);
+      {
+        ADC_calc_UV_value(ADC_CHANNEL_LEFT_BACK,
  800a140:	2100      	movs	r1, #0
  800a142:	2003      	movs	r0, #3
  800a144:	f000 f860 	bl	800a208 <ADC_calc_UV_value>
  800a148:	e04a      	b.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-			    }
-		    }
-		else if(SSD1322_Screen_State == SSD1322_SCREEN_FFT)
+                          ADC_CHANNEL_RIGHT_BACK);
+      }
+    }
+    else if (SSD1322_Screen_State == SSD1322_SCREEN_FFT)
  800a14a:	4b28      	ldr	r3, [pc, #160]	; (800a1ec <HAL_ADC_ConvCpltCallback+0xe0>)
  800a14c:	781b      	ldrb	r3, [r3, #0]
  800a14e:	2b03      	cmp	r3, #3
  800a150:	d146      	bne.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-		    {
-			switch (FFT_channel_source)
+    {
+      switch (FFT_channel_source)
  800a152:	4b28      	ldr	r3, [pc, #160]	; (800a1f4 <HAL_ADC_ConvCpltCallback+0xe8>)
  800a154:	781b      	ldrb	r3, [r3, #0]
  800a156:	3b01      	subs	r3, #1
@@ -21753,9 +21750,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a168:	0800a187 	.word	0x0800a187
  800a16c:	0800a199 	.word	0x0800a199
  800a170:	0800a1ab 	.word	0x0800a1ab
-			    {
-				case FFT_front_left:
-				   ADC_In[i] = ADC_SamplesTEST[1];
+      {
+      case FFT_front_left:
+        ADC_In[i] = ADC_SamplesTEST[1];
  800a174:	4b20      	ldr	r3, [pc, #128]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a176:	881b      	ldrh	r3, [r3, #0]
  800a178:	461a      	mov	r2, r3
@@ -21763,10 +21760,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a17c:	8859      	ldrh	r1, [r3, #2]
  800a17e:	4b20      	ldr	r3, [pc, #128]	; (800a200 <HAL_ADC_ConvCpltCallback+0xf4>)
  800a180:	f823 1012 	strh.w	r1, [r3, r2, lsl #1]
-				break;
+        break;
  800a184:	e01b      	b.n	800a1be <HAL_ADC_ConvCpltCallback+0xb2>
-				case FFT_front_right:
-				    ADC_In[i] = ADC_SamplesTEST[2];
+      case FFT_front_right:
+        ADC_In[i] = ADC_SamplesTEST[2];
  800a186:	4b1c      	ldr	r3, [pc, #112]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a188:	881b      	ldrh	r3, [r3, #0]
  800a18a:	461a      	mov	r2, r3
@@ -21774,10 +21771,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a18e:	8899      	ldrh	r1, [r3, #4]
  800a190:	4b1b      	ldr	r3, [pc, #108]	; (800a200 <HAL_ADC_ConvCpltCallback+0xf4>)
  800a192:	f823 1012 	strh.w	r1, [r3, r2, lsl #1]
-				break;
+        break;
  800a196:	e012      	b.n	800a1be <HAL_ADC_ConvCpltCallback+0xb2>
-				case FFT_back_left:
-				    ADC_In[i] = ADC_SamplesTEST[3];
+      case FFT_back_left:
+        ADC_In[i] = ADC_SamplesTEST[3];
  800a198:	4b17      	ldr	r3, [pc, #92]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a19a:	881b      	ldrh	r3, [r3, #0]
  800a19c:	461a      	mov	r2, r3
@@ -21785,10 +21782,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a1a0:	88d9      	ldrh	r1, [r3, #6]
  800a1a2:	4b17      	ldr	r3, [pc, #92]	; (800a200 <HAL_ADC_ConvCpltCallback+0xf4>)
  800a1a4:	f823 1012 	strh.w	r1, [r3, r2, lsl #1]
-				break;
+        break;
  800a1a8:	e009      	b.n	800a1be <HAL_ADC_ConvCpltCallback+0xb2>
-				case FFT_back_right:
-				    ADC_In[i] = ADC_SamplesTEST[0];
+      case FFT_back_right:
+        ADC_In[i] = ADC_SamplesTEST[0];
  800a1aa:	4b13      	ldr	r3, [pc, #76]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a1ac:	881b      	ldrh	r3, [r3, #0]
  800a1ae:	461a      	mov	r2, r3
@@ -21796,14 +21793,14 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a1b2:	8819      	ldrh	r1, [r3, #0]
  800a1b4:	4b12      	ldr	r3, [pc, #72]	; (800a200 <HAL_ADC_ConvCpltCallback+0xf4>)
  800a1b6:	f823 1012 	strh.w	r1, [r3, r2, lsl #1]
-				break;
+        break;
  800a1ba:	e000      	b.n	800a1be <HAL_ADC_ConvCpltCallback+0xb2>
-				default:
-				break;
+      default:
+        break;
  800a1bc:	bf00      	nop
-			    }
+      }
 
-			i++;
+      i++;
  800a1be:	4b0e      	ldr	r3, [pc, #56]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a1c0:	881b      	ldrh	r3, [r3, #0]
  800a1c2:	3301      	adds	r3, #1
@@ -21811,26 +21808,26 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
  800a1c6:	4b0c      	ldr	r3, [pc, #48]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a1c8:	801a      	strh	r2, [r3, #0]
 
-			if(i == FFT_SAMPLES)
+      if (i == FFT_SAMPLES)
  800a1ca:	4b0b      	ldr	r3, [pc, #44]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a1cc:	881b      	ldrh	r3, [r3, #0]
  800a1ce:	f5b3 6f00 	cmp.w	r3, #2048	; 0x800
  800a1d2:	d105      	bne.n	800a1e0 <HAL_ADC_ConvCpltCallback+0xd4>
-			{
-				i = 0;
+      {
+        i = 0;
  800a1d4:	4b08      	ldr	r3, [pc, #32]	; (800a1f8 <HAL_ADC_ConvCpltCallback+0xec>)
  800a1d6:	2200      	movs	r2, #0
  800a1d8:	801a      	strh	r2, [r3, #0]
-				Samples_ready = 1;
+        Samples_ready = 1;
  800a1da:	4b0a      	ldr	r3, [pc, #40]	; (800a204 <HAL_ADC_ConvCpltCallback+0xf8>)
  800a1dc:	2201      	movs	r2, #1
  800a1de:	701a      	strb	r2, [r3, #0]
-	if(hadc->Instance == ADC2)
-	    {
 
-	    }
-
-    }
+  //adc2 is used for vbat monitoring after power is set off
+  if (hadc->Instance == ADC2)
+  {
+  }
+}
  800a1e0:	bf00      	nop
  800a1e2:	3708      	adds	r7, #8
  800a1e4:	46bd      	mov	sp, r7
@@ -21846,10 +21843,9 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
 
 0800a208 <ADC_calc_UV_value>:
 
-
 // Calculates mean value for selected audio channels.
 void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
-    {
+{
  800a208:	b480      	push	{r7}
  800a20a:	b083      	sub	sp, #12
  800a20c:	af00      	add	r7, sp, #0
@@ -21858,26 +21854,26 @@ void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
  800a212:	71fb      	strb	r3, [r7, #7]
  800a214:	4613      	mov	r3, r2
  800a216:	71bb      	strb	r3, [r7, #6]
-	static uint32_t sum_right = 0;
-	static uint32_t div_left  = 1;
-	static uint32_t div_right = 1;
-	static uint32_t num_of_samples = 0;
+  static uint32_t sum_right = 0;
+  static uint32_t div_left = 1;
+  static uint32_t div_right = 1;
+  static uint32_t num_of_samples = 0;
 
-	num_of_samples++; //ilość zbieranych próbek do obliczania sredniej RMS
+  num_of_samples++; //ilość zbieranych próbek do obliczania sredniej RMS
  800a218:	4b31      	ldr	r3, [pc, #196]	; (800a2e0 <ADC_calc_UV_value+0xd8>)
  800a21a:	681b      	ldr	r3, [r3, #0]
  800a21c:	3301      	adds	r3, #1
  800a21e:	4a30      	ldr	r2, [pc, #192]	; (800a2e0 <ADC_calc_UV_value+0xd8>)
  800a220:	6013      	str	r3, [r2, #0]
-	//według warunku sumować albo front albo back
-	if (ADC_SamplesTEST[adc_channel_left] > 1920)// take only positive probes
+  //według warunku sumować albo front albo back
+  if (ADC_SamplesTEST[adc_channel_left] > 1920) // take only positive probes
  800a222:	79fb      	ldrb	r3, [r7, #7]
  800a224:	4a2f      	ldr	r2, [pc, #188]	; (800a2e4 <ADC_calc_UV_value+0xdc>)
  800a226:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
  800a22a:	f5b3 6ff0 	cmp.w	r3, #1920	; 0x780
  800a22e:	d91a      	bls.n	800a266 <ADC_calc_UV_value+0x5e>
-	    {
-		sum_left = sum_left + ADC_SamplesTEST[adc_channel_left] - 1919;	//minus offset from volate divader
+  {
+    sum_left = sum_left + ADC_SamplesTEST[adc_channel_left] - 1919; //minus offset from volate divader
  800a230:	79fb      	ldrb	r3, [r7, #7]
  800a232:	4a2c      	ldr	r2, [pc, #176]	; (800a2e4 <ADC_calc_UV_value+0xdc>)
  800a234:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
@@ -21888,7 +21884,7 @@ void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
  800a240:	f2a3 737f 	subw	r3, r3, #1919	; 0x77f
  800a244:	4a28      	ldr	r2, [pc, #160]	; (800a2e8 <ADC_calc_UV_value+0xe0>)
  800a246:	6013      	str	r3, [r2, #0]
-		ADC_SamplesSUM[adc_channel_left] = sum_left / div_left;
+    ADC_SamplesSUM[adc_channel_left] = sum_left / div_left;
  800a248:	4b27      	ldr	r3, [pc, #156]	; (800a2e8 <ADC_calc_UV_value+0xe0>)
  800a24a:	6819      	ldr	r1, [r3, #0]
  800a24c:	4b27      	ldr	r3, [pc, #156]	; (800a2ec <ADC_calc_UV_value+0xe4>)
@@ -21897,21 +21893,21 @@ void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
  800a252:	fbb1 f2f2 	udiv	r2, r1, r2
  800a256:	4926      	ldr	r1, [pc, #152]	; (800a2f0 <ADC_calc_UV_value+0xe8>)
  800a258:	f841 2023 	str.w	r2, [r1, r3, lsl #2]
-		div_left++;
+    div_left++;
  800a25c:	4b23      	ldr	r3, [pc, #140]	; (800a2ec <ADC_calc_UV_value+0xe4>)
  800a25e:	681b      	ldr	r3, [r3, #0]
  800a260:	3301      	adds	r3, #1
  800a262:	4a22      	ldr	r2, [pc, #136]	; (800a2ec <ADC_calc_UV_value+0xe4>)
  800a264:	6013      	str	r3, [r2, #0]
-	    }
-	if(ADC_SamplesTEST[adc_channel_right] > 1920)
+  }
+  if (ADC_SamplesTEST[adc_channel_right] > 1920)
  800a266:	79bb      	ldrb	r3, [r7, #6]
  800a268:	4a1e      	ldr	r2, [pc, #120]	; (800a2e4 <ADC_calc_UV_value+0xdc>)
  800a26a:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
  800a26e:	f5b3 6ff0 	cmp.w	r3, #1920	; 0x780
  800a272:	d91a      	bls.n	800a2aa <ADC_calc_UV_value+0xa2>
-	    {
-		sum_right = sum_right + ADC_SamplesTEST[adc_channel_right] - 1919;
+  {
+    sum_right = sum_right + ADC_SamplesTEST[adc_channel_right] - 1919;
  800a274:	79bb      	ldrb	r3, [r7, #6]
  800a276:	4a1b      	ldr	r2, [pc, #108]	; (800a2e4 <ADC_calc_UV_value+0xdc>)
  800a278:	f832 3013 	ldrh.w	r3, [r2, r3, lsl #1]
@@ -21922,7 +21918,7 @@ void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
  800a284:	f2a3 737f 	subw	r3, r3, #1919	; 0x77f
  800a288:	4a1a      	ldr	r2, [pc, #104]	; (800a2f4 <ADC_calc_UV_value+0xec>)
  800a28a:	6013      	str	r3, [r2, #0]
-		ADC_SamplesSUM[adc_channel_right] = sum_right / div_right;
+    ADC_SamplesSUM[adc_channel_right] = sum_right / div_right;
  800a28c:	4b19      	ldr	r3, [pc, #100]	; (800a2f4 <ADC_calc_UV_value+0xec>)
  800a28e:	6819      	ldr	r1, [r3, #0]
  800a290:	4b19      	ldr	r3, [pc, #100]	; (800a2f8 <ADC_calc_UV_value+0xf0>)
@@ -21931,42 +21927,42 @@ void ADC_calc_UV_value(uint8_t adc_channel_left, uint8_t adc_channel_right)
  800a296:	fbb1 f2f2 	udiv	r2, r1, r2
  800a29a:	4915      	ldr	r1, [pc, #84]	; (800a2f0 <ADC_calc_UV_value+0xe8>)
  800a29c:	f841 2023 	str.w	r2, [r1, r3, lsl #2]
-		div_right++;
+    div_right++;
  800a2a0:	4b15      	ldr	r3, [pc, #84]	; (800a2f8 <ADC_calc_UV_value+0xf0>)
  800a2a2:	681b      	ldr	r3, [r3, #0]
  800a2a4:	3301      	adds	r3, #1
  800a2a6:	4a14      	ldr	r2, [pc, #80]	; (800a2f8 <ADC_calc_UV_value+0xf0>)
  800a2a8:	6013      	str	r3, [r2, #0]
-	    }
-	if(num_of_samples > 10000)
+  }
+  if (num_of_samples > 10000)
  800a2aa:	4b0d      	ldr	r3, [pc, #52]	; (800a2e0 <ADC_calc_UV_value+0xd8>)
  800a2ac:	681b      	ldr	r3, [r3, #0]
  800a2ae:	f242 7210 	movw	r2, #10000	; 0x2710
  800a2b2:	4293      	cmp	r3, r2
  800a2b4:	d90e      	bls.n	800a2d4 <ADC_calc_UV_value+0xcc>
-	    {
-		num_of_samples = 0;
+  {
+    num_of_samples = 0;
  800a2b6:	4b0a      	ldr	r3, [pc, #40]	; (800a2e0 <ADC_calc_UV_value+0xd8>)
  800a2b8:	2200      	movs	r2, #0
  800a2ba:	601a      	str	r2, [r3, #0]
-		div_left = 1;
+    div_left = 1;
  800a2bc:	4b0b      	ldr	r3, [pc, #44]	; (800a2ec <ADC_calc_UV_value+0xe4>)
  800a2be:	2201      	movs	r2, #1
  800a2c0:	601a      	str	r2, [r3, #0]
-		div_right = 1;
+    div_right = 1;
  800a2c2:	4b0d      	ldr	r3, [pc, #52]	; (800a2f8 <ADC_calc_UV_value+0xf0>)
  800a2c4:	2201      	movs	r2, #1
  800a2c6:	601a      	str	r2, [r3, #0]
-		sum_left = 0;
+    sum_left = 0;
  800a2c8:	4b07      	ldr	r3, [pc, #28]	; (800a2e8 <ADC_calc_UV_value+0xe0>)
  800a2ca:	2200      	movs	r2, #0
  800a2cc:	601a      	str	r2, [r3, #0]
-		sum_right = 0;
+    sum_right = 0;
  800a2ce:	4b09      	ldr	r3, [pc, #36]	; (800a2f4 <ADC_calc_UV_value+0xec>)
  800a2d0:	2200      	movs	r2, #0
  800a2d2:	601a      	str	r2, [r3, #0]
-	    }
-    }
+  }
+}
  800a2d4:	bf00      	nop
  800a2d6:	370c      	adds	r7, #12
  800a2d8:	46bd      	mov	sp, r7
@@ -21995,11 +21991,11 @@ void Error_Handler(void)
  800a302:	bf00      	nop
   /* USER CODE BEGIN Error_Handler_Debug */
   /* User can add his own implementation to report the HAL error return state */
-	__disable_irq();
-	__NOP();
+  __disable_irq();
+  __NOP();
  800a304:	bf00      	nop
-	//__bswap16();
-	__NVIC_SystemReset();
+  //__bswap16();
+  __NVIC_SystemReset();
  800a306:	f7ff f9df 	bl	80096c8 <__NVIC_SystemReset>
 	...
 
