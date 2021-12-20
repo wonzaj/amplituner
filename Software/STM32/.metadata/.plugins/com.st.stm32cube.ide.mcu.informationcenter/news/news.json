@@ -1,0 +1,17 @@
+data='[ \
+	{ \
+		"image": "news/TraceX.png", \
+		"link": "", \
+		"caption": "" \
+	}, \
+	{ \
+		"image": "news/VideosBrowser.png", \
+		"link": "", \
+		"caption": "" \
+	}, \
+	{ \
+		"image": "news/MPUBootloader.png", \
+		"link": "", \
+		"caption": "" \
+	} \
+]';

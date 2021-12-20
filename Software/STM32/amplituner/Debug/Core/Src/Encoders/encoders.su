@@ -1,0 +1,8 @@
+encoders.c:22:6:encoders_init	8	static
+encoders.c:33:6:volume_front_encoder_used	8	static
+encoders.c:78:6:volume_back_encoder_used	8	static
+encoders.c:110:6:loudness_encoder_used	8	static
+encoders.c:138:6:bass_encoder_used	8	static
+encoders.c:162:6:middle_encoder_used	8	static
+encoders.c:184:6:treble_encoder_used	8	static
+encoders.c:207:6:radio_encoder_used	4	static
