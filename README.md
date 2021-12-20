@@ -13,6 +13,8 @@ Audio amplituner with display, bass, middle, treble control. It has:
  - displaying current day of the week, day of the month, year, hour, minunte, second and possibility to change them
  - momentary button used as main power button with led controlled by PWM signal
  - displaying FFT of selected output signal
+ - saving user settings in external EEPROM memory
+ - using ultra low power stm32l4q5 
 
 
 Soon to be done:
