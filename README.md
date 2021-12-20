@@ -1,6 +1,7 @@
-# Audio amplituner
+# Audio amplituner, prototype
 
-Audio amplituner with display, bass, middle, treble control. It has:
+Audio amplituner with display, bass, middle, treble control. 
+It has:
 
  - 3.2" OLED display with SSD1322 controler with 4bit gray scale. (check displays folder to see possible display states)
  - possibility to wake up to your favourite radio station at specified time.
