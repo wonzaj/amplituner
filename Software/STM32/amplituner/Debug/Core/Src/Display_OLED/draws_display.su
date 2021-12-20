@@ -1,5 +1,5 @@
 draws_display.c:96:6:Refresh_display	16	static
-draws_display.c:195:6:SSD1322_Screen_Welcome	24	static
+draws_display.c:194:6:SSD1322_Screen_Welcome	24	static
 draws_display.c:223:6:SSD1322_Screen_Time	24	static
 draws_display.c:243:6:SSD1322_Screen_Radio	24	static
 draws_display.c:292:6:SSD1322_Screen_WakeUp	32	static
@@ -44,7 +44,9 @@ draws_display.c:1363:6:change_display_state	16	static
 draws_display.c:1394:6:refresh_timer_state	8	static
 draws_display.c:1407:6:ChangeDateToArrayChar	24	static
 draws_display.c:1436:6:ChangeDateToArrayCharTime	16	static
-draws_display.c:1481:6:ConvertDateToBuffer	32	static
-draws_display.c:1570:7:prepare_RDS_text	24	static
-draws_display.c:1601:8:get_random_coords	24	static
-draws_display.c:1633:6:make_array	48	static
+draws_display.c:1481:9:SplitNumberToDignits	16	static
+draws_display.c:1489:10:map	24	static
+draws_display.c:1495:6:ConvertDateToBuffer	32	static
+draws_display.c:1584:7:prepare_RDS_text	24	static
+draws_display.c:1615:8:get_random_coords	24	static
+draws_display.c:1647:6:make_array	48	static

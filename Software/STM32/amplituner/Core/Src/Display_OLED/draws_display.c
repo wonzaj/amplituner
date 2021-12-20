@@ -109,8 +109,6 @@ void Refresh_display(const SSD1322_Screen_t SSD1322_Screen_State)
 		    }
 	    }
 
-
-	//przy nowym roku wyświetlić szczęśliwego nowego roku
 	switch (SSD1322_Screen_State)
 	    {
 	    case SSD1322_SCREEN_Welcome:
@@ -120,7 +118,7 @@ void Refresh_display(const SSD1322_Screen_t SSD1322_Screen_State)
 		SSD1322_Screen_Time(DisplayOLEDBuffer);
 		break;
 	    case SSD1322_SCREEN_RADIO:
-		//jeżeli nie jest ustawione radio to dac taka flagę i nie losowac z niego podczas wyswietlania
+
 		SSD1322_Screen_Radio(DisplayOLEDBuffer);
 		break;
 	    case SSD1322_SCREEN_WakeUp:
@@ -192,6 +190,7 @@ void Refresh_display(const SSD1322_Screen_t SSD1322_Screen_State)
 	    }
     }
 
+// ??
 void SSD1322_Screen_Welcome(uint8_t *const buffer)
     {
 	draw_text(buffer, "Przyjemnosc ze sluchania ", 20, 15, 15);
@@ -219,6 +218,7 @@ void SSD1322_Screen_Welcome(uint8_t *const buffer)
 	fill_buffer(buffer, 0);
 	send_buffer_to_OLED(buffer, 0, 0);
     }
+
 
 void SSD1322_Screen_Time(uint8_t *const buffer)
     {
@@ -458,7 +458,7 @@ void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 			if (IS_ALARM_SET_A == true)
 			    {
 				select_font(&FreeSerif9pt7b);
-				ChangeDateToArrayCharTime(buffer, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
+				ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
 				draw_text(buffer, (char*)buffer, 2, 30, 5);
 				Set_Alarm_Mode(RTC_typeOfAlarm_A);
 				draw_text(buffer, (char*) AlarmMode, 55, 30, 5);
@@ -1477,6 +1477,20 @@ void ChangeDateToArrayCharTime(char *arrayChar, uint8_t hours, uint8_t minutes, 
 
     }
 
+//
+int16_t SplitNumberToDignits(int16_t position, int16_t number)
+    {
+	while(position--)
+	    number /= 10;
+	return number % 10;
+    }
+
+//
+uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min,
+	uint32_t out_max)
+    {
+	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+    }
 
 void ConvertDateToBuffer(uint16_t Year, uint8_t Month, uint8_t WeekDay, uint8_t Date)
     {
