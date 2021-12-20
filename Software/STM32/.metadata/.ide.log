@@ -658,3 +658,11 @@
 2021-12-20 20:42:03,902 [INFO] ApiDb:280 - User favorites MCUs=[]
 2021-12-20 20:42:08,549 [INFO] I2cTimingTraitement:325 - 0x307075B1
 2021-12-20 20:42:08,573 [INFO] I2cTimingTraitement:325 - 0x307075B1
+2021-12-20 20:45:53,964 [INFO] Activator:177 - 
+
+
+2021-12-20 20:45:53,966 [INFO] Activator:178 - !SESSION log4j initialized
+2021-12-20 20:45:54,442 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Could not load icon "icons/chip.png".
+2021-12-20 20:45:54,448 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Could not load icon "icons/chip.png".
+2021-12-20 20:45:54,457 [ERROR] LogOutputStream:74 - [STDERR_REDIRECT] Managed Build system manifest file error: Could not load icon "icons/chip.png".
+2021-12-20 20:46:01,776 [ERROR] AnalyticsContext:980 - The ST intranet updater server is unknown: mcucrossselector.codex.cro.st.com
