@@ -352,9 +352,9 @@ void SSD1322_Screen_FFT(uint8_t *const buffer, __attribute__((__unused__)) uint8
 
 	select_font(&TomThumb);
 	draw_text(buffer, "50", 10, 5, 5);
-	draw_text(buffer, "200", 60, 5, 5);
-	draw_text(buffer, "2k", 100, 5, 5);
-	draw_text(buffer, "20k", 150, 5, 5);
+	draw_text(buffer, "200", 50, 5, 5);
+	draw_text(buffer, "2k", 140, 5, 5);
+	draw_text(buffer, "20k", 220, 5, 5);
 
 	send_buffer_to_OLED(buffer, 0, 0);
     }

@@ -323,7 +323,7 @@ void Button_pressed_change_screen(void)
 	if(ADC_IS_ON_flag == true)
 	    {
 		HAL_TIM_Base_Stop(&htim6);
-		HAL_ADC_Stop_DMA(&hadc1);
+		HAL_ADC_Stop_DMA(&hadc2);
 		ADC_IS_ON_flag = false;
 	    }
 
@@ -338,12 +338,12 @@ void Button_pressed_change_screen(void)
 		break;
 	    case SSD1322_SCREEN_FFT:
 		HAL_TIM_Base_Start(&htim6);
-		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
+		HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
 		ADC_IS_ON_flag = true;
 		break;
 	    case SSD1322_SCREEN_UVMETER:
 		HAL_TIM_Base_Start(&htim6);
-		HAL_ADC_Start_DMA(&hadc1, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
+		HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
 		ADC_IS_ON_flag = true;
 		//set flag indicating that adc is on
 		break;

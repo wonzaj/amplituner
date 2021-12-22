@@ -31,6 +31,7 @@ extern uint16_t ADC_SamplesTEST[4];
 extern uint16_t gGPIO_Pin;
 extern _Bool volatile button_debou_state;
 extern ADC_HandleTypeDef 	 hadc1;
+extern ADC_HandleTypeDef 	 hadc2;
 extern DMA_HandleTypeDef 	 hdma_adc1;
 extern TIM_HandleTypeDef 	 htim6;
 extern volatile TDA7719_config_t TDA7719_config;
