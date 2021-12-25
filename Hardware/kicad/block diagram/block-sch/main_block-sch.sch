@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 7
+Sheet 1 2
 Title ""
 Date ""
 Rev ""
@@ -14,7 +14,7 @@ Comment3 ""
 Comment4 ""
 $EndDescr
 Wire Notes Line
-	6850 2150 8100 2150
+	6050 2150 7300 2150
 Wire Notes Line
 	4650 4450 4650 4300
 Wire Notes Line
@@ -22,20 +22,20 @@ Wire Notes Line
 Text Notes 4300 4400 0    50   ~ 0
 5V 
 Wire Notes Line
-	6850 4600 6850 4450
+	6150 4600 6150 4450
 Wire Notes Line
-	6350 4600 6850 4600
+	5650 4600 6150 4600
 Connection ~ 5050 4750
-Text Notes 6400 4550 0    50   ~ 0
+Text Notes 5700 4550 0    50   ~ 0
 STM32L4Q5
 Wire Notes Line
-	7700 4450 6350 4450
+	7000 4450 5650 4450
 Wire Notes Line
-	7700 5050 7700 4450
+	7000 5050 7000 4450
 Wire Notes Line
-	6350 5050 7700 5050
+	5650 5050 7000 5050
 Wire Notes Line
-	6350 4450 6350 5050
+	5650 4450 5650 5050
 Wire Wire Line
 	5050 4800 5050 4750
 $Comp
@@ -72,17 +72,17 @@ Wire Notes Line
 Wire Notes Line
 	4750 3100 4300 3100
 Wire Notes Line
-	4750 3700 4300 3700
+	4750 3500 4300 3500
 Text Notes 4350 3350 0    39   ~ 0
 for audio\nprocessor
-Text Notes 4350 3950 0    39   ~ 0
+Text Notes 4350 3750 0    39   ~ 0
 for tuner 
-Text Notes 4350 3800 0    50   ~ 0
+Text Notes 4350 3600 0    50   ~ 0
 3.3V
 Wire Notes Line
-	4300 3800 4550 3800
+	4300 3600 4550 3600
 Wire Notes Line
-	4550 3800 4550 3700
+	4550 3600 4550 3500
 Wire Notes Line
 	4300 3200 4550 3200
 Wire Notes Line
@@ -90,43 +90,55 @@ Wire Notes Line
 Text Notes 4350 3200 0    50   ~ 0
 12V
 Wire Notes Line
-	4750 4000 4750 3700
+	4750 3800 4750 3500
 Wire Notes Line
-	4300 4000 4750 4000
+	4300 3800 4750 3800
 Wire Notes Line
-	4300 3700 4300 4000
+	4300 3500 4300 3800
+Wire Notes Line
+	6150 3400 6150 2900
+Wire Notes Line
+	7550 2900 7550 3400
 Text Label 4900 3150 0    50   ~ 0
 12V
 Text Label 4850 3350 0    50   ~ 0
 GNDA
 Wire Notes Line
-	5450 3700 5450 4000
+	5600 3500 5600 3800
 Wire Notes Line
-	5450 4000 5950 4000
+	5600 3800 6100 3800
 Wire Notes Line
-	5950 3700 5450 3700
+	6100 3800 6100 3500
 Wire Notes Line
-	5450 4350 5950 4350
+	6100 3500 5600 3500
 Wire Notes Line
-	5950 4050 5450 4050
+	5650 4350 6150 4350
 Wire Notes Line
-	5450 4050 5450 4350
+	6150 4050 5650 4050
 Wire Notes Line
-	5950 4050 5950 4350
-Text Notes 5500 3800 0    50   ~ 0
+	5650 4050 5650 4350
+Wire Notes Line
+	6150 4050 6150 4350
+Text Notes 5650 3600 0    50   ~ 0
 Radio
 Wire Notes Line
-	5450 3850 5800 3850
+	5600 3650 5950 3650
 Wire Notes Line
-	5800 3850 5800 3700
-Text Notes 5450 4150 0    50   ~ 0
+	5950 3650 5950 3500
+Text Notes 5650 4150 0    50   ~ 0
 Bluetooth
 Wire Notes Line
-	5450 4200 5850 4200
+	5650 4200 6050 4200
 Wire Notes Line
-	5850 4200 5850 4050
-Text Notes 6200 3000 0    50   ~ 0
+	6050 4200 6050 4050
+Text Notes 6200 3100 0    50   ~ 0
 Audioprocessor\nTDA7719
+Wire Wire Line
+	6100 3550 6200 3550
+Wire Wire Line
+	6200 3550 6200 3400
+Wire Wire Line
+	6100 3600 6250 3600
 Text HLabel 7400 3500 2    50   Input ~ 0
 IN1_L
 Text HLabel 7400 3600 2    50   Input ~ 0
@@ -137,21 +149,25 @@ Text HLabel 7400 3750 2    50   Input ~ 0
 IN2_L
 Text Notes 6300 3350 0    50   ~ 0
 Input_selector
-Text Label 7800 3050 2    50   ~ 0
+Text Label 7000 2850 1    50   ~ 0
 OUT_LF
-Text Label 7200 4350 2    50   ~ 0
+Wire Bus Line
+	7200 4550 7000 4550
+Text Label 7050 4550 0    50   ~ 0
 I2C
 Text Notes 7250 3350 2    50   ~ 0
 I2C
+Wire Bus Line
+	6200 3950 7200 3950
 Text GLabel 1250 1150 0    50   Input ~ 0
 AC_220V
 Text GLabel 1250 1550 0    50   Input ~ 0
 AC_220V
-Text Notes 8300 4400 0    50   ~ 0
+Text Notes 7550 4400 0    50   ~ 0
 OLED 3,12" SSD1322
-Text Label 4850 3750 0    50   ~ 0
+Text Label 4850 3550 0    50   ~ 0
 3.3V
-Text Label 4850 3950 0    50   ~ 0
+Text Label 4850 3750 0    50   ~ 0
 GNDA
 $Comp
 L Relay:AZ850-x K?
@@ -192,9 +208,9 @@ F 3 "~" H 3900 1250 50  0001 C CNN
 	1    3900 1250
 	0    1    1    0   
 $EndComp
-Text Label 6700 1350 2    50   ~ 0
+Text Label 6000 1350 2    50   ~ 0
 -36V
-Text Label 6700 2050 2    50   ~ 0
+Text Label 6000 2050 2    50   ~ 0
 +36V
 Wire Wire Line
 	3900 1550 4550 1550
@@ -208,59 +224,61 @@ Wire Wire Line
 Wire Wire Line
 	3900 950  5150 950 
 Wire Wire Line
-	9750 1400 9850 1400
+	8500 1400 8600 1400
 Wire Wire Line
-	9750 1850 9750 1950
+	8500 1850 8500 1950
 Wire Wire Line
-	9850 1850 9750 1850
+	8600 1850 8500 1850
 $Comp
 L power:GNDPWR #PWR?
 U 1 1 5CF804D1
-P 9750 1950
-F 0 "#PWR?" H 9750 1750 50  0001 C CNN
-F 1 "GNDPWR" H 9754 1796 50  0000 C CNN
-F 2 "" H 9750 1900 50  0001 C CNN
-F 3 "" H 9750 1900 50  0001 C CNN
-	1    9750 1950
+P 8500 1950
+F 0 "#PWR?" H 8500 1750 50  0001 C CNN
+F 1 "GNDPWR" H 8504 1796 50  0000 C CNN
+F 2 "" H 8500 1900 50  0001 C CNN
+F 3 "" H 8500 1900 50  0001 C CNN
+	1    8500 1950
 	1    0    0    -1  
 $EndComp
-Text Label 8200 1550 0    50   ~ 0
+Text Label 7350 1550 0    50   ~ 0
 SPEAKER_Right_Front
-Text Label 8200 1300 0    50   ~ 0
+Text Label 7350 1300 0    50   ~ 0
 SPEAKER_Left_Front
+Wire Wire Line
+	8600 1300 7300 1300
 $Comp
 L Device:Speaker LS?
 U 1 1 5CF79FE9
-P 10050 1750
-F 0 "LS?" H 10220 1746 50  0000 L CNN
-F 1 "Speaker" H 10220 1655 50  0000 L CNN
-F 2 "" H 10050 1550 50  0001 C CNN
-F 3 "~" H 10040 1700 50  0001 C CNN
-	1    10050 1750
+P 8800 1750
+F 0 "LS?" H 8970 1746 50  0000 L CNN
+F 1 "Speaker" H 8970 1655 50  0000 L CNN
+F 2 "" H 8800 1550 50  0001 C CNN
+F 3 "~" H 8790 1700 50  0001 C CNN
+	1    8800 1750
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:Speaker LS?
 U 1 1 5CF79386
-P 10050 1300
-F 0 "LS?" H 10220 1296 50  0000 L CNN
-F 1 "Speaker" H 10220 1205 50  0000 L CNN
-F 2 "" H 10050 1100 50  0001 C CNN
-F 3 "~" H 10040 1250 50  0001 C CNN
-	1    10050 1300
+P 8800 1300
+F 0 "LS?" H 8970 1296 50  0000 L CNN
+F 1 "Speaker" H 8970 1205 50  0000 L CNN
+F 2 "" H 8800 1100 50  0001 C CNN
+F 3 "~" H 8790 1250 50  0001 C CNN
+	1    8800 1300
 	1    0    0    -1  
 $EndComp
 Wire Notes Line
-	6850 1550 7550 1550
-Text Notes 6900 1450 0    50   ~ 0
+	6050 1550 6750 1550
+Text Notes 6100 1450 0    50   ~ 0
 Power amplifier\n2x LM3886
 Wire Notes Line
-	8100 1250 6850 1250
+	7300 1250 6050 1250
 Wire Notes Line
-	8100 2150 8100 1250
+	7300 2150 7300 1250
 Wire Notes Line
-	6850 1250 6850 2150
-Text Label 6700 1700 2    50   ~ 0
+	6050 1250 6050 2150
+Text Label 6000 1700 2    50   ~ 0
 0V
 $Comp
 L Device:CP_Small C?
@@ -307,86 +325,92 @@ Connection ~ 5150 1700
 $Comp
 L Device:Speaker LS?
 U 1 1 61FB5EAA
-P 10050 2800
-F 0 "LS?" H 10220 2796 50  0000 L CNN
-F 1 "Speaker" H 10220 2705 50  0000 L CNN
-F 2 "" H 10050 2600 50  0001 C CNN
-F 3 "~" H 10040 2750 50  0001 C CNN
-	1    10050 2800
+P 8800 2800
+F 0 "LS?" H 8970 2796 50  0000 L CNN
+F 1 "Speaker" H 8970 2705 50  0000 L CNN
+F 2 "" H 8800 2600 50  0001 C CNN
+F 3 "~" H 8790 2750 50  0001 C CNN
+	1    8800 2800
 	1    0    0    -1  
 $EndComp
 $Comp
 L Device:Speaker LS?
 U 1 1 61FB5EB0
-P 10050 2350
-F 0 "LS?" H 10220 2346 50  0000 L CNN
-F 1 "Speaker" H 10220 2255 50  0000 L CNN
-F 2 "" H 10050 2150 50  0001 C CNN
-F 3 "~" H 10040 2300 50  0001 C CNN
-	1    10050 2350
+P 8800 2350
+F 0 "LS?" H 8970 2346 50  0000 L CNN
+F 1 "Speaker" H 8970 2255 50  0000 L CNN
+F 2 "" H 8800 2150 50  0001 C CNN
+F 3 "~" H 8790 2300 50  0001 C CNN
+	1    8800 2350
 	1    0    0    -1  
 $EndComp
 Wire Notes Line
-	7550 1250 7550 1550
+	6750 1250 6750 1550
 Wire Wire Line
-	9850 2350 9400 2350
+	8600 2350 8150 2350
 Wire Wire Line
-	9400 2350 9400 1950
+	8150 2350 8150 1950
 Wire Wire Line
-	9850 2800 9250 2800
+	8600 2800 8000 2800
 $Comp
 L power:GNDPWR #PWR?
 U 1 1 61FC9F4F
-P 9750 2550
-F 0 "#PWR?" H 9750 2350 50  0001 C CNN
-F 1 "GNDPWR" H 9754 2396 50  0000 C CNN
-F 2 "" H 9750 2500 50  0001 C CNN
-F 3 "" H 9750 2500 50  0001 C CNN
-	1    9750 2550
+P 8500 2550
+F 0 "#PWR?" H 8500 2350 50  0001 C CNN
+F 1 "GNDPWR" H 8504 2396 50  0000 C CNN
+F 2 "" H 8500 2500 50  0001 C CNN
+F 3 "" H 8500 2500 50  0001 C CNN
+	1    8500 2550
 	1    0    0    -1  
 $EndComp
 $Comp
 L power:GNDPWR #PWR?
 U 1 1 61FCA5F6
-P 9750 3000
-F 0 "#PWR?" H 9750 2800 50  0001 C CNN
-F 1 "GNDPWR" H 9754 2846 50  0000 C CNN
-F 2 "" H 9750 2950 50  0001 C CNN
-F 3 "" H 9750 2950 50  0001 C CNN
-	1    9750 3000
+P 8500 3000
+F 0 "#PWR?" H 8500 2800 50  0001 C CNN
+F 1 "GNDPWR" H 8504 2846 50  0000 C CNN
+F 2 "" H 8500 2950 50  0001 C CNN
+F 3 "" H 8500 2950 50  0001 C CNN
+	1    8500 3000
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9750 2450 9850 2450
+	8500 2450 8600 2450
 Wire Wire Line
-	9750 3000 9750 2900
+	8500 3000 8500 2900
 Wire Wire Line
-	9750 2900 9850 2900
+	8500 2900 8600 2900
 Wire Wire Line
-	9750 2450 9750 2550
+	8500 2450 8500 2550
 $Comp
 L power:GNDPWR #PWR?
 U 1 1 61FD5696
-P 9750 1500
-F 0 "#PWR?" H 9750 1300 50  0001 C CNN
-F 1 "GNDPWR" H 9754 1346 50  0000 C CNN
-F 2 "" H 9750 1450 50  0001 C CNN
-F 3 "" H 9750 1450 50  0001 C CNN
-	1    9750 1500
+P 8500 1500
+F 0 "#PWR?" H 8500 1300 50  0001 C CNN
+F 1 "GNDPWR" H 8504 1346 50  0000 C CNN
+F 2 "" H 8500 1450 50  0001 C CNN
+F 3 "" H 8500 1450 50  0001 C CNN
+	1    8500 1500
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	9750 1500 9750 1400
-Text Label 8200 1950 0    50   ~ 0
+	8500 1500 8500 1400
+Text Label 7350 1950 0    50   ~ 0
 SPEAKER_Left_Rear
-Text Label 8200 2100 0    50   ~ 0
+Text Label 7350 2100 0    50   ~ 0
 SPEAKER_Right_Rear
 Wire Wire Line
-	9850 1750 9500 1750
+	8600 1750 8250 1750
 Wire Wire Line
-	9500 1750 9500 1550
+	8250 1750 8250 1550
 Wire Wire Line
-	9250 2100 9250 2800
+	8250 1550 7300 1550
+Wire Wire Line
+	7300 1950 8150 1950
+Wire Wire Line
+	8000 2100 8000 2800
+Wire Wire Line
+	7300 2100 8000 2100
 Wire Wire Line
 	5150 2050 5400 2050
 Wire Wire Line
@@ -395,26 +419,44 @@ Wire Wire Line
 	5150 1350 5400 1350
 Wire Wire Line
 	5400 1950 5400 2050
+Connection ~ 5400 2050
+Wire Wire Line
+	5400 2050 6050 2050
 Wire Wire Line
 	5400 1750 5400 1700
 Connection ~ 5400 1700
 Wire Wire Line
+	5400 1700 6050 1700
+Wire Wire Line
 	5400 1700 5400 1600
 Wire Wire Line
 	5400 1400 5400 1350
-Text Label 7800 3150 2    50   ~ 0
+Connection ~ 5400 1350
+Wire Wire Line
+	5400 1350 6050 1350
+Text Label 6800 2850 1    50   ~ 0
 OUT_LR
-Text Label 7800 3250 2    50   ~ 0
+Text Label 6600 2850 1    50   ~ 0
 OUT_RR
+Text Label 7200 2850 1    50   ~ 0
+OUT_RF
+Wire Wire Line
+	6600 2150 6600 2900
+Wire Wire Line
+	6800 2150 6800 2900
+Wire Wire Line
+	7000 2150 7000 2900
+Wire Wire Line
+	7200 2150 7200 2900
 $Comp
 L Device:D_Bridge_+-AA D?
 U 1 1 62030C63
-P 3600 2750
-F 0 "D?" H 3850 2950 50  0000 L CNN
-F 1 "D_Bridge_+-AA" H 3850 2850 50  0000 L CNN
-F 2 "" H 3600 2750 50  0001 C CNN
-F 3 "~" H 3600 2750 50  0001 C CNN
-	1    3600 2750
+P 3700 2750
+F 0 "D?" H 3950 2950 50  0000 L CNN
+F 1 "D_Bridge_+-AA" H 3950 2850 50  0000 L CNN
+F 2 "" H 3700 2750 50  0001 C CNN
+F 3 "~" H 3700 2750 50  0001 C CNN
+	1    3700 2750
 	1    0    0    -1  
 $EndComp
 $Comp
@@ -439,11 +481,15 @@ Wire Wire Line
 Wire Wire Line
 	2650 2650 2500 2650
 Wire Wire Line
-	3050 2450 3600 2450
+	3050 2450 3700 2450
 Wire Wire Line
 	3200 2650 3200 3050
 Wire Wire Line
-	3200 3050 3600 3050
+	4000 2750 4000 3150
+Wire Wire Line
+	3400 2750 3400 3350
+Wire Wire Line
+	3200 3050 3700 3050
 Wire Wire Line
 	3050 2650 3200 2650
 Wire Wire Line
@@ -463,7 +509,7 @@ Text Label 3100 2450 0    50   ~ 0
 Text Label 3100 2650 0    50   ~ 0
 12Vac
 $Bitmap
-Pos 9300 4800
+Pos 8550 4800
 Scale 0.700000
 Data
 89 50 4E 47 0D 0A 1A 0A 00 00 00 0D 49 48 44 52 00 00 03 3C 00 00 00 EE 08 02 00 00 00 73 8A 95 
@@ -6805,33 +6851,104 @@ AF 50 68 49 F9 86 89 80 B0 D6 94 5F 14 BA 5D 3C 07 D6 AA 76 ED B9 A9 E4 F6 AC E0
 EndData
 $EndBitmap
 Wire Notes Line
-	8300 4500 8300 5100
+	7550 4500 7550 5100
 Wire Notes Line
-	8300 5100 10300 5100
+	7550 5100 9550 5100
 Wire Notes Line
-	10300 5100 10300 4500
+	9550 5100 9550 4500
 Wire Notes Line
-	10300 4500 8300 4500
+	9550 4500 7550 4500
 Wire Notes Line
-	8250 5150 10400 5150
+	7500 5150 9650 5150
 Wire Notes Line
-	10400 5150 10400 4300
+	9650 5150 9650 4300
 Wire Notes Line
-	10400 4300 8250 4300
+	9650 4300 7500 4300
 Wire Notes Line
-	8250 4300 8250 5150
-Text Label 7750 4750 0    50   ~ 0
+	7500 4300 7500 5150
+Text Label 7050 4750 0    50   ~ 0
 SPI
+Wire Wire Line
+	4000 3150 4000 3550
+Connection ~ 4000 3150
+Wire Wire Line
+	3400 3350 3400 3750
+Connection ~ 3400 3350
+Wire Wire Line
+	3400 3750 4300 3750
+Wire Wire Line
+	4000 3550 4300 3550
+Wire Wire Line
+	4000 3150 4300 3150
+Wire Wire Line
+	3400 3350 4300 3350
+Wire Wire Line
+	4750 3750 5600 3750
+Wire Wire Line
+	4750 3550 5600 3550
+Connection ~ 7200 3950
+Wire Bus Line
+	7200 3950 7200 3400
+Wire Bus Line
+	7200 3950 7200 4550
+Wire Wire Line
+	4000 3550 4000 4550
+Wire Wire Line
+	4000 4550 4250 4550
+Connection ~ 4000 3550
+Wire Wire Line
+	3400 3750 3400 4750
+Wire Wire Line
+	3400 4750 4250 4750
+Connection ~ 3400 3750
+Wire Wire Line
+	4800 4550 5200 4550
+Wire Wire Line
+	5050 4750 5400 4750
+Wire Wire Line
+	5200 4150 5200 4550
+Connection ~ 5200 4550
+Wire Wire Line
+	5200 4550 5650 4550
+Wire Wire Line
+	5400 4300 5400 4750
+Connection ~ 5400 4750
+Wire Wire Line
+	5400 4750 5650 4750
+Wire Wire Line
+	5400 4300 5650 4300
+Wire Wire Line
+	5200 4150 5650 4150
 Text Notes 4300 4600 0    39   ~ 0
 (for STM, ESP,\n bluetooth)
 Wire Bus Line
-	8250 4750 7750 4750
+	7500 4750 7000 4750
+Wire Notes Line
+	6150 3400 7550 3400
+Wire Notes Line
+	6150 2900 7550 2900
 Wire Wire Line
 	4750 3150 6150 3150
 Wire Wire Line
 	4750 3350 6150 3350
 Wire Notes Line
-	6850 2800 6850 3050
+	6900 2900 6900 3150
+Wire Notes Line
+	6150 3150 6900 3150
+Wire Wire Line
+	6250 3600 6250 3400
+Wire Bus Line
+	6200 3950 6200 3750
+Wire Bus Line
+	6200 3750 6100 3750
+Wire Wire Line
+	6350 3400 6350 4100
+Wire Wire Line
+	6350 4100 6150 4100
+Wire Wire Line
+	6400 3400 6400 4150
+Wire Wire Line
+	6400 4150 6150 4150
 Wire Wire Line
 	6500 3400 6500 4100
 Wire Wire Line
@@ -6842,6 +6959,8 @@ Wire Wire Line
 	6650 3400 6650 3850
 Wire Wire Line
 	6650 3850 7400 3850
+Wire Wire Line
+	7400 3750 6700 3750
 Wire Wire Line
 	6700 3750 6700 3400
 Wire Wire Line
@@ -6859,26 +6978,48 @@ Mircrophone_USB
 Text HLabel 7400 4100 2    50   Input ~ 0
 Mircrophone_USB
 Wire Notes Line
-	4850 5750 4850 5600
-Text Notes 4300 5700 0    50   ~ 0
+	6250 5500 6250 5350
+Text Notes 5700 5450 0    50   ~ 0
 ESP8266-E12
 Wire Notes Line
-	5700 6200 5700 5600
+	7100 5950 7100 5350
 Wire Notes Line
-	4250 5600 4250 6200
+	5650 5350 5650 5950
 Wire Notes Line
-	4250 5750 4850 5750
-Text Label 6100 4900 0    50   ~ 0
+	5650 5500 6250 5500
+Wire Bus Line
+	6400 5050 6400 5350
+Text Label 6400 5200 0    50   ~ 0
 UART
-Text Notes 4300 6150 0    50   ~ 0
+Text Notes 5700 5900 0    50   ~ 0
 Control audio parameters\n via smartphone or browser
-Text Label 5250 5450 2    50   ~ 0
+Wire Wire Line
+	5400 4750 5400 5550
+Wire Wire Line
+	5400 5550 5650 5550
+Wire Wire Line
+	5650 5650 5200 5650
+Wire Wire Line
+	5200 5650 5200 4550
+Text Label 5500 4150 0    50   ~ 0
 5V
-Text Label 5350 5450 0    50   ~ 0
+Text Label 5250 5650 0    50   ~ 0
+5V
+Text Label 5400 4300 0    50   ~ 0
 GNDD
-Text Label 3900 3300 2    50   ~ 0
+Text Label 5400 5550 0    50   ~ 0
+GNDD
+Text Label 4000 4550 0    50   ~ 0
 16V
-Text Label 3300 3300 0    50   ~ 0
+Text Label 4000 4750 0    50   ~ 0
+GNDD
+Text Label 4100 3150 0    50   ~ 0
+16V
+Text Label 4100 3550 0    50   ~ 0
+16V
+Text Label 4050 3750 0    50   ~ 0
+GNDD
+Text Label 4050 3350 0    50   ~ 0
 GNDD
 $Comp
 L Electronic_stethoscope-cache:Transistor_BJT_BC817 Q?
@@ -6964,196 +7105,19 @@ Wire Wire Line
 Text Notes 2700 900  0    50   ~ 0
 Transformator has 5x12V secondary coils.\nTwo are connected in series to make 24V\n for positive and negative volatage required for LM3886 to run.\nIt has to be atleast 250VAR
 $Sheet
-S 4200 5550 1600 750 
+S 5700 4750 500  150 
+U 61C8C45E
+F0 "stm32" 50
+F1 "stm32_scheet.sch" 50
+$EndSheet
+$Sheet
+S 6300 5450 500  150 
 U 61C8CC9B
 F0 "esp8266" 50
 F1 "esp_scheet.sch" 50
 $EndSheet
 Wire Notes Line
-	4250 5600 5700 5600
+	5650 5350 7100 5350
 Wire Notes Line
-	4250 6200 5700 6200
-$Sheet
-S 6800 1200 1350 1000
-U 61C9CF3C
-F0 "LM3886" 50
-F1 "LM3886_scheet.sch" 50
-$EndSheet
-$Sheet
-S 6100 2750 1350 700 
-U 61C9D382
-F0 "TDA7719" 50
-F1 "TDA7719_scheet.sch" 50
-$EndSheet
-Wire Notes Line
-	6850 3050 6150 3050
-Wire Notes Line
-	6150 2800 7400 2800
-Wire Notes Line
-	7400 3400 6150 3400
-Wire Wire Line
-	5050 4750 5350 4750
-Wire Wire Line
-	4800 4550 5250 4550
-$Sheet
-S 6300 4400 1450 700 
-U 61C8C45E
-F0 "stm32" 50
-F1 "stm32_scheet.sch" 50
-$EndSheet
-Wire Notes Line
-	7400 2800 7400 3400
-Wire Notes Line
-	6150 3400 6150 2800
-Text Label 7800 2950 2    50   ~ 0
-OUT_RF
-Wire Wire Line
-	7400 3250 8000 3250
-Wire Wire Line
-	7400 3150 7950 3150
-Wire Wire Line
-	7400 3050 7900 3050
-Wire Wire Line
-	7400 2950 7850 2950
-Wire Wire Line
-	3900 2750 3900 3150
-Wire Wire Line
-	3900 3150 4300 3150
-Connection ~ 3900 3150
-Wire Wire Line
-	3300 2750 3300 3350
-Wire Wire Line
-	3300 4750 4250 4750
-Wire Wire Line
-	3300 3350 4300 3350
-Connection ~ 3300 3350
-Wire Wire Line
-	3300 3950 4300 3950
-Wire Wire Line
-	3900 4550 4250 4550
-Wire Wire Line
-	3900 3750 4300 3750
-$Sheet
-S 4050 3000 1100 2050
-U 61D1A754
-F0 "low_power" 50
-F1 "low_power_scheet.sch" 50
-$EndSheet
-Wire Wire Line
-	5400 1350 6850 1350
-Connection ~ 5400 1350
-Wire Wire Line
-	5400 1700 6850 1700
-Wire Wire Line
-	5400 2050 6850 2050
-Connection ~ 5400 2050
-Wire Wire Line
-	8100 1300 9850 1300
-Wire Wire Line
-	8100 1550 9500 1550
-Wire Wire Line
-	8100 1950 9400 1950
-Wire Wire Line
-	8100 2100 9250 2100
-Wire Wire Line
-	7850 2950 7850 2150
-Wire Wire Line
-	7900 3050 7900 2150
-Wire Wire Line
-	7950 3150 7950 2150
-Wire Wire Line
-	8000 3250 8000 2150
-Wire Wire Line
-	5250 4550 5250 4250
-Wire Wire Line
-	5350 4750 5350 4300
-Wire Notes Line
-	5950 4000 5950 3700
-Connection ~ 3300 3950
-Wire Wire Line
-	3300 3950 3300 4750
-Connection ~ 3900 3750
-Wire Wire Line
-	3900 3750 3900 4550
-Wire Wire Line
-	3300 3350 3300 3950
-Wire Wire Line
-	3900 3150 3900 3750
-Wire Wire Line
-	6700 3750 7400 3750
-Wire Wire Line
-	6200 3400 6200 3750
-Wire Wire Line
-	6250 3400 6250 3800
-Wire Bus Line
-	7200 3400 7200 3900
-Wire Wire Line
-	5950 3750 6200 3750
-Wire Wire Line
-	5950 3800 6250 3800
-Wire Wire Line
-	5950 4150 6400 4150
-Wire Wire Line
-	6400 3400 6400 4150
-Wire Wire Line
-	6350 4100 5950 4100
-Wire Wire Line
-	6350 3400 6350 4100
-Wire Wire Line
-	4750 3950 5450 3950
-Wire Wire Line
-	4750 3750 5450 3750
-Wire Bus Line
-	5950 3900 7200 3900
-Connection ~ 7200 3900
-Wire Bus Line
-	7200 3900 7200 4450
-$Sheet
-S 5400 3650 600  750 
-U 61F67B6F
-F0 "radio_blue" 50
-F1 "radio_blue.sch" 50
-$EndSheet
-Connection ~ 5250 4550
-Wire Wire Line
-	5250 4550 6350 4550
-Wire Wire Line
-	5250 4250 5450 4250
-Connection ~ 5350 4750
-Wire Wire Line
-	5350 4750 6350 4750
-Wire Wire Line
-	5350 4300 5450 4300
-Wire Wire Line
-	5250 4550 5250 5600
-Wire Wire Line
-	5350 4750 5350 5600
-Wire Bus Line
-	6350 4900 5600 4900
-Wire Bus Line
-	5600 4900 5600 5600
-Wire Notes Line
-	6350 5550 6350 6200
-Wire Notes Line
-	6350 6200 7750 6200
-Wire Notes Line
-	7750 6200 7750 5550
-Wire Notes Line
-	7750 5550 6350 5550
-Text Notes 6400 5650 0    50   ~ 0
-Encoders and buttons
-Wire Notes Line
-	7250 5550 7250 5700
-Wire Notes Line
-	7250 5700 6350 5700
-$Sheet
-S 6300 5500 1500 750 
-U 61FED567
-F0 "enc_butt" 50
-F1 "enc_butt_scheet.sch" 50
-$EndSheet
-Wire Bus Line
-	7500 5550 7500 5050
-Text Label 7500 5200 0    50   ~ 0
-GPIOs
+	5650 5950 7100 5950
 $EndSCHEMATC
