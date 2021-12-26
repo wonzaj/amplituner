@@ -336,9 +336,11 @@ Wire Wire Line
 Wire Wire Line
 	4600 3750 5150 3750
 $Comp
-L Ultra~kombajn~audio-cache:Ultra_kombajn_audio-cache_TDA7719 U5
+L block-sch-rescue:Ultra_kombajn_audio-cache_TDA7719-Ultra~kombajn~audio-cache U5
 U 1 1 621334AD
 P 5650 3600
+AR Path="/621334AD" Ref="U5"  Part="1" 
+AR Path="/61C9D382/621334AD" Ref="U5"  Part="1" 
 F 0 "U5" H 5300 4400 50  0000 C CNN
 F 1 "TDA7719" H 6800 2200 50  0000 C CNN
 F 2 "lib-amplituner:TDA7719" H 7150 3600 50  0001 C CNN
