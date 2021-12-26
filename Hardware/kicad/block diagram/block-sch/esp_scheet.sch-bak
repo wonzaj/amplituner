@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 7
+Sheet 2 9
 Title ""
 Date ""
 Rev ""
@@ -13,4 +13,16 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L ESP8266-12E_ESP-12E:ESP8266-12E_ESP-12E U7
+U 1 1 621CA2F4
+P 5650 3600
+F 0 "U7" H 5650 4467 50  0000 C CNN
+F 1 "ESP8266-12E_ESP-12E" H 5650 4376 50  0000 C CNN
+F 2 "RF_Module:ESP-12E" H 5650 3600 50  0001 L BNN
+F 3 "" H 5650 3600 50  0001 L BNN
+F 4 "AI-Thinker" H 5650 3600 50  0001 L BNN "MANUFACTURER"
+	1    5650 3600
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

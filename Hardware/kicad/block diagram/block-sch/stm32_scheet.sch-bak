@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 7
+Sheet 5 9
 Title ""
 Date ""
 Rev ""
@@ -13,4 +13,464 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L MCU_ST_STM32L4:STM32L4A6RGTx U6
+U 1 1 61C78A51
+P 2250 4150
+F 0 "U6" H 2550 2250 50  0000 C CNN
+F 1 "STM32L4Q5" H 2700 2350 50  0000 C CNN
+F 2 "Package_QFP:LQFP-64_10x10mm_P0.5mm" H 1650 2450 50  0001 R CNN
+F 3 "http://www.st.com/st-web-ui/static/active/en/resource/technical/document/datasheet/DM00284207.pdf" H 2250 4150 50  0001 C CNN
+	1    2250 4150
+	1    0    0    -1  
+$EndComp
+Text GLabel 1550 5650 0    50   Input ~ 0
+SP3_RESET
+Text GLabel 1550 5750 0    50   Input ~ 0
+SPI3_DC
+Text GLabel 1550 3650 0    50   Input ~ 0
+OSC_IN
+Text GLabel 1550 3750 0    50   Input ~ 0
+OSC_OUT
+Text GLabel 1550 2550 0    50   Input ~ 0
+NRST
+Text GLabel 1550 4450 0    50   Input ~ 0
+SPI3_CD
+Text GLabel 2850 2550 2    50   Input ~ 0
+TIM5_CH1
+Text GLabel 2850 2650 2    50   Input ~ 0
+TIM5_CH2
+Text GLabel 2850 2750 2    50   Input ~ 0
+ADC2_IN7
+Text GLabel 2850 2850 2    50   Input ~ 0
+ADC2_IN8
+Text GLabel 2850 2950 2    50   Input ~ 0
+DAC_OUT1
+Text GLabel 2850 3050 2    50   Input ~ 0
+DAC_OUT2
+Text GLabel 2850 3150 2    50   Input ~ 0
+TIM16_CH1
+Text GLabel 2850 3250 2    50   Input ~ 0
+ADC2_IN12
+Text GLabel 1550 4650 0    50   Input ~ 0
+ADC2_IN13
+Text GLabel 1550 4750 0    50   Input ~ 0
+USER_BUTTON_1
+Text GLabel 2850 4250 2    50   Input ~ 0
+USER_BUTTON_2
+Text GLabel 2850 4350 2    50   Input ~ 0
+USER_BUTTON_3
+Text GLabel 2850 4450 2    50   Input ~ 0
+USER_BUTTON_4
+Text GLabel 2850 5250 2    50   Input ~ 0
+POWER_BUTTON
+Text GLabel 2850 5350 2    50   Input ~ 0
+I2C_SDA
+Text GLabel 2850 5450 2    50   Input ~ 0
+ENC_BUT_VOL_FRONT
+Text GLabel 2850 5550 2    50   Input ~ 0
+I2C_SCL
+Text GLabel 2850 5750 2    50   Input ~ 0
+ENC_BUT_VOL_BACK
+Text GLabel 1550 4850 0    50   Input ~ 0
+TIM8_CH1
+Text GLabel 1550 4950 0    50   Input ~ 0
+TIM8_CH2
+Text GLabel 1550 5050 0    50   Input ~ 0
+ENC_BUT_LOUD
+Text GLabel 2850 3350 2    50   Input ~ 0
+TIM1_CH1
+Text GLabel 2850 3450 2    50   Input ~ 0
+TIM1_CH2
+Text GLabel 2850 3850 2    50   Input ~ 0
+SWDIO
+Text GLabel 2850 3950 2    50   Input ~ 0
+SWCLK
+Text GLabel 2850 4050 2    50   Input ~ 0
+TIM2_CH1
+Text GLabel 1550 5250 0    50   Input ~ 0
+SPI3_SCK
+Text GLabel 1550 5450 0    50   Input ~ 0
+SPI3_MOSI
+Text GLabel 2850 4550 2    50   Input ~ 0
+TIM2_CH2
+Text GLabel 2850 4650 2    50   Input ~ 0
+TIM3_CH1
+Text GLabel 2850 4750 2    50   Input ~ 0
+TIM3_CH2
+Text GLabel 2850 4850 2    50   Input ~ 0
+TIM4_CH1
+Text GLabel 2850 4950 2    50   Input ~ 0
+TIM4_CH2
+Text GLabel 1550 3850 0    50   Input ~ 0
+LD1
+$Comp
+L Device:C C76
+U 1 1 61CB66D3
+P 1300 1500
+F 0 "C76" H 1400 1550 50  0000 L CNN
+F 1 "100nF" H 1400 1450 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 1338 1350 50  0001 C CNN
+F 3 "~" H 1300 1500 50  0001 C CNN
+	1    1300 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C77
+U 1 1 61CB756A
+P 1750 1500
+F 0 "C77" H 1850 1550 50  0000 L CNN
+F 1 "100nF" H 1850 1450 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 1788 1350 50  0001 C CNN
+F 3 "~" H 1750 1500 50  0001 C CNN
+	1    1750 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C78
+U 1 1 61CB7A46
+P 2200 1500
+F 0 "C78" H 2315 1546 50  0000 L CNN
+F 1 "100nF" H 2315 1455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 2238 1350 50  0001 C CNN
+F 3 "~" H 2200 1500 50  0001 C CNN
+	1    2200 1500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C79
+U 1 1 61CB7B89
+P 2650 1500
+F 0 "C79" H 2765 1546 50  0000 L CNN
+F 1 "100nF" H 2765 1455 50  0000 L CNN
+F 2 "Capacitor_SMD:C_0805_2012Metric" H 2688 1350 50  0001 C CNN
+F 3 "~" H 2650 1500 50  0001 C CNN
+	1    2650 1500
+	1    0    0    -1  
+$EndComp
+Connection ~ 2200 1650
+Connection ~ 2200 1350
+$Comp
+L Electronic_stethoscope-cache:+3.3V #PWR014
+U 1 1 61CEDF0D
+P 2200 1350
+F 0 "#PWR014" H 2200 1200 50  0001 C CNN
+F 1 "+3.3V" H 2215 1523 50  0000 C CNN
+F 2 "" H 2200 1350 50  0001 C CNN
+F 3 "" H 2200 1350 50  0001 C CNN
+	1    2200 1350
+	1    0    0    -1  
+$EndComp
+$Comp
+L power:GNDD #PWR015
+U 1 1 61CF0572
+P 2200 1700
+F 0 "#PWR015" H 2200 1450 50  0001 C CNN
+F 1 "GNDD" H 2204 1545 50  0000 C CNN
+F 2 "" H 2200 1700 50  0001 C CNN
+F 3 "" H 2200 1700 50  0001 C CNN
+	1    2200 1700
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2200 1700 2200 1650
+Wire Wire Line
+	2450 2350 2450 2250
+Wire Wire Line
+	2050 2250 2050 2350
+Wire Wire Line
+	2150 2350 2150 2250
+Connection ~ 2150 2250
+Wire Wire Line
+	2150 2250 2050 2250
+Wire Wire Line
+	2250 2350 2250 2250
+Connection ~ 2250 2250
+Wire Wire Line
+	2250 2250 2150 2250
+Wire Wire Line
+	2250 2250 2450 2250
+$Comp
+L Electronic_stethoscope-cache:+3.3V #PWR013
+U 1 1 61D89714
+P 2050 2250
+F 0 "#PWR013" H 2050 2100 50  0001 C CNN
+F 1 "+3.3V" H 2065 2423 50  0000 C CNN
+F 2 "" H 2050 2250 50  0001 C CNN
+F 3 "" H 2050 2250 50  0001 C CNN
+	1    2050 2250
+	1    0    0    -1  
+$EndComp
+Connection ~ 2050 2250
+$Comp
+L power:GNDD #PWR012
+U 1 1 61D9C4AA
+P 1950 6050
+F 0 "#PWR012" H 1950 5800 50  0001 C CNN
+F 1 "GNDD" H 1954 5895 50  0000 C CNN
+F 2 "" H 1950 6050 50  0001 C CNN
+F 3 "" H 1950 6050 50  0001 C CNN
+	1    1950 6050
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	2250 5950 2250 6050
+Wire Wire Line
+	2250 6050 2150 6050
+Wire Wire Line
+	1950 6050 1950 5950
+Wire Wire Line
+	2050 5950 2050 6050
+Connection ~ 2050 6050
+Wire Wire Line
+	2050 6050 1950 6050
+Wire Wire Line
+	2150 5950 2150 6050
+Connection ~ 2150 6050
+Wire Wire Line
+	2150 6050 2050 6050
+Connection ~ 1950 6050
+Text Notes 550  900  0    197  ~ 39
+MCU - STM32\n
+Connection ~ 1750 1350
+Connection ~ 1750 1650
+Wire Wire Line
+	1750 1650 2200 1650
+Wire Wire Line
+	1750 1350 2200 1350
+Wire Wire Line
+	1300 1650 1750 1650
+Wire Wire Line
+	1300 1350 1750 1350
+Wire Wire Line
+	2200 1650 2650 1650
+Wire Wire Line
+	2200 1350 2650 1350
+$Comp
+L Device:Crystal Y1
+U 1 1 62A22890
+P 4150 1500
+F 0 "Y1" V 4100 1250 50  0000 L CNN
+F 1 "Crystal" V 4250 1150 50  0000 L CNN
+F 2 "Crystal:Crystal_HC52-6mm_Vertical" H 4150 1500 50  0001 C CNN
+F 3 "~" H 4150 1500 50  0001 C CNN
+	1    4150 1500
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C81
+U 1 1 62A24053
+P 3850 1700
+F 0 "C81" V 3700 1600 50  0000 C CNN
+F 1 "C" V 3800 1600 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 3888 1550 50  0001 C CNN
+F 3 "~" H 3850 1700 50  0001 C CNN
+	1    3850 1700
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:C C80
+U 1 1 62A24A2E
+P 3850 1300
+F 0 "C80" V 4000 1200 50  0000 C CNN
+F 1 "C" V 3900 1200 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 3888 1150 50  0001 C CNN
+F 3 "~" H 3850 1300 50  0001 C CNN
+	1    3850 1300
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	4000 1700 4150 1700
+Wire Wire Line
+	4150 1700 4150 1650
+Wire Wire Line
+	4000 1300 4150 1300
+Wire Wire Line
+	4150 1300 4150 1350
+Wire Wire Line
+	3700 1700 3650 1700
+Wire Wire Line
+	3650 1700 3650 1500
+Wire Wire Line
+	3650 1300 3700 1300
+$Comp
+L power:GNDD #PWR016
+U 1 1 62AB52D7
+P 3650 1500
+F 0 "#PWR016" H 3650 1250 50  0001 C CNN
+F 1 "GNDD" H 3654 1345 50  0000 C CNN
+F 2 "" H 3650 1500 50  0001 C CNN
+F 3 "" H 3650 1500 50  0001 C CNN
+	1    3650 1500
+	0    1    1    0   
+$EndComp
+Connection ~ 3650 1500
+Wire Wire Line
+	3650 1500 3650 1300
+Text GLabel 4300 1300 2    50   Input ~ 0
+OSC_IN
+Text GLabel 4300 1700 2    50   Input ~ 0
+OSC_OUT
+Wire Wire Line
+	4150 1300 4300 1300
+Connection ~ 4150 1300
+Wire Wire Line
+	4150 1700 4300 1700
+Connection ~ 4150 1700
+$Comp
+L Electronic_stethoscope-cache:Transistor_BJT_BC817 Q2
+U 1 1 62B6F6B2
+P 10600 6050
+F 0 "Q2" H 10790 6096 50  0000 L CNN
+F 1 "BC817" H 10790 6005 50  0000 L CNN
+F 2 "Package_TO_SOT_SMD:SOT-23" H 10800 5975 50  0001 L CIN
+F 3 "" H 10600 6050 50  0001 L CNN
+	1    10600 6050
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:LED D9
+U 1 1 62B71963
+P 10700 5650
+F 0 "D9" V 10739 5532 50  0000 R CNN
+F 1 "LED" V 10648 5532 50  0000 R CNN
+F 2 "LED_SMD:LED_1206_3216Metric" H 10700 5650 50  0001 C CNN
+F 3 "~" H 10700 5650 50  0001 C CNN
+	1    10700 5650
+	0    -1   -1   0   
+$EndComp
+$Comp
+L power:GNDD #PWR021
+U 1 1 62B8FC8A
+P 10700 6250
+F 0 "#PWR021" H 10700 6000 50  0001 C CNN
+F 1 "GNDD" H 10704 6095 50  0000 C CNN
+F 2 "" H 10700 6250 50  0001 C CNN
+F 3 "" H 10700 6250 50  0001 C CNN
+	1    10700 6250
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	10700 5850 10700 5800
+$Comp
+L power:+12V #PWR020
+U 1 1 62BADC8E
+P 10700 5500
+F 0 "#PWR020" H 10700 5350 50  0001 C CNN
+F 1 "+12V" H 10550 5600 50  0000 C CNN
+F 2 "" H 10700 5500 50  0001 C CNN
+F 3 "" H 10700 5500 50  0001 C CNN
+	1    10700 5500
+	1    0    0    -1  
+$EndComp
+Text GLabel 10400 6050 0    50   Input ~ 0
+TIM16_CH1
+$Comp
+L Switch:SW_Push SW1
+U 1 1 62C52A34
+P 8750 6100
+F 0 "SW1" H 8750 6385 50  0000 C CNN
+F 1 "Power Button" H 8750 6294 50  0000 C CNN
+F 2 "" H 8750 6300 50  0001 C CNN
+F 3 "~" H 8750 6300 50  0001 C CNN
+	1    8750 6100
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:R R31
+U 1 1 62C53C1C
+P 9050 5650
+F 0 "R31" H 9120 5696 50  0000 L CNN
+F 1 "R" H 9120 5605 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 8980 5650 50  0001 C CNN
+F 3 "~" H 9050 5650 50  0001 C CNN
+	1    9050 5650
+	1    0    0    -1  
+$EndComp
+Text GLabel 9200 5900 2    50   Input ~ 0
+POWER_BUTTON
+$Comp
+L power:GNDD #PWR017
+U 1 1 62C9136A
+P 8750 6300
+F 0 "#PWR017" H 8750 6050 50  0001 C CNN
+F 1 "GNDD" H 8754 6145 50  0000 C CNN
+F 2 "" H 8750 6300 50  0001 C CNN
+F 3 "" H 8750 6300 50  0001 C CNN
+	1    8750 6300
+	1    0    0    -1  
+$EndComp
+$Comp
+L Electronic_stethoscope-cache:+3.3V #PWR018
+U 1 1 62CAFB94
+P 9050 5500
+F 0 "#PWR018" H 9050 5350 50  0001 C CNN
+F 1 "+3.3V" H 9200 5600 50  0000 C CNN
+F 2 "" H 9050 5500 50  0001 C CNN
+F 3 "" H 9050 5500 50  0001 C CNN
+	1    9050 5500
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C82
+U 1 1 62D2A5D1
+P 9050 6150
+F 0 "C82" H 9165 6196 50  0000 L CNN
+F 1 "C" H 9165 6105 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 9088 6000 50  0001 C CNN
+F 3 "~" H 9050 6150 50  0001 C CNN
+	1    9050 6150
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:R R30
+U 1 1 62D2B1DB
+P 8900 5900
+F 0 "R30" H 8970 5946 50  0000 L CNN
+F 1 "R" H 8970 5855 50  0000 L CNN
+F 2 "Resistor_SMD:R_1206_3216Metric" V 8830 5900 50  0001 C CNN
+F 3 "~" H 8900 5900 50  0001 C CNN
+	1    8900 5900
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	9200 5900 9050 5900
+Connection ~ 9050 5900
+Wire Wire Line
+	9050 6000 9050 5900
+$Comp
+L power:GNDD #PWR019
+U 1 1 62D85255
+P 9050 6300
+F 0 "#PWR019" H 9050 6050 50  0001 C CNN
+F 1 "GNDD" H 9054 6145 50  0000 C CNN
+F 2 "" H 9050 6300 50  0001 C CNN
+F 3 "" H 9050 6300 50  0001 C CNN
+	1    9050 6300
+	1    0    0    -1  
+$EndComp
+Wire Notes Line
+	8300 6550 8300 5150
+Text Notes 8350 5300 0    79   ~ 0
+Power button with LED
+Wire Wire Line
+	9050 5900 9050 5800
+Text Notes 5200 5300 0    79   ~ 0
+USB
+Wire Notes Line
+	8900 4000 11200 4000
+Wire Notes Line
+	8900 2600 11200 2600
+Wire Notes Line
+	8900 2600 8900 5150
+Text Notes 8950 4150 0    79   ~ 0
+Encoders
+Text Notes 8950 2750 0    79   ~ 0
+User buttons
+Wire Notes Line
+	11200 6550 11200 6500
+Wire Notes Line
+	5150 5150 5150 6550
+Wire Notes Line
+	5150 5150 11200 5150
 $EndSCHEMATC
