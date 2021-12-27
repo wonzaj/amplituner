@@ -499,7 +499,7 @@
   )
 
   (module RF_Module:ESP-12E (layer F.Cu) (tedit 5A030172) (tstamp 61CCBD50)
-    (at 240 135 180)
+    (at 235 145 180)
     (descr "Wi-Fi Module, http://wiki.ai-thinker.com/_media/esp8266/docs/aithinker_esp_12f_datasheet_en.pdf")
     (tags "Wi-Fi Module")
     (path /61C8CC9B/621CA2F4)
@@ -601,7 +601,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC5B)
-    (at 265 145)
+    (at 260 155)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B742E)
@@ -629,7 +629,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC4B)
-    (at 265 55)
+    (at 260 65)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B7B91)
@@ -657,7 +657,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC3B)
-    (at 25 145)
+    (at 20 155)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B80E2)
@@ -685,7 +685,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC2B)
-    (at 75 95)
+    (at 70 105)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B7216)
@@ -713,7 +713,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC1B)
-    (at 215 95)
+    (at 210 105)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B7908)
@@ -741,7 +741,7 @@
   )
 
   (module MountingHole:MountingHole_3mm_Pad_Via (layer F.Cu) (tedit 56DDBED4) (tstamp 61CBFC0B)
-    (at 25 55)
+    (at 20 65)
     (descr "Mounting Hole 3mm")
     (tags "mounting hole 3mm")
     (path /621B6DBA)
@@ -769,7 +769,7 @@
   )
 
   (module Crystal:Crystal_HC52-6mm_Vertical (layer F.Cu) (tedit 5A1AD3B8) (tstamp 61CA93C4)
-    (at 150 118.8 90)
+    (at 145 128.8 90)
     (descr "Crystal THT HC-52/6mm, http://www.kvg-gmbh.de/assets/uploads/files/product_pdfs/XS71xx.pdf")
     (tags "THT crystalHC-49/U")
     (path /61C8C45E/62A22890)
@@ -810,7 +810,7 @@
   )
 
   (module Package_QFP:LQFP-64_10x10mm_P0.5mm (layer F.Cu) (tedit 5D9F72AF) (tstamp 61CA93AD)
-    (at 165 115)
+    (at 160 125)
     (descr "LQFP, 64 Pin (https://www.analog.com/media/en/technical-documentation/data-sheets/ad7606_7606-6_7606-4.pdf), generated with kicad-footprint-generator ipc_gullwing_generator.py")
     (tags "LQFP QFP")
     (path /61C8C45E/61C78A51)
@@ -998,7 +998,7 @@
   )
 
   (module Package_TO_SOT_THT:TO-220-11_P3.4x5.08mm_StaggerOdd_Lead4.85mm_Vertical (layer F.Cu) (tedit 5AF05A31) (tstamp 61CA92EC)
-    (at 240 60)
+    (at 235 70)
     (descr "TO-220-11, Vertical, RM 1.7mm, staggered type-1, see http://www.st.com/resource/en/datasheet/tda7391lv.pdf")
     (tags "TO-220-11 Vertical RM 1.7mm staggered type-1")
     (path /61C9CF3C/62161F53)
@@ -2384,7 +2384,7 @@
   )
 
   (module lib-amplituner:TDA7719 (layer F.Cu) (tedit 61C38FFD) (tstamp 61C96A7D)
-    (at 200 115)
+    (at 195 125)
     (path /61C9D382/621334AD)
     (fp_text reference U5 (at 0.127 -6.1214) (layer F.SilkS)
       (effects (font (size 0.64 0.64) (thickness 0.15)))
@@ -2463,7 +2463,7 @@
   )
 
   (module Package_TO_SOT_THT:TO-220-11_P3.4x5.08mm_StaggerOdd_Lead4.85mm_Vertical (layer F.Cu) (tedit 5AF05A31) (tstamp 61C96A51)
-    (at 184.9 60.08)
+    (at 179.9 70.08)
     (descr "TO-220-11, Vertical, RM 1.7mm, staggered type-1, see http://www.st.com/resource/en/datasheet/tda7391lv.pdf")
     (tags "TO-220-11 Vertical RM 1.7mm staggered type-1")
     (path /61C9CF3C/620F7A54)
@@ -2541,7 +2541,7 @@
   )
 
   (module Package_TO_SOT_THT:TO-220-11_P3.4x5.08mm_StaggerOdd_Lead4.85mm_Vertical (layer F.Cu) (tedit 5AF05A31) (tstamp 61C96A1E)
-    (at 55 60)
+    (at 50 70)
     (descr "TO-220-11, Vertical, RM 1.7mm, staggered type-1, see http://www.st.com/resource/en/datasheet/tda7391lv.pdf")
     (tags "TO-220-11 Vertical RM 1.7mm staggered type-1")
     (path /61C9CF3C/612EEBCE)
@@ -2619,7 +2619,7 @@
   )
 
   (module Package_TO_SOT_THT:TO-220-11_P3.4x5.08mm_StaggerOdd_Lead4.85mm_Vertical (layer F.Cu) (tedit 5AF05A31) (tstamp 61CB49BC)
-    (at 115 60)
+    (at 110 70)
     (descr "TO-220-11, Vertical, RM 1.7mm, staggered type-1, see http://www.st.com/resource/en/datasheet/tda7391lv.pdf")
     (tags "TO-220-11 Vertical RM 1.7mm staggered type-1")
     (path /61C9CF3C/620F42DC)
@@ -2697,7 +2697,7 @@
   )
 
   (module Resistor_SMD:R_1206_3216Metric (layer F.Cu) (tedit 5F68FEEE) (tstamp 61CC1056)
-    (at 25 110)
+    (at 20 120)
     (descr "Resistor SMD 1206 (3216 Metric), square (rectangular) end terminal, IPC_7351 nominal, (Body size source: IPC-SM-782 page 72, https://www.pcb-3d.com/wordpress/wp-content/uploads/ipc-sm-782a_amendment_1_and_2.pdf), generated with kicad-footprint-generator")
     (tags resistor)
     (path /61C7B1B3)
@@ -3805,7 +3805,7 @@
   )
 
   (module Package_TO_SOT_SMD:SOT-23 (layer F.Cu) (tedit 5A02FF57) (tstamp 61C96720)
-    (at 26 115)
+    (at 21 125)
     (descr "SOT-23, Standard")
     (tags SOT-23)
     (path /61C78502)
@@ -3846,7 +3846,7 @@
   )
 
   (module Relay_THT:Relay_DPDT_FRT5 (layer F.Cu) (tedit 58FA2D90) (tstamp 61CB4C72)
-    (at 30 95)
+    (at 25 105)
     (descr "IM Signal Relay DPDT FRT5 narrow footprint")
     (tags "Relay DPDT IM-relay FRT5")
     (path /61E3BE18)
@@ -3907,7 +3907,7 @@
   )
 
   (module Heatsink:Heatsink_125x35x50mm_3xFixationM3 (layer F.Cu) (tedit 5A1F5AA0) (tstamp 61C966E6)
-    (at 90 45)
+    (at 85 55)
     (descr "Heatsink, 125x35x50mm, 3 fixation holes 3.2mm")
     (tags heatsink)
     (path /61C9CF3C/620F4339)
@@ -4082,7 +4082,7 @@
   )
 
   (module Heatsink:Heatsink_125x35x50mm_3xFixationM3 (layer F.Cu) (tedit 5A1F5AA0) (tstamp 61C96647)
-    (at 220 45)
+    (at 215 55)
     (descr "Heatsink, 125x35x50mm, 3 fixation holes 3.2mm")
     (tags heatsink)
     (path /61C9CF3C/62122913)
@@ -4257,7 +4257,7 @@
   )
 
   (module Diode_THT:Diode_Bridge_19.0x3.5x10.0mm_P5.0mm (layer F.Cu) (tedit 5A4F7F5F) (tstamp 61C965A8)
-    (at 30 85)
+    (at 25 95)
     (descr "Vishay GBU rectifier package, 5.08mm pitch, see http://www.vishay.com/docs/88606/g3sba20.pdf")
     (tags "Vishay GBU rectifier diode bridge")
     (path /61EBE321)
@@ -4302,7 +4302,7 @@
   )
 
   (module Diode_THT:Diode_Bridge_19.0x3.5x10.0mm_P5.0mm (layer F.Cu) (tedit 5A4F7F5F) (tstamp 61C9658F)
-    (at 30 80)
+    (at 25 90)
     (descr "Vishay GBU rectifier package, 5.08mm pitch, see http://www.vishay.com/docs/88606/g3sba20.pdf")
     (tags "Vishay GBU rectifier diode bridge")
     (path /61EBD3E9)
@@ -4347,7 +4347,7 @@
   )
 
   (module Diode_THT:Diode_Bridge_19.0x3.5x10.0mm_P5.0mm (layer F.Cu) (tedit 5A4F7F5F) (tstamp 61CB4D4C)
-    (at 30 75)
+    (at 25 85)
     (descr "Vishay GBU rectifier package, 5.08mm pitch, see http://www.vishay.com/docs/88606/g3sba20.pdf")
     (tags "Vishay GBU rectifier diode bridge")
     (path /62030C63)
@@ -5080,7 +5080,7 @@
   )
 
   (module Capacitor_THT:CP_Radial_D18.0mm_P7.50mm (layer F.Cu) (tedit 5AE50EF1) (tstamp 61C96218)
-    (at 53.489199 119.04)
+    (at 48.489199 129.04)
     (descr "CP, Radial series, Radial, pin pitch=7.50mm, , diameter=18mm, Electrolytic Capacitor")
     (tags "CP Radial series Radial pin pitch 7.50mm  diameter 18mm Electrolytic Capacitor")
     (path /5CEA4977)
@@ -5413,7 +5413,7 @@
   )
 
   (module Capacitor_THT:CP_Radial_D18.0mm_P7.50mm (layer F.Cu) (tedit 5AE50EF1) (tstamp 61C960DD)
-    (at 32.859199 124.12)
+    (at 27.859199 134.12)
     (descr "CP, Radial series, Radial, pin pitch=7.50mm, , diameter=18mm, Electrolytic Capacitor")
     (tags "CP Radial series Radial pin pitch 7.50mm  diameter 18mm Electrolytic Capacitor")
     (path /5CEA192A)
@@ -14437,13 +14437,13 @@
     )
   )
 
-  (gr_arc (start 265 145) (end 265 150) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
-  (gr_arc (start 25 145) (end 20 145) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
-  (gr_arc (start 25 55) (end 25 50) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
-  (gr_arc (start 265 55) (end 270 55) (angle -90) (layer Edge.Cuts) (width 0.1))
-  (gr_line (start 20 55) (end 20 145) (layer Edge.Cuts) (width 0.1) (tstamp 61C9BDCE))
-  (gr_line (start 265 50) (end 25 50) (layer Edge.Cuts) (width 0.1))
-  (gr_line (start 270 145) (end 270 55) (layer Edge.Cuts) (width 0.1))
-  (gr_line (start 25 150) (end 265 150) (layer Edge.Cuts) (width 0.1))
+  (gr_arc (start 260 155) (end 260 160) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
+  (gr_arc (start 20 155) (end 15 155) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
+  (gr_arc (start 20 65) (end 20 60) (angle -90) (layer Edge.Cuts) (width 0.1) (tstamp 61CB53AE))
+  (gr_arc (start 260 65) (end 265 65) (angle -90) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 15 65) (end 15 155) (layer Edge.Cuts) (width 0.1) (tstamp 61C9BDCE))
+  (gr_line (start 260 60) (end 20 60) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 265 155) (end 265 65) (layer Edge.Cuts) (width 0.1))
+  (gr_line (start 20 160) (end 260 160) (layer Edge.Cuts) (width 0.1))
 
 )

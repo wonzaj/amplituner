@@ -1,4 +1,4 @@
-19082569093944057
+19089131338285907
 Battery
 BatteryHolder_Bulgin_BX0036_1xC
 Bulgin Battery Holder, BX0036, Battery Type C (https://www.bulgin.com/products/pub/media/bulgin/data/Battery_holders.pdf)
@@ -83027,9 +83027,37 @@ varistor SIOV
 2
 2
 lib-amplituner
+AZ1117-3.3
+
+
+0
+4
+4
+lib-amplituner
+CAP_TANT_1206_SMD
+<b>TANTALUM CAPACITOR</b>
+
+0
+2
+2
+lib-amplituner
+RDA5807M
+
+
+0
+0
+0
+lib-amplituner
 TDA7719
 
 
 0
 28
 28
+lib-amplituner
+Zener_Diode_3.6 V_SMD
+
+
+0
+2
+2

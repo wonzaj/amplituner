@@ -7031,12 +7031,12 @@ F0 "low_power" 50
 F1 "low_power_scheet.sch" 50
 $EndSheet
 Wire Wire Line
-	5400 1350 6850 1350
+	5400 1350 5900 1350
 Connection ~ 5400 1350
 Wire Wire Line
 	5400 1700 6850 1700
 Wire Wire Line
-	5400 2050 6850 2050
+	5400 2050 5900 2050
 Connection ~ 5400 2050
 Wire Wire Line
 	8100 1300 9850 1300
@@ -7170,7 +7170,7 @@ Analog part of calculating FFT\n and uv meter for display
 Text Notes 6400 6050 0    39   ~ 0
 Six encoders for audio control\n(volume front, volume back, bass, \ntreble, middle, loudness).\nOne encoder for radio.\nFour buttons for user 
 Wire Wire Line
-	3900 2750 3900 3150
+	3900 2750 3900 2850
 Connection ~ 3900 3150
 $Comp
 L Mechanical:MountingHole H1
@@ -7291,4 +7291,41 @@ Wire Wire Line
 	5200 4550 5200 5600
 Wire Wire Line
 	5250 4750 5250 5600
+$Comp
+L Device:Fuse F2
+U 1 1 61D5BD98
+P 6050 1350
+F 0 "F2" V 6247 1350 50  0000 C CNN
+F 1 "Fuse" V 6156 1350 50  0000 C CNN
+F 2 "" V 5980 1350 50  0001 C CNN
+F 3 "~" H 6050 1350 50  0001 C CNN
+	1    6050 1350
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6200 1350 6850 1350
+$Comp
+L Device:Fuse F3
+U 1 1 61D5C912
+P 6050 2050
+F 0 "F3" V 6247 2050 50  0000 C CNN
+F 1 "Fuse" V 6156 2050 50  0000 C CNN
+F 2 "" V 5980 2050 50  0001 C CNN
+F 3 "~" H 6050 2050 50  0001 C CNN
+	1    6050 2050
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	6200 2050 6850 2050
+$Comp
+L Device:Fuse F1
+U 1 1 61D5DB71
+P 3900 3000
+F 0 "F1" H 3750 3000 50  0000 L CNN
+F 1 "Fuse" H 3700 2900 50  0000 L CNN
+F 2 "" V 3830 3000 50  0001 C CNN
+F 3 "~" H 3900 3000 50  0001 C CNN
+	1    3900 3000
+	1    0    0    -1  
+$EndComp
 $EndSCHEMATC

@@ -3,7 +3,7 @@ EELAYER 30 0
 EELAYER END
 $Descr A4 11693 8268
 encoding utf-8
-Sheet 1 9
+Sheet 7 9
 Title ""
 Date ""
 Rev ""
@@ -13,4 +13,138 @@ Comment2 ""
 Comment3 ""
 Comment4 ""
 $EndDescr
+$Comp
+L lib_amplituner:RDA5807M U11
+U 1 1 61D679C0
+P 5700 2200
+F 0 "U11" H 5550 2651 39  0000 C CNN
+F 1 "RDA5807M" H 5550 2576 39  0000 C CNN
+F 2 "lib-amplituner:RDA5807M" H 5300 2550 39  0001 C CNN
+F 3 "" H 5300 2550 39  0001 C CNN
+	1    5700 2200
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C99
+U 1 1 61D693F0
+P 4250 2400
+F 0 "C99" H 4365 2446 50  0000 L CNN
+F 1 "100nF" H 4365 2355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 4288 2250 50  0001 C CNN
+F 3 "~" H 4250 2400 50  0001 C CNN
+	1    4250 2400
+	1    0    0    -1  
+$EndComp
+$Comp
+L Device:C C100
+U 1 1 61D69B5C
+P 4700 2400
+F 0 "C100" H 4815 2446 50  0000 L CNN
+F 1 "100pF" H 4815 2355 50  0000 L CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 4738 2250 50  0001 C CNN
+F 3 "~" H 4700 2400 50  0001 C CNN
+	1    4700 2400
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4250 2550 4700 2550
+Wire Wire Line
+	5150 2550 5150 2450
+Connection ~ 4700 2550
+Wire Wire Line
+	5150 2350 5150 2250
+Connection ~ 4700 2250
+Wire Wire Line
+	4700 2250 4250 2250
+Wire Wire Line
+	4700 2550 5150 2550
+Wire Wire Line
+	4700 2250 5150 2250
+$Comp
+L power:+3.3V #PWR038
+U 1 1 61D6BEB8
+P 4250 2250
+F 0 "#PWR038" H 4250 2100 50  0001 C CNN
+F 1 "+3.3V" H 4265 2423 50  0000 C CNN
+F 2 "" H 4250 2250 50  0001 C CNN
+F 3 "" H 4250 2250 50  0001 C CNN
+	1    4250 2250
+	1    0    0    -1  
+$EndComp
+Connection ~ 4250 2250
+$Comp
+L Device:C C101
+U 1 1 61D6CBE7
+P 6650 2350
+F 0 "C101" V 6398 2350 50  0000 C CNN
+F 1 "10uF" V 6489 2350 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 6688 2200 50  0001 C CNN
+F 3 "~" H 6650 2350 50  0001 C CNN
+	1    6650 2350
+	0    1    1    0   
+$EndComp
+$Comp
+L Device:C C102
+U 1 1 61D6D3F8
+P 6650 2750
+F 0 "C102" V 6398 2750 50  0000 C CNN
+F 1 "10uF" V 6489 2750 50  0000 C CNN
+F 2 "Capacitor_SMD:C_1206_3216Metric" H 6688 2600 50  0001 C CNN
+F 3 "~" H 6650 2750 50  0001 C CNN
+	1    6650 2750
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	5950 2350 6500 2350
+Wire Wire Line
+	5950 2450 5950 2750
+Wire Wire Line
+	5950 2750 6500 2750
+$Comp
+L Device:L L4
+U 1 1 61D6E544
+P 6950 2750
+F 0 "L4" V 7140 2750 50  0000 C CNN
+F 1 "100MHz" V 7049 2750 50  0000 C CNN
+F 2 "Inductor_SMD:L_1206_3216Metric" H 6950 2750 50  0001 C CNN
+F 3 "~" H 6950 2750 50  0001 C CNN
+	1    6950 2750
+	0    -1   -1   0   
+$EndComp
+$Comp
+L Device:L L3
+U 1 1 61D6E5C9
+P 6950 2350
+F 0 "L3" V 7140 2350 50  0000 C CNN
+F 1 "100MHz" V 7049 2350 50  0000 C CNN
+F 2 "Inductor_SMD:L_1206_3216Metric" H 6950 2350 50  0001 C CNN
+F 3 "~" H 6950 2350 50  0001 C CNN
+	1    6950 2350
+	0    -1   -1   0   
+$EndComp
+Text GLabel 7100 2350 2    39   Input ~ 0
+Radio_in_L
+Text GLabel 7100 2750 2    39   Input ~ 0
+Radio_in_R
+Text GLabel 5950 1950 2    39   Input ~ 0
+ANNTENA
+Text GLabel 5150 2050 0    50   Input ~ 0
+I2C_SCL
+Text GLabel 5150 1950 0    50   Input ~ 0
+I2C_SDA
+$Comp
+L power:GNDD #PWR?
+U 1 1 61D7E7E0
+P 4700 2600
+AR Path="/61D7E7E0" Ref="#PWR?"  Part="1" 
+AR Path="/61F67B6F/61D7E7E0" Ref="#PWR039"  Part="1" 
+F 0 "#PWR039" H 4700 2350 50  0001 C CNN
+F 1 "GNDD" H 4704 2445 50  0000 C CNN
+F 2 "" H 4700 2600 50  0001 C CNN
+F 3 "" H 4700 2600 50  0001 C CNN
+	1    4700 2600
+	1    0    0    -1  
+$EndComp
+Wire Wire Line
+	4700 2600 4700 2550
 $EndSCHEMATC

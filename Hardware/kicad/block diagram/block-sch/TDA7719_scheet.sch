@@ -336,7 +336,7 @@ Wire Wire Line
 Wire Wire Line
 	4600 3750 5150 3750
 $Comp
-L block-sch-rescue:Ultra_kombajn_audio-cache_TDA7719-Ultra~kombajn~audio-cache U5
+L block-sch-rescue:Ultra_kombajn_audio-cache_TDA7719-Ultra_kombajn_audio-cache U5
 U 1 1 621334AD
 P 5650 3600
 AR Path="/621334AD" Ref="U5"  Part="1" 
