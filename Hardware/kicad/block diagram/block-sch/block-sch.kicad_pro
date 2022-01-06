@@ -34,8 +34,8 @@
         "other_text_upright": false,
         "pads": {
           "drill": 0.0,
-          "height": 1.2,
-          "width": 2.0
+          "height": 1.45,
+          "width": 1.0
         },
         "silk_line_width": 0.15,
         "silk_text_italic": false,
@@ -121,7 +121,9 @@
       },
       "track_widths": [
         0.0,
+        0.1,
         0.25,
+        0.4,
         0.5,
         1.0,
         1.2,
@@ -129,7 +131,9 @@
         1.7,
         2.54,
         4.0,
-        5.0
+        5.0,
+        6.0,
+        7.0
       ],
       "via_dimensions": [
         {
@@ -147,6 +151,10 @@
         {
           "diameter": 2.0,
           "drill": 1.0
+        },
+        {
+          "diameter": 6.0,
+          "drill": 3.0
         }
       ],
       "zones_allow_external_fillets": false,
@@ -354,7 +362,7 @@
       "no_connect_dangling": "warning",
       "pin_not_connected": "error",
       "pin_not_driven": "error",
-      "pin_to_pin": "warning",
+      "pin_to_pin": "error",
       "power_pin_not_driven": "error",
       "similar_labels": "warning",
       "unannotated": "error",

@@ -1,4 +1,4 @@
 (sym_lib_table
-  (lib (name "Ultra kombajn audio-cache")(type Legacy)(uri "F:/Amplituner/Hardware/kicad/amplituner/amplituner/Ultra kombajn audio-cache.lib")(options "")(descr ""))
-  (lib (name block-sch-rescue)(type Legacy)(uri ${KIPRJMOD}/block-sch-rescue.lib)(options "")(descr ""))
+  (lib (name "Ultra kombajn audio-cache")(type "Legacy")(uri "F:/Amplituner/Hardware/kicad/amplituner/amplituner/Ultra kombajn audio-cache.lib")(options "")(descr "")(disabled))
+  (lib (name "block-sch-rescue")(type "Legacy")(uri "${KIPRJMOD}/block-sch-rescue.lib")(options "")(descr ""))
 )
