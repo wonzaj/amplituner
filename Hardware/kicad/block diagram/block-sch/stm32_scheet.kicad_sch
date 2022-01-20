@@ -3520,7 +3520,7 @@
     (uuid 319d6a9b-a9e4-4a76-8796-c1cbb5a7a21a)
     (property "Reference" "J5" (id 0) (at 247.65 140.843 0))
     (property "Value" "Conn_02x02_Counter_Clockwise" (id 1) (at 248.285 136.906 0))
-    (property "Footprint" "Connector_PinHeader_2.54mm:PinHeader_2x02_P2.54mm_Vertical" (id 2) (at 246.761 144.018 0)
+    (property "Footprint" "Connector_PinSocket_1.27mm:PinSocket_2x02_P1.27mm_Vertical" (id 2) (at 246.761 144.018 0)
       (effects (font (size 1.27 1.27)) hide)
     )
     (property "Datasheet" "~" (id 3) (at 246.761 144.018 0)
