@@ -1,0 +1,10 @@
+19:57:52 **** Incremental Build of configuration Debug for project schody ****
+make -j4 all 
+arm-none-eabi-size   schody.elf 
+   text	   data	    bss	    dec	    hex	filename
+  37428	    728	   3432	  41588	   a274	schody.elf
+Finished building: default.size.stdout
+ 
+
+19:57:52 Build Finished. 0 errors, 0 warnings. (took 432ms)
+

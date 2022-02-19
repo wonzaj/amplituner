@@ -7454,6 +7454,15 @@
     (path "/00000000-0000-0000-0000-000061fed567/065761e4-2646-4914-837b-36f1dadcdd24"
       (reference "#PWR0165") (unit 1) (value "+3.3V") (footprint "")
     )
+    (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/840622fc-8a29-4759-9e2d-3e3505ca56b8"
+      (reference "#PWR0166") (unit 1) (value "GNDA") (footprint "")
+    )
+    (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/7d7ac457-8106-4d26-9f43-dd8da031213b"
+      (reference "#PWR0167") (unit 1) (value "+3V3") (footprint "")
+    )
+    (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/94013bdf-921c-4110-bf95-b4617e0c56c6"
+      (reference "#PWR0168") (unit 1) (value "GNDA") (footprint "")
+    )
     (path "/00000000-0000-0000-0000-00005cea192a"
       (reference "C1") (unit 1) (value "2200uF") (footprint "Capacitor_THT:CP_Radial_D18.0mm_P7.50mm")
     )
@@ -7970,6 +7979,9 @@
     (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/7a3c6ec6-d506-48b7-94bd-51c13d7dd370"
       (reference "C172") (unit 1) (value "4,7uF") (footprint "Capacitor_THT:CP_Radial_D6.3mm_P2.50mm")
     )
+    (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/895f3ddf-13b4-40e4-9f21-49872560d858"
+      (reference "C173") (unit 1) (value "100nF") (footprint "Capacitor_SMD:C_1206_3216Metric")
+    )
     (path "/00000000-0000-0000-0000-000061cb667b"
       (reference "D1") (unit 1) (value "D") (footprint "Diode_THT:D_DO-35_SOD27_P7.62mm_Horizontal")
     )
@@ -8152,6 +8164,9 @@
     )
     (path "/00000000-0000-0000-0000-000061fb5eaa"
       (reference "LS4") (unit 1) (value "Speaker") (footprint "")
+    )
+    (path "/1cac61e7-80b3-42a5-b751-5a85580635a7/d4dc0448-9973-4991-bba8-ad991edf6832"
+      (reference "MK1") (unit 1) (value "AMM-3742-T-R") (footprint "amplituner_lib:MIC_AMM-3742-T-R")
     )
     (path "/00000000-0000-0000-0000-000061c78502"
       (reference "Q1") (unit 1) (value "BC817") (footprint "Package_TO_SOT_SMD:SOT-23")
