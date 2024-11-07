@@ -28,6 +28,7 @@
 /* USER CODE BEGIN Includes */
 #include "Display_API.h"
 #include "RDA5807m.h"
+#include "TDA7719.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -61,9 +62,7 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-uint32_t i = 0;
-uint32_t ret = 0;
-uint32_t aha = 0;
+
 /* USER CODE END 0 */
 
 /**
