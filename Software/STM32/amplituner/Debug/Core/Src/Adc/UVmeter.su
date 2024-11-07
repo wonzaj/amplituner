@@ -1,2 +1,0 @@
-UVmeter.c:20:6:calc_UVmeter_scale	8	static
-UVmeter.c:34:6:ADC_calc_UV_value	16	static

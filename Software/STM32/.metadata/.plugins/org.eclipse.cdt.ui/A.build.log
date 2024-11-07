@@ -1,20 +1,10 @@
-20:30:46 **** Incremental Build of configuration Debug for project A ****
+11:12:40 **** Incremental Build of configuration Debug for project a ****
 make -j4 all 
-arm-none-eabi-gcc "../Core/Src/main.c" -mcpu=cortex-m3 -std=gnu11 -g3 -DDEBUG -DUSE_HAL_DRIVER -DSTM32F103xB -c -I../Core/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc -I../Drivers/STM32F1xx_HAL_Driver/Inc/Legacy -I../Drivers/CMSIS/Device/ST/STM32F1xx/Include -I../Drivers/CMSIS/Include -O0 -ffunction-sections -fdata-sections -Wall -fstack-usage -MMD -MP -MF"Core/Src/main.d" -MT"Core/Src/main.o" --specs=nano.specs -mfloat-abi=soft -mthumb -o "Core/Src/main.o"
-arm-none-eabi-gcc -o "A.elf" @"objects.list"   -mcpu=cortex-m3 -T"F:\Amplituner\Software\STM32\A\STM32F103C8TX_FLASH.ld" --specs=nosys.specs -Wl,-Map="A.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
-Finished building target: A.elf
- 
-arm-none-eabi-size   A.elf 
-arm-none-eabi-objdump -h -S  A.elf  > "A.list"
-arm-none-eabi-objcopy  -O binary  A.elf  "A.bin"
+arm-none-eabi-size   a.elf 
    text	   data	    bss	    dec	    hex	filename
-  10896	     20	   2028	  12944	   3290	A.elf
+  35220	     24	   5408	  40652	   9ecc	a.elf
 Finished building: default.size.stdout
  
-Finished building: A.bin
- 
-Finished building: A.list
- 
 
-20:30:47 Build Finished. 0 errors, 0 warnings. (took 824ms)
+11:12:41 Build Finished. 0 errors, 0 warnings. (took 324ms)
 

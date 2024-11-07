@@ -1,7 +1,0 @@
-time.c:26:6:SetAlarm	8	static
-time.c:41:6:RTC_Alarm_activated_routine	4	static
-time.c:50:6:HAL_RTCEx_AlarmBEventCallback	16	static
-time.c:93:6:HAL_RTC_AlarmAEventCallback	16	static
-time.c:138:6:switch_change_time	16	static
-time.c:196:6:Set_Alarm_Mode	24	static
-time.c:222:6:switch_change_alarm	24	static

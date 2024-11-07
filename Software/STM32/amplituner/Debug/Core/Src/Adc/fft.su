@@ -1,4 +1,0 @@
-fft.c:20:6:calc_FFT_scale	4	static
-fft.c:53:7:complexABS	16	static
-fft.c:59:6:CalculateFFT	8216	static
-fft.c:110:6:check_FFT_flag	16	static
