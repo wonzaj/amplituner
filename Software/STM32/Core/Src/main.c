@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "Display_API.h"
+#include "RDA5807m.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -60,7 +61,9 @@ void MX_FREERTOS_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
-
+uint32_t i = 0;
+uint32_t ret = 0;
+uint32_t aha = 0;
 /* USER CODE END 0 */
 
 /**
@@ -99,7 +102,9 @@ int main(void)
   MX_I2C2_Init();
   MX_SPI4_Init();
   /* USER CODE BEGIN 2 */
-  display_init_on_start();
+  //display_init_on_start();
+  RDA5807_Init();
+  RDA5807_PowerOn();
   /* USER CODE END 2 */
 
   /* Init scheduler */
