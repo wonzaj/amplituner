@@ -26,7 +26,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "Display_API.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -99,7 +99,7 @@ int main(void)
   MX_I2C2_Init();
   MX_SPI4_Init();
   /* USER CODE BEGIN 2 */
-
+  display_init_on_start();
   /* USER CODE END 2 */
 
   /* Init scheduler */
