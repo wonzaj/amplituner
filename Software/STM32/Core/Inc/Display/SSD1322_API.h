@@ -68,21 +68,16 @@ enum SSD1322_mode_e
 
 void SSD1322_API_Send_Command(uint8_t command);
 void SSD1322_API_Send_Data(uint8_t data);
-
 void SSD1322_API_Init(void);
-
 void SSD1322_API_Sleep_On(void);
 void SSD1322_API_Sleep_Off(void);
-
 void SSD1322_API_Set_DisplayMode(enum SSD1322_mode_e mode);
 void SSD1322_API_Set_Contrast(uint8_t contrast);
 void SSD1322_API_Set_Brightness(uint8_t brightness);
 void SSD1322_API_Set_Window(uint8_t start_column, uint8_t end_column, uint8_t start_row, uint8_t end_row);
 uint8_t SSD1322_API_Set_CustomGrayscale(uint8_t* grayscale_tab);
 void SSD1322_API_Set_DefaultGrayscale(void);
-
 void SSD1322_API_Send_Buffer(uint8_t* buffer, uint32_t buffer_size);
-
 void set_change_time_of_display(const uint16_t counter_period);
 void display_on_standby_mode(void);
 
