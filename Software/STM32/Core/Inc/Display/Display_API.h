@@ -14,6 +14,7 @@
 #include "hal_buttons.h"
 #include "SSD1322_API.h"
 #include "SSD1322_GFX.h"
+#include "fft.h"
 // Fonts
 #include "FreeMono9pt7b.h"
 #include "Maciek.h"
@@ -102,32 +103,32 @@ typedef uint16_t UV_meter_t;
 typedef enum
 {
     SCREEN_TIME = 1,
-    SSD1322_SCREEN_RADIO,
-    SSD1322_SCREEN_FFT,
-    SSD1322_SCREEN_UVMETER,
-    SSD1322_SCREEN_TIME_BOUNCING,
-    SSD1322_SCREEN_SETINPUT,
-    SSD1322_SCREEN_SETCLOCK,
-    SSD1322_SCREEN_SETALARM,
-    SSD1322_SCREEN_SETTINGS,
-    SSD1322_SCREEN_SNAKE,
+    SCREEN_RADIO,
+    SCREEN_FFT,
+    SCREEN_UVMETER,
+    SCREEN_TIME_BOUNCING,
+    SCREEN_SETINPUT,
+    SCREEN_SETCLOCK,
+    SCREEN_SETALARM,
+    SCREEN_SETTINGS,
+    SCREEN_SNAKE,
     ENUM_MAX_USER_DISPLAY,
 
-    SSD1322_SCREEN_USB, //not used atm
+    SCREEN_USB, //not used atm
 
-    SSD1322_SCREEN_WakeUp = 20,
-    SSD1322_SCREEN_Welcome,
-    SSD1322_SCREEN_OFF,
-    SSD1322_SCREEN_GoodBye,
+    SCREEN_WakeUp = 20,
+    SCREEN_Welcome,
+    SCREEN_OFF,
+    SCREEN_GoodBye,
     ENUM_MAX_INVIS_DISPLAY,
 
-    SSD1322_SCREEN_ENCODER_VOLUME_FRONT = 30,
-    SSD1322_SCREEN_ENCODER_VOLUME_BACK,
-    SSD1322_SCREEN_ENCODER_LOUDNESS,
-    SSD1322_SCREEN_ENCODER_TREBLE,
-    SSD1322_SCREEN_ENCODER_MIDDLE,
-    SSD1322_SCREEN_ENCODER_BASS,
-    SSD1322_SCREEN_ENCODER_RADIO,
+    SCREEN_ENCODER_VOLUME_FRONT = 30,
+    SCREEN_ENCODER_VOLUME_BACK,
+    SCREEN_ENCODER_LOUDNESS,
+    SCREEN_ENCODER_TREBLE,
+    SCREEN_ENCODER_MIDDLE,
+    SCREEN_ENCODER_BASS,
+    SCREEN_ENCODER_RADIO,
     ENUM_MAX
 
 }ScreenState_t;
@@ -137,18 +138,17 @@ typedef enum
     POWER_OFF = 1,
     POWER_ON,
     Always_OFF,
-    Always_ON,
-    Change_brigh
+    ALWAYS_ON,
+    CHANGE_BRIGHTNESS
 
 } led_power_state_t;
 
-
 typedef enum
 {
-    Disp_normal = 1,
-    Disp_changing,
-    Disp_standby,
-    Disp_time,
+	DISPLAY_NORMAL_MODE = 1,
+    DISPLAY_CHANGING,
+    DISPLAY_STANDBY,
+    DISPLAY_TIME,
 
 }display_mode_t;
 

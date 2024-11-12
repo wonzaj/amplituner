@@ -38,7 +38,7 @@ extern uint8_t volumeMasterFlag;
 void AppEncoders_EncoderVolFront_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_VOLUME_FRONT);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderVolFront.audioOutputState)
@@ -83,7 +83,7 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 void AppEncoders_EncoderVolBack_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_VOLUME_BACK);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderVolBack.audioOutputState)
@@ -115,7 +115,7 @@ void AppEncoders_EncoderVolBack_Rotated(void)
 void AppEncoders_EncoderTreble_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_TREBLE);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterTreble.buttonControl)
@@ -138,7 +138,7 @@ void AppEncoders_EncoderTreble_Rotated(void)
 void AppEncoders_EncoderBass_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_BASS);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterBass.buttonControl)
@@ -162,7 +162,7 @@ void AppEncoders_EncoderBass_Rotated(void)
 void AppEncoders_EncoderMiddle_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_MIDDLE);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterMiddle.buttonControl)
@@ -185,7 +185,7 @@ void AppEncoders_EncoderMiddle_Rotated(void)
 void AppEncoders_EncoderRadio_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_RADIO);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_RADIO);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 }
@@ -193,7 +193,7 @@ void AppEncoders_EncoderRadio_Rotated(void)
 void AppEncoders_EncoderLoudness_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_LOUDNESS);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterLoudness.buttonControl)

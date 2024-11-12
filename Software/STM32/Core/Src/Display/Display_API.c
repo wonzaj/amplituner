@@ -1,5 +1,5 @@
 //--------------------------------------------------------------
-/* draw_display.c
+/* Display_API.c
  * contains operations that draw on the display
  */
 //--------------------------------------------------------------
@@ -8,6 +8,7 @@
 // Includes
 //--------------------------------------------------------------
 #include "Display_API.h"
+#include "const_grafics.h"
 
 //--------------------------------------------------------------
 // Typedefs
@@ -15,15 +16,10 @@
 
 Display_Controls_t Display_Controls =
 {
-		.Screen_State = SSD1322_SCREEN_WakeUp,
-		.Screen_State_Saved = SSD1322_SCREEN_WakeUp,
+		.Screen_State = SCREEN_WakeUp,
+		.Screen_State_Saved = SCREEN_WakeUp,
 		.Refresh_Hz = DISPLAY_REFRESH_TIME_HZ,
 };
-
-ScreenState_t Screen_State; //static
-ScreenState_t SSD1322_Screen_State_Saved; //static
-led_power_state_t led_power_state;
-display_mode_t display_mode;
 
 //--------------------------------------------------------------
 // Local Variables
@@ -55,52 +51,7 @@ volatile _Bool is_display_on_standby_flag = false;
 //extern encoderFilter_t	 		encoderFilterLoudness;
 //extern encoder_t 	 		encoderVolFront;
 //extern encoder_t	 		encoderVolBack;
-//--------------------------------------------------------------
-// Const strings
-//--------------------------------------------------------------
-static const char *Poniedzialek = "Poniedzialek, "; //15
-static const char *Wtorek = "Wtorek, ";       //9
-static const char *Sroda = "Sroda, ";        //8
-static const char *Czwartek = "Czwartek, ";     //11
-static const char *Piatek = "Piatek, ";       //9
-static const char *Sobota = "Sobota, ";       //9
-static const char *Niedziela = "Niedziela, ";    //12
 
-static const char *Styczen = "Styczen ";     //9
-static const char *Luty = "Luty ";        //6
-static const char *Marzec = "Marzec ";      //8
-static const char *Kwiecien = "Kwiecien ";    //10
-static const char *Maj = "Maj ";         //5
-static const char *Czerwiec = "Czerwiec ";    //10
-static const char *Lipiec = "Lipiec ";      //8
-static const char *Sierpien = "Sierpien ";    //10
-static const char *Wrzesien = "Wrzesien ";    //10
-static const char *Pazdziernik = "Pazdziernik "; //13
-static const char *Listopad = "Listopad ";    //10
-static const char *Grudzien = "Grudzien ";    //10
-
-static const char *Jack_1 = "Jack 1";
-static const char *Jack_2 = "Jack 2";
-static const char *Radio = "Radio";
-static const char *Bluetooth = "Bluetooth";
-static const char *Microphone = "Microphone";
-
-static const char *Power_OFF_str = "1"; //zmienia jasność przy wyłączonym
-static const char *Power_ON_str = "2"; //zmienia janość przy włączonym
-static const char *Always_OFF_str = "3"; //Zawsze wyłączone
-static const char *Always_ON_str = "4"; //zawsze włączone
-static const char *Change_brigh_str = "5"; //zawsze zmienia jasność
-//może dodać kontrole max jasności
-
-static const char *Disp_normal_str = "Normal";
-static const char *Disp_changing_str = "Change";
-static const char *Disp_standby_str = "Standby"; //gasi wyświetlacz po 1 min braku aktywności
-static const char *Disp_time_str = "Time"; //co godzine pokazuje zegar przez minute , czyli drugi wyswietlacz
-
-__attribute__((__unused__))static const char *FFT_front_left_str = "Front left";
-__attribute__((__unused__))static const char *FFT_front_right_str = "Front right";
-__attribute__((__unused__))static const char *FFT_back_left_str = "Back left";
-__attribute__((__unused__))static const char *FFT_back_right_str = "Back right";
 //--------------------------------------------------------------
 // Static functions
 //--------------------------------------------------------------
@@ -150,79 +101,79 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 
 	switch (Screen_State)
 	{
-	case SSD1322_SCREEN_Welcome:
+	case SCREEN_Welcome:
 		SSD1322_Screen_Welcome(Display_Buffer);
 		break;
 	case SCREEN_TIME:
 		SSD1322_Screen_Time(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_RADIO:
+	case SCREEN_RADIO:
 
 		SSD1322_Screen_Radio(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_WakeUp:
+	case SCREEN_WakeUp:
 
 		SSD1322_Screen_WakeUp(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_FFT:
+	case SCREEN_FFT:
 		if (FFT_calc_done == 1)
 		{
 			SSD1322_Screen_FFT(Display_Buffer, OutFreqArray);
 		}
 		break;
-	case SSD1322_SCREEN_UVMETER:
+	case SCREEN_UVMETER:
 		//if(UV_meter_front_back == UV_METER_BACK)
-	{
-		SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[0], ADC_SamplesSUM[3], UV_meter_front_back);
-	}
+		{
+			SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[0], ADC_SamplesSUM[3], UV_meter_front_back);
+		}
 		//else if(UV_meter_front_back == UV_METER_FRONT)
 		{
 			SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[2], ADC_SamplesSUM[1], UV_meter_front_back);
 		}
 		break;
-	case SSD1322_SCREEN_OFF:
+	case SCREEN_OFF:
 		SSD1322_Screen_OFF(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_GoodBye:
+	case SCREEN_GoodBye:
 		SSD1322_Screen_GoodBye(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_SETCLOCK:
+	case SCREEN_SETCLOCK:
 		SSD1322_Screen_SetClock(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_SETALARM:
+	case SCREEN_SETALARM:
 		SSD1322_Screen_SetAlarm(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_SETTINGS:
+	case SCREEN_SETTINGS:
 		SSD1322_Screen_Settings(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_SNAKE:
+	case SCREEN_SNAKE:
 		SSD1322_Screen_Snake(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_USB:
+	case SCREEN_USB:
 		SSD1322_Screen_USB(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_SETINPUT:
+	case SCREEN_SETINPUT:
 		SSD1322_Screen_SetInput(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_TIME_BOUNCING:
+	case SCREEN_TIME_BOUNCING:
 		SSD1322_Screen_Time_Bouncing(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_VOLUME_FRONT:
+	case SCREEN_ENCODER_VOLUME_FRONT:
 		SSD1322_Screen_Encoder_Volume_Front(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_VOLUME_BACK:
+	case SCREEN_ENCODER_VOLUME_BACK:
 		SSD1322_Screen_Encoder_Volume_Back(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_LOUDNESS:
+	case SCREEN_ENCODER_LOUDNESS:
 		SSD1322_Screen_Encoder_Loudness(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_TREBLE:
+	case SCREEN_ENCODER_TREBLE:
 		SSD1322_Screen_Encoder_Treble(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_MIDDLE:
+	case SCREEN_ENCODER_MIDDLE:
 		SSD1322_Screen_Encoder_Middle(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_ENCODER_BASS:
+	case SCREEN_ENCODER_BASS:
 		SSD1322_Screen_Encoder_Bass(Display_Buffer);
 		break;
 	default:
@@ -1404,26 +1355,23 @@ void draw_displayMode(uint8_t *const buffer)
 //--------------------------------------------------------------
 void AppDisplay_SaveCurrentDisplayState(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t SSD1322_Screen_State_temp = AppDisplay_GetDisplayState();
 
 	if (SSD1322_Screen_State_temp != AppDisplay_GetSavedDisplayState())
 	{
-		if ((SSD1322_Screen_State_temp != (ENUM_MAX_USER_DISPLAY)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_WakeUp)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_Welcome)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_OFF)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_GoodBye)
+		if((SSD1322_Screen_State_temp != (ENUM_MAX_USER_DISPLAY)
+				&& (SSD1322_Screen_State_temp != SCREEN_WakeUp)
+				&& (SSD1322_Screen_State_temp != SCREEN_Welcome)
+				&& (SSD1322_Screen_State_temp != SCREEN_OFF)
+				&& (SSD1322_Screen_State_temp != SCREEN_GoodBye)
 				&& (SSD1322_Screen_State_temp != ENUM_MAX_INVIS_DISPLAY)
-				&& (SSD1322_Screen_State_temp
-						!= SSD1322_SCREEN_ENCODER_VOLUME_FRONT)
-				&& (SSD1322_Screen_State_temp
-						!= SSD1322_SCREEN_ENCODER_VOLUME_BACK)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_ENCODER_LOUDNESS)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_ENCODER_TREBLE)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_ENCODER_MIDDLE)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_ENCODER_BASS)
-				&& (SSD1322_Screen_State_temp != SSD1322_SCREEN_ENCODER_RADIO)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_FRONT)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_BACK)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_LOUDNESS)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_TREBLE)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_MIDDLE)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_BASS)
+				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_RADIO)
 				&& (SSD1322_Screen_State_temp != ENUM_MAX)))
 		{
 			AppDisplay_SetSavedDisplayState(SSD1322_Screen_State_temp);
@@ -1434,23 +1382,19 @@ void AppDisplay_SaveCurrentDisplayState(void)
 
 void change_display_state(TIM_HandleTypeDef *htim)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t SSD1322_Screen_State_temp = AppDisplay_GetDisplayState();
 
 //	if (SettingsUserMenu.RefreshScreenTime != 65535) // change display if timer is set
 	{
-		if ((SSD1322_Screen_State_temp >= SCREEN_TIME)
-				&& (SSD1322_Screen_State_temp <= SSD1322_SCREEN_TIME_BOUNCING))
+		if ((SSD1322_Screen_State_temp >= SCREEN_TIME) && (SSD1322_Screen_State_temp <= SCREEN_TIME_BOUNCING))
 		{
 			AppDisplay_SetDisplayState(SSD1322_Screen_State_temp + 1);
 
-			if (SSD1322_SCREEN_SETINPUT == SSD1322_Screen_State_temp)
-				SSD1322_Screen_State_temp = SCREEN_TIME;
+			if (SCREEN_SETINPUT == SSD1322_Screen_State_temp) SSD1322_Screen_State_temp = SCREEN_TIME;
 			htim->Instance->CNT = 0;
 
 			/* Check if ADC is needed */
-			if ((SSD1322_Screen_State_temp == SSD1322_SCREEN_UVMETER)
-					|| (SSD1322_Screen_State_temp == SSD1322_SCREEN_FFT))
+			if ((SSD1322_Screen_State_temp == SCREEN_UVMETER) || (SSD1322_Screen_State_temp == SCREEN_FFT))
 			{
 				//HAL_TIM_Base_Start(&htim6);
 				//HAL_ADC_Start_DMA(&hadc1, (uint32_t*) ADC_SamplesTEST, UV_meter_numb_of_chan);
@@ -1470,26 +1414,19 @@ void ChangeDateToArrayChar(uint16_t frq)
 {
 	if (frq >= RADIO_100MHZ_FREQ && frq <= RADIO_MAX_FREQ)
 	{
-		ConvertArrayCharLong[4] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(0, frq);
+		ConvertArrayCharLong[4] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, frq);
 		ConvertArrayCharLong[3] = PRZECINEK;
-		ConvertArrayCharLong[2] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(1, frq);
-		ConvertArrayCharLong[1] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(2, frq);
-		ConvertArrayCharLong[0] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(3, frq);
+		ConvertArrayCharLong[2] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, frq);
+		ConvertArrayCharLong[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(2, frq);
+		ConvertArrayCharLong[0] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(3, frq);
 		ConvertArrayCharLong[5] = ASCII_NULL;
 	}
 	else if (frq < RADIO_100MHZ_FREQ && frq >= RADIO_MIN_FREQ)
 	{
-		ConvertArrayCharLong[3] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(0, frq);
+		ConvertArrayCharLong[3] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, frq);
 		ConvertArrayCharLong[2] = PRZECINEK;
-		ConvertArrayCharLong[1] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(1, frq);
-		ConvertArrayCharLong[0] = ASCII_DIGIT_OFFSET
-				+ SplitNumberToDignits(2, frq);
+		ConvertArrayCharLong[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, frq);
+		ConvertArrayCharLong[0] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(2, frq);
 		ConvertArrayCharLong[4] = ASCII_NULL;
 	}
 	else //Invalid frq value
@@ -1501,8 +1438,7 @@ void ChangeDateToArrayChar(uint16_t frq)
 	}
 }
 
-void ChangeDateToArrayCharTime(char *arrayChar, uint8_t hours, uint8_t minutes,
-		uint8_t seconds, uint8_t mode)
+void ChangeDateToArrayCharTime(char *arrayChar, uint8_t hours, uint8_t minutes, uint8_t seconds, uint8_t mode)
 
 {
 	if (hours < 9)
@@ -1514,10 +1450,8 @@ void ChangeDateToArrayCharTime(char *arrayChar, uint8_t hours, uint8_t minutes,
 		if (0 == mode)
 		{
 			arrayChar[4] = ASCII_DWUKROPEK;
-			arrayChar[5] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(1, seconds);
-			arrayChar[6] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, seconds);
+			arrayChar[5] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, seconds);
+			arrayChar[6] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, seconds);
 			arrayChar[7] = ASCII_NULL;
 		}
 		else if (1 == mode)
@@ -1536,10 +1470,8 @@ void ChangeDateToArrayCharTime(char *arrayChar, uint8_t hours, uint8_t minutes,
 		if (0 == mode)
 		{
 			arrayChar[5] = ASCII_DWUKROPEK;
-			arrayChar[6] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(1, seconds);
-			arrayChar[7] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, seconds);
+			arrayChar[6] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, seconds);
+			arrayChar[7] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, seconds);
 			arrayChar[8] = ASCII_NULL;
 		}
 		else if (1 == mode)
@@ -1559,20 +1491,20 @@ int16_t SplitNumberToDignits(int16_t position, int16_t number)
 }
 
 //
-uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min,
-		uint32_t out_max)
+uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max)
 {
 	return (x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
 }
 
-void ConvertDateToBuffer(uint16_t Year, uint8_t Month, uint8_t WeekDay,
-		uint8_t Date)
+void ConvertDateToBuffer(uint16_t Year, uint8_t Month, uint8_t WeekDay, uint8_t Date)
 {
 	uint8_t temp = 0;
+
 	for (uint8_t i = 0; i < 40; ++i)
 	{
 		TestingArray[i] = 0;
 	}
+
 	switch (WeekDay)
 	{
 	case 1:
@@ -1763,7 +1695,7 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 
 		if (steep)
 		{
-			if (Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
+			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING)
 				return;
 			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
@@ -1774,7 +1706,7 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 		}
 		else
 		{
-			if (Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
+			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING)
 				return;
 			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
@@ -1795,19 +1727,19 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 
 ScreenState_t AppDisplay_GetDisplayState(void)
 {
-	return Screen_State;
+	return Display_Controls.Screen_State;
 }
 
 void AppDisplay_SetDisplayState(ScreenState_t ScreenState)
 {
-	Screen_State = ScreenState;
+	Display_Controls.Screen_State = ScreenState;
 }
 
 ScreenState_t AppDisplay_GetSavedDisplayState(void)
 {
-	return SSD1322_Screen_State_Saved;
+	return Display_Controls.Screen_State_Saved;
 }
 void AppDisplay_SetSavedDisplayState(ScreenState_t ScreenState)
 {
-	SSD1322_Screen_State_Saved = ScreenState;
+	Display_Controls.Screen_State_Saved = ScreenState;
 }

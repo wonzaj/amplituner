@@ -18,7 +18,6 @@ static uint8_t inc = 0; //97 - 'a'
 //--------------------------------------------------------------
 FFT_channel_source_e FFT_channel_source = 1;
 SettingsUserMenu_t SettingsUserMenu;
-extern ScreenState_t Screen_State;
 extern Clock_Data_Change_t Clock_Data_Time;
 extern AlarmDataChange_t AlarmDataChange;
 
@@ -159,16 +158,15 @@ GPIO_PinState Buttons_PowerButton_GetState(void)
 //User button 1
 void Buttons_UserButton1_Pressed(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t Screen_State_temp = AppDisplay_GetDisplayState();
 
-	if ((SSD1322_Screen_State_temp + 1) == ENUM_MAX_USER_DISPLAY)
+	if ((Screen_State_temp + 1) == ENUM_MAX_USER_DISPLAY)
 	{
 		AppDisplay_SetDisplayState(SCREEN_TIME);
 	}
 	else
 	{
-		AppDisplay_SetDisplayState(SSD1322_Screen_State_temp + 1);
+		AppDisplay_SetDisplayState(Screen_State_temp + 1);
 	}
 
 	if (ADC_IS_ON_flag == true)
@@ -178,41 +176,41 @@ void Buttons_UserButton1_Pressed(void)
 		ADC_IS_ON_flag = false;
 	}
 
-	switch (Screen_State)
+	switch (Screen_State_temp)
 	{
 	case SCREEN_TIME:
 
 		break;
-	case SSD1322_SCREEN_RADIO:
+	case SCREEN_RADIO:
 
 		break;
-	case SSD1322_SCREEN_FFT:
+	case SCREEN_FFT:
 		//HAL_TIM_Base_Start(&htim6);
 		//HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
 		ADC_IS_ON_flag = true;
 		break;
-	case SSD1322_SCREEN_UVMETER:
+	case SCREEN_UVMETER:
 		//HAL_TIM_Base_Start(&htim6);
 		//HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
 		ADC_IS_ON_flag = true;
 		//set flag indicating that adc is on
 		break;
-	case SSD1322_SCREEN_SETCLOCK:
+	case SCREEN_SETCLOCK:
 
 		break;
-	case SSD1322_SCREEN_SETALARM:
+	case SCREEN_SETALARM:
 
 		break;
-	case SSD1322_SCREEN_SETINPUT:
+	case SCREEN_SETINPUT:
 
 		break;
-	case SSD1322_SCREEN_SETTINGS:
+	case SCREEN_SETTINGS:
 
 		break;
-	case SSD1322_SCREEN_USB:
+	case SCREEN_USB:
 
 		break;
-	case SSD1322_SCREEN_TIME_BOUNCING:
+	case SCREEN_TIME_BOUNCING:
 
 		break;
 	default:
@@ -241,42 +239,42 @@ void Buttons_UserButton2_Pressed(void)
 	{
 	case SCREEN_TIME:
 		break;
-	case SSD1322_SCREEN_RADIO:
+	case SCREEN_RADIO:
 		RDA5807_SeekUp();
 		break;
-	case SSD1322_SCREEN_WakeUp:
+	case SCREEN_WakeUp:
 		//po wcisnięciu budzika można ustawić czy się wyłącza muzyka
 		break;
-	case SSD1322_SCREEN_FFT:
+	case SCREEN_FFT:
 		break;
-	case SSD1322_SCREEN_UVMETER:
+	case SCREEN_UVMETER:
 		break;
-	case SSD1322_SCREEN_OFF:
+	case SCREEN_OFF:
 		break;
-	case SSD1322_SCREEN_GoodBye:
+	case SCREEN_GoodBye:
 		break;
-	case SSD1322_SCREEN_SETCLOCK:
+	case SCREEN_SETCLOCK:
 		Clock_Data_Time++;
 		if (9 == Clock_Data_Time)
 		{
 			Clock_Data_Time = 1;
 		}
 		break;
-	case SSD1322_SCREEN_SETALARM:
+	case SCREEN_SETALARM:
 		AlarmDataChange++;
 		if (7 == AlarmDataChange)
 		{
 			AlarmDataChange = 1;
 		}
 		break;
-	case SSD1322_SCREEN_SETTINGS:
+	case SCREEN_SETTINGS:
 		Change_selected_setting();
 		break;
-	case SSD1322_SCREEN_USB:
+	case SCREEN_USB:
 		//tutaj akcept wejście w folder albo otworzenie pliku
 		//jeżeli brak podpiętego USB to komunikat żeby podłączyć z formatowanie FatFS
 		break;
-	case SSD1322_SCREEN_SETINPUT:
+	case SCREEN_SETINPUT:
 
 		break;
 	default:
@@ -305,33 +303,33 @@ void Buttons_UserButton3_Pressed(void)
 	{
 	case SCREEN_TIME:
 		break;
-	case SSD1322_SCREEN_RADIO:
+	case SCREEN_RADIO:
 		Save_Station_Freq_1(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
 		break;
-	case SSD1322_SCREEN_WakeUp:
+	case SCREEN_WakeUp:
 		break;
-	case SSD1322_SCREEN_FFT:
+	case SCREEN_FFT:
 		Change_FFT_source_Down();
 		break;
-	case SSD1322_SCREEN_UVMETER:
+	case SCREEN_UVMETER:
 		UV_meter_front_back = UV_METER_BACK; // zmienić nazwe, wrzucić do odpowiedniego modulu wrzucić do funkcji do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_OFF:
+	case SCREEN_OFF:
 		break;
-	case SSD1322_SCREEN_GoodBye:
+	case SCREEN_GoodBye:
 		break;
-	case SSD1322_SCREEN_SETCLOCK:
+	case SCREEN_SETCLOCK:
 		switch_change_time(Clock_Data_Time, 0); //zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_SETALARM:
+	case SCREEN_SETALARM:
 		switch_change_alarm(AlarmDataChange, 0); //zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_SETTINGS:
+	case SCREEN_SETTINGS:
 		Change_Down_Settings(); //zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_USB:
+	case SCREEN_USB:
 		break;
-	case SSD1322_SCREEN_SETINPUT:
+	case SCREEN_SETINPUT:
 		Change_Down_Input();   //zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
 	default:
@@ -359,33 +357,33 @@ void Buttons_UserButton4_Pressed(void)
 	{
 	case SCREEN_TIME:
 		break;
-	case SSD1322_SCREEN_RADIO:
+	case SCREEN_RADIO:
 		Save_Station_Freq_2(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
 		break;
-	case SSD1322_SCREEN_WakeUp:
+	case SCREEN_WakeUp:
 		break;
-	case SSD1322_SCREEN_FFT:
+	case SCREEN_FFT:
 		Change_FFT_source_Up();	// zmienić nazwe, wrzucić do odpowiedniego modulu
 		break;
-	case SSD1322_SCREEN_UVMETER:
+	case SCREEN_UVMETER:
 		UV_meter_front_back = UV_METER_FRONT;// zmienić nazwe, wrzucić do odpowiedniego modulu wrzucić do funkcji do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_OFF:
+	case SCREEN_OFF:
 		break;
-	case SSD1322_SCREEN_GoodBye:
+	case SCREEN_GoodBye:
 		break;
-	case SSD1322_SCREEN_SETCLOCK:
+	case SCREEN_SETCLOCK:
 		Read_Set_TimeAndDate();	//zmienic nazwe i wrzucic do odpowiedniego modułus
 		break;
-	case SSD1322_SCREEN_SETALARM:
+	case SCREEN_SETALARM:
 		switch_change_alarm(AlarmDataChange, 1);//zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_SETTINGS:
+	case SCREEN_SETTINGS:
 		Change_Up_Settings();//zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
-	case SSD1322_SCREEN_USB:
+	case SCREEN_USB:
 		break;
-	case SSD1322_SCREEN_SETINPUT:
+	case SCREEN_SETINPUT:
 		Change_Up_Input();	//zmienic nazwe i wrzucic do odpowiedniego modułu
 		break;
 	default:
@@ -420,7 +418,7 @@ GPIO_PinState Buttons_UserButton4_GetState(void)
 void Buttons_EncoderVolFrontButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_VOLUME_FRONT);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderVolFront.audioOutputState)
@@ -479,7 +477,7 @@ GPIO_PinState Buttons_EncoderVolFrontButton_GetState(void)
 void Buttons_EncoderVolBackButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_VOLUME_BACK);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderVolBack.audioOutputState)
@@ -529,7 +527,7 @@ GPIO_PinState Buttons_EncoderVolBackButton_GetState(void)
 void Buttons_EncoderTrebleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_TREBLE);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterTreble.buttonControl)
@@ -567,7 +565,7 @@ GPIO_PinState Buttons_EncoderTrebleButton_GetState(void)
 void Buttons_EncoderBassButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_BASS);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterBass.buttonControl)
@@ -602,7 +600,7 @@ GPIO_PinState Buttons_EncoderBassButton_GetState(void)
 void Buttons_EncoderMiddleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_MIDDLE);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterMiddle.buttonControl)
@@ -640,7 +638,7 @@ GPIO_PinState Buttons_EncoderMiddleButton_GetState(void)
 void Buttons_EncoderRadioButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_RADIO);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_RADIO);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 }
 
@@ -659,7 +657,7 @@ GPIO_PinState Buttons_EncoderRadioButton_GetState(void)
 void Buttons_EncoderLoudnessButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
-	AppDisplay_SetDisplayState(SSD1322_SCREEN_ENCODER_LOUDNESS);
+	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderFilterLoudness.buttonControl)
@@ -986,7 +984,7 @@ static void Change_Down_Settings(void)
 			break;
 		case REFRESH_SCREEN_TIME:
 		{
-			if (SettingsUserMenu.Display_mode == Disp_normal)
+			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 			{
 				SettingsUserMenu.RefreshScreenTime = 65535;
 				break;
@@ -1012,9 +1010,9 @@ static void Change_Down_Settings(void)
 			SettingsUserMenu.Display_mode++;
 			if (SettingsUserMenu.Display_mode == 5)
 				SettingsUserMenu.Display_mode = 1;
-			if (SettingsUserMenu.Display_mode == Disp_normal)
+			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 				SettingsUserMenu.RefreshScreenTime = 65535;
-			if (SettingsUserMenu.Display_mode == Disp_standby)
+			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
 			{
 				is_display_on_standby_flag = true;
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
@@ -1064,7 +1062,7 @@ static void Change_Up_Settings(void)
 			break;
 		case REFRESH_SCREEN_TIME:
 		{
-			if (SettingsUserMenu.Display_mode == Disp_normal)
+			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 			{
 				SettingsUserMenu.RefreshScreenTime = 65535;
 				break;
@@ -1087,9 +1085,9 @@ static void Change_Up_Settings(void)
 			SettingsUserMenu.Display_mode--;
 			if (SettingsUserMenu.Display_mode == 0)
 				SettingsUserMenu.Display_mode = 4;
-			if (SettingsUserMenu.Display_mode == Disp_normal)
+			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 				SettingsUserMenu.RefreshScreenTime = 65535;
-			if (SettingsUserMenu.Display_mode == Disp_standby)
+			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
 			{
 				is_display_on_standby_flag = true;
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
@@ -1247,32 +1245,24 @@ void AppButtons_PowerButton_StateUpdate(void)
 		case POWER_OFF:
 			if (countingUp_or_countingDown)
 			{
-				AppButtons_PowerButton_SetPWMValue(
-						AppButtons_ConvertPWM(
-								miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+				AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			}
 			else
 			{
-				AppButtons_PowerButton_SetPWMValue(
-						AppButtons_ConvertPWM(
-								miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+				AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			}
 			break;
 		case POWER_ON:
-			AppButtons_PowerButton_SetPWMValue(
-					AppButtons_ConvertPWM(
-							miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+			AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			break;
 		case Always_OFF:
 			AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MIN_VALUE);
 			break;
-		case Always_ON:
+		case ALWAYS_ON:
 			AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MAX_VALUE);
 			break;
-		case Change_brigh:
-			AppButtons_PowerButton_SetPWMValue(
-					AppButtons_ConvertPWM(
-							miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+		case CHANGE_BRIGHTNESS:
+			AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			break;
 			//może case gdzie użytkownik podaje parametr określający jasność
 		default:

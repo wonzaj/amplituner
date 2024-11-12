@@ -17,6 +17,17 @@
 //#include "Adc/arm_math.h"
 #include "float.h"
 
+typedef enum
+{
+    FFT_ch_src_enum_MIN = 0,
+    FFT_front_left  	= 1,
+    FFT_front_right 	= 2,
+    FFT_back_left   	= 3,
+    FFT_back_right  	= 4,
+    FFT_ch_src_enum_MAX = 5
+
+}FFT_channel_source_e;
+
 //--------------------------------------------------------------
 // extern variables
 //--------------------------------------------------------------
@@ -28,6 +39,7 @@ extern uint8_t 					OutFreqArray[21];
 extern float 					FFTInBuffer[FFT_SAMPLES];
 extern volatile uint8_t 		FFT_calc_done;
 extern float 					FFTOutBuffer[FFT_SAMPLES];
+extern volatile uint8_t FFT_calc_done;
 //extern arm_rfft_fast_instance_f32 FFTHandler;
 
 //--------------------------------------------------------------

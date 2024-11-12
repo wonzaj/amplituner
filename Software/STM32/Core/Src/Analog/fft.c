@@ -9,7 +9,7 @@
 //--------------------------------------------------------------
 // Includes
 //--------------------------------------------------------------
-#include <Analog/fft.h>
+#include "fft.h"
 
 uint8_t OutFreqArray[21];
 //arm_rfft_fast_instance_f32 FFTHandler;
@@ -17,6 +17,7 @@ uint16_t ADC_In[FFT_SAMPLES];
 float FFTInBuffer[FFT_SAMPLES];
 float FFTOutBuffer[FFT_SAMPLES];
 volatile uint8_t Samples_ready;
+volatile uint8_t FFT_calc_done = 0;
 
 //--------------------------------------------------------------
 // Functions definitions
