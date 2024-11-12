@@ -53,7 +53,6 @@ extern uint8_t settings_page;
 extern uint8_t saved_seconds;
 extern uint8_t saved_minutes;
 extern char user_name[10];
-extern volatile _Bool is_display_on_standby_flag;
 extern volatile uint8_t POWER_device_state_flag;
 
 extern uint8_t UV_meter_front_back;
@@ -242,7 +241,7 @@ void Buttons_UserButton2_Pressed(void)
 	case SCREEN_RADIO:
 		RDA5807_SeekUp();
 		break;
-	case SCREEN_WakeUp:
+	case SCREEN_WAKEUP:
 		//po wcisnięciu budzika można ustawić czy się wyłącza muzyka
 		break;
 	case SCREEN_FFT:
@@ -251,7 +250,7 @@ void Buttons_UserButton2_Pressed(void)
 		break;
 	case SCREEN_OFF:
 		break;
-	case SCREEN_GoodBye:
+	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
 		Clock_Data_Time++;
@@ -306,7 +305,7 @@ void Buttons_UserButton3_Pressed(void)
 	case SCREEN_RADIO:
 		Save_Station_Freq_1(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
 		break;
-	case SCREEN_WakeUp:
+	case SCREEN_WAKEUP:
 		break;
 	case SCREEN_FFT:
 		Change_FFT_source_Down();
@@ -316,7 +315,7 @@ void Buttons_UserButton3_Pressed(void)
 		break;
 	case SCREEN_OFF:
 		break;
-	case SCREEN_GoodBye:
+	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
 		switch_change_time(Clock_Data_Time, 0); //zmienic nazwe i wrzucic do odpowiedniego modułu
@@ -360,7 +359,7 @@ void Buttons_UserButton4_Pressed(void)
 	case SCREEN_RADIO:
 		Save_Station_Freq_2(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
 		break;
-	case SCREEN_WakeUp:
+	case SCREEN_WAKEUP:
 		break;
 	case SCREEN_FFT:
 		Change_FFT_source_Up();	// zmienić nazwe, wrzucić do odpowiedniego modulu
@@ -370,7 +369,7 @@ void Buttons_UserButton4_Pressed(void)
 		break;
 	case SCREEN_OFF:
 		break;
-	case SCREEN_GoodBye:
+	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
 		Read_Set_TimeAndDate();	//zmienic nazwe i wrzucic do odpowiedniego modułus
@@ -1014,7 +1013,7 @@ static void Change_Down_Settings(void)
 				SettingsUserMenu.RefreshScreenTime = 65535;
 			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
 			{
-				is_display_on_standby_flag = true;
+				Display_Controls.OnStandbyMode_flag = true;
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 				saved_seconds = sTime.Seconds;
@@ -1022,7 +1021,7 @@ static void Change_Down_Settings(void)
 			}
 			else
 			{
-				is_display_on_standby_flag = false;
+				Display_Controls.OnStandbyMode_flag = false;
 			}
 		}
 			break;
@@ -1089,7 +1088,7 @@ static void Change_Up_Settings(void)
 				SettingsUserMenu.RefreshScreenTime = 65535;
 			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
 			{
-				is_display_on_standby_flag = true;
+				Display_Controls.OnStandbyMode_flag = true;
 				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 				saved_seconds = sTime.Seconds;
@@ -1097,7 +1096,7 @@ static void Change_Up_Settings(void)
 			}
 			else
 			{
-				is_display_on_standby_flag = false;
+				Display_Controls.OnStandbyMode_flag = false;
 			}
 			break;
 		case POWER_LED:

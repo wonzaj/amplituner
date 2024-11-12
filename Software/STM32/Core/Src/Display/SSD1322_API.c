@@ -237,7 +237,7 @@ void SSD1322_API_Send_Buffer(uint8_t *buffer, uint32_t buffer_size)
  */
 //void display_on_standby_mode(void)
 //    {
-//	if (is_display_on_standby_flag == true)
+//	if (Display_Controls.OnStandbyMode_flag == true)
 //	    {
 //		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);

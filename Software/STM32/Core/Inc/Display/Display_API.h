@@ -116,10 +116,10 @@ typedef enum
 
     SCREEN_USB, //not used atm
 
-    SCREEN_WakeUp = 20,
-    SCREEN_Welcome,
+    SCREEN_WAKEUP = 20,
+    SCREEN_WELCOME,
     SCREEN_OFF,
-    SCREEN_GoodBye,
+    SCREEN_GOODBYTE,
     ENUM_MAX_INVIS_DISPLAY,
 
     SCREEN_ENCODER_VOLUME_FRONT = 30,
@@ -158,6 +158,8 @@ typedef struct
 	ScreenState_t 	Screen_State_Saved;
 	uint32_t 		Refresh_Hz;
 
+	_Bool OnStandbyMode_flag;
+
 }Display_Controls_t;
 
 extern Display_Controls_t Display_Controls;
@@ -167,16 +169,10 @@ void AppDisplay_SetDisplayState(ScreenState_t ScreenState);
 
 ScreenState_t AppDisplay_GetSavedDisplayState(void);
 void AppDisplay_SetSavedDisplayState(ScreenState_t ScreenState);
-//--------------------------------------------------------------
-// Possible displayed screens
-//--------------------------------------------------------------
 void AppDisplay_OnInitTask(void);
 void AppDisplay_RefreshDisplayTask(void);
 void AppDisplay_RefreshDisplay(const ScreenState_t SSD1322_Screen_State);
-void SSD1322_Screen_Welcome(uint8_t *const buffer);
-void SSD1322_Screen_Time(uint8_t *const buffer);//, RTC_TimeTypeDef *RtcTime, RTC_DateTypeDef *RtcDate);
-void SSD1322_Screen_Radio(uint8_t *const buffer);
-void SSD1322_Screen_WakeUp(uint8_t *const buffer);
+
 void SSD1322_Screen_FFT(uint8_t *const buffer, uint8_t *const FFT_out_buffer);
 void SSD1322_Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel, UV_meter_t right_channel, const uint8_t mode);
 void SSD1322_Screen_OFF(uint8_t *const buffer);

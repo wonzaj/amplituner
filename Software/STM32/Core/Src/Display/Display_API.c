@@ -13,18 +13,19 @@
 //--------------------------------------------------------------
 // Typedefs
 //--------------------------------------------------------------
+uint8_t Display_Buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 2];	//divided by 2 because one pixel takes 4 bits
 
 Display_Controls_t Display_Controls =
 {
-		.Screen_State = SCREEN_WakeUp,
-		.Screen_State_Saved = SCREEN_WakeUp,
-		.Refresh_Hz = DISPLAY_REFRESH_TIME_HZ,
+		.Screen_State 			= SCREEN_WAKEUP,
+		.Screen_State_Saved 	= SCREEN_WELCOME,
+		.Refresh_Hz 			= DISPLAY_REFRESH_TIME_HZ,
+		.OnStandbyMode_flag 	= false,
 };
 
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-uint8_t Display_Buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 2];	//divided by 2 because one pixel takes 4 bits
 
 static char ConvertArrayCharTime[10];
 static char TestingArray[40];
@@ -40,7 +41,6 @@ uint8_t settings_page = 0;
 uint8_t saved_seconds = 0;
 uint8_t saved_minutes = 0;
 char user_name[10];
-volatile _Bool is_display_on_standby_flag = false;
 
 //extern SettingsUserMenu_t 	 	SettingsUserMenu;
 //extern FFT_channel_source_e 		FFT_channel_source;
@@ -56,9 +56,12 @@ volatile _Bool is_display_on_standby_flag = false;
 // Static functions
 //--------------------------------------------------------------
 static void Display_Init(void);
-
+static void Screen_Welcome(uint8_t *const buffer);
+static void Screen_Time(uint8_t *const buffer);
+static void Screen_Radio(uint8_t *const buffer);
+static void SSD1322_Screen_WakeUp(uint8_t *const buffer);
 /**
- *  @brief init display on start
+ *  @brief init display api and drivers
  */
 static void Display_Init(void)
 {
@@ -68,6 +71,129 @@ static void Display_Init(void)
 	DisplayDriver_TX_ImageBuff(Display_Buffer, 0, 0);
 }
 
+//--------------------------------------------------------------
+// Possible displayed screens
+//--------------------------------------------------------------
+// ??
+static void Screen_Welcome(uint8_t *const buffer)
+{
+	draw_text(buffer, "Przyjemnosc ze sluchania ", 20, 15, 15);
+	draw_text(buffer, "zapewnia ", 20, 36, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'M', 20, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'A', 38, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'C', 53, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'I', 68, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'E', 78, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(200);
+	draw_char(buffer, 'J', 93, 55, 15);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+	HAL_Delay(1000);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+// ??
+static void Screen_Time(uint8_t *const buffer)
+{
+	// do zegara dodac wybor roznych czcionek
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
+	DisplayGrafics_SelectFont(&FreeSerifItalic24pt7b);
+	//wywoływać tylko co sekunde i nie sprawdzac nie potrzebne innych wartości
+	//aktualizacje czasu wywolywac timerem co sekunde
+	/* Setting Time */
+	ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
+	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 32, 5);
+	/* Setting Date */
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
+	ConvertDateToBuffer((2021 + sDate.Year), sDate.Month, sDate.WeekDay, sDate.Date);
+	draw_text(buffer, (char*) TestingArray, 2, 60, 5);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void Screen_Radio(uint8_t *const buffer)
+{
+	static uint16_t freq_scaled = 0;
+	static uint16_t rssi_scaled = 0;
+	static char RDStext[32];
+
+	if (RADIO_IS_ON_back_flag == true || RADIO_IS_ON_front_flag == true)
+	{
+		RDA5807_Read();
+	}
+	else
+	{
+		RDA5807_RDSinit();
+	}
+
+	freq_scaled = map(RDA5807_GetFrequency(), RADIO_MIN_FREQ, RADIO_MAX_FREQ, 20, 200);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
+
+	ChangeDateToArrayChar(RDA5807_GetFrequency());
+	draw_text(buffer, (char*) ConvertArrayCharLong, 20, 13, 5);
+
+	/* draw radio info */
+	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
+	draw_text(buffer, (char *)StationName, 150, 13, 5);
+	DisplayGrafics_SelectFont(&MACIEK_FONT);
+	if (prepare_RDS_text((char*) RDStext) == true)
+	{
+		draw_text(buffer, (char *)RDStextbuffer, 20, 32, 5); //zwraca stringa
+		//if(another string avaible == true)
+		{
+			//draw in the same place after 2 sec
+			//zrobić wtedy zmianę co 2 sec
+		}
+	}
+
+	/* Scale for frequency */
+	draw_freq_scale(buffer, freq_scaled);
+	/* Draw RSSI wskaźnik */
+	rssi_scaled = map(RDA5807_GetRSSI(), 0, 63, 0, 63);
+	draw_rect_filled(buffer, 0, 62 - rssi_scaled, 10, 63, 5);
+	/* Draw antenna */
+	DisplayGrafics_SelectFont(&Custon_chars);
+	draw_char(buffer, '!', 0, 16, 5); // ! - anntena in custom chars
+
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void SSD1322_Screen_WakeUp(uint8_t *const buffer)
+{
+	//zwiększanie głośności podczas budzenia
+	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+	uint8_t Hours = sTime.Hours;
+	uint8_t Minutes = sTime.Minutes;
+	uint8_t Seconds = sTime.Seconds;
+
+	uint8_t Mode = 0;
+
+	DisplayGrafics_SelectFont(&FreeSerifBoldItalic9pt7b);
+	draw_text(buffer, "WSTAWAJ !!!", 2, 58, 5);
+	ChangeDateToArrayCharTime(ConvertArrayCharTime, Hours, Minutes, Seconds, Mode);
+	DisplayGrafics_SelectFont(&FreeSerifBoldItalic24pt7b);
+	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 33, 5);
+	//dodać budzik który bedzie sie ruszal, czyli odswiezac i zmieniac go dwa razy na sekunde
+	//poprzez togglowanie flagi
+	//albo usunac napis wstawaj i dac tylko czas i animacje budzika
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
 //--------------------------------------------------------------
 // Possible displayed screens
 //--------------------------------------------------------------
@@ -84,7 +210,7 @@ void AppDisplay_RefreshDisplayTask(void)
 
 void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 {
-	if (is_display_on_standby_flag == true)
+	if (Display_Controls.OnStandbyMode_flag == true)
 	{
 //		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
@@ -101,18 +227,16 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 
 	switch (Screen_State)
 	{
-	case SCREEN_Welcome:
-		SSD1322_Screen_Welcome(Display_Buffer);
+	case SCREEN_WELCOME:
+		Screen_Welcome(Display_Buffer);
 		break;
 	case SCREEN_TIME:
-		SSD1322_Screen_Time(Display_Buffer);
+		Screen_Time(Display_Buffer);
 		break;
 	case SCREEN_RADIO:
-
-		SSD1322_Screen_Radio(Display_Buffer);
+		Screen_Radio(Display_Buffer);
 		break;
-	case SCREEN_WakeUp:
-
+	case SCREEN_WAKEUP:
 		SSD1322_Screen_WakeUp(Display_Buffer);
 		break;
 	case SCREEN_FFT:
@@ -122,11 +246,11 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 		}
 		break;
 	case SCREEN_UVMETER:
-		//if(UV_meter_front_back == UV_METER_BACK)
+		if(UV_meter_front_back == UV_METER_BACK)
 		{
 			SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[0], ADC_SamplesSUM[3], UV_meter_front_back);
 		}
-		//else if(UV_meter_front_back == UV_METER_FRONT)
+		else if(UV_meter_front_back == UV_METER_FRONT)
 		{
 			SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[2], ADC_SamplesSUM[1], UV_meter_front_back);
 		}
@@ -134,7 +258,7 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 	case SCREEN_OFF:
 		SSD1322_Screen_OFF(Display_Buffer);
 		break;
-	case SCREEN_GoodBye:
+	case SCREEN_GOODBYTE:
 		SSD1322_Screen_GoodBye(Display_Buffer);
 		break;
 	case SCREEN_SETCLOCK:
@@ -181,128 +305,6 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 		DisplayDriver_TX_ImageBuff(Display_Buffer, 0, 0);
 		break;
 	}
-}
-
-// ??
-void SSD1322_Screen_Welcome(uint8_t *const buffer)
-{
-	draw_text(buffer, "Przyjemnosc ze sluchania ", 20, 15, 15);
-	draw_text(buffer, "zapewnia ", 20, 36, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'M', 20, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'A', 38, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'C', 53, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'I', 68, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'E', 78, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(200);
-	draw_char(buffer, 'J', 93, 55, 15);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-	HAL_Delay(1000);
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Time(uint8_t *const buffer)
-{
-	// do zegara dodac wybor roznych czcionek
-//	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
-	DisplayGrafics_SelectFont(&FreeSerifItalic24pt7b);
-	//wywoływać tylko co sekunde i nie sprawdzac nie potrzebne innych wartości
-	//aktualizacje czasu wywolywac timerem co sekunde
-	/* Setting Time */
-//	ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
-	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 32, 5);
-	/* Setting Date */
-	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
-//	ConvertDateToBuffer((2021 + sDate.Year), sDate.Month, sDate.WeekDay, sDate.Date);
-	draw_text(buffer, (char*) TestingArray, 2, 60, 5);
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Radio(uint8_t *const buffer)
-{
-	static uint16_t freq_scaled = 0;
-	static uint16_t rssi_scaled = 0;
-	static char RDStext[32];
-
-	if (RADIO_IS_ON_back_flag == true || RADIO_IS_ON_front_flag == true)
-	{
-//		RDA5807_Read();
-	}
-	else
-	{
-//		RDA5807_RDSinit();
-	}
-
-//	freq_scaled = map(RDA5807_GetFrequency(), RADIO_MIN_FREQ, RADIO_MAX_FREQ, 20, 200);
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
-
-//	ChangeDateToArrayChar(RDA5807_GetFrequency());
-	draw_text(buffer, (char*) ConvertArrayCharLong, 20, 13, 5);
-
-	/* draw radio info */
-	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
-//	draw_text(buffer, (char *)StationName, 150, 13, 5);
-	DisplayGrafics_SelectFont(&MACIEK_FONT);
-	if (prepare_RDS_text((char*) RDStext) == true)
-	{
-//		draw_text(buffer, (char *)RDStextbuffer, 20, 32, 5); //zwraca stringa
-		//if(another string avaible == true)
-		{
-			//draw in the same place after 2 sec
-			//zrobić wtedy zmianę co 2 sec
-		}
-	}
-
-	/* Scale for frequency */
-	draw_freq_scale(buffer, freq_scaled);
-
-	/* Draw RSSI wskaźnik */
-//	rssi_scaled = map(RDA5807_GetRSSI(), 0, 63, 0, 63);
-	draw_rect_filled(buffer, 0, 62 - rssi_scaled, 10, 63, 5);
-	/* Draw antenna */
-	DisplayGrafics_SelectFont(&Custon_chars);
-	draw_char(buffer, '!', 0, 16, 5); // ! - anntena in custom chars
-
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_WakeUp(uint8_t *const buffer)
-{
-	//zwiększanie głośności podczas budzenia
-	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
-//	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-//	uint8_t Hours = sTime.Hours;
-//	uint8_t Minutes = sTime.Minutes;
-//	uint8_t Seconds = sTime.Seconds;
-
-	uint8_t Mode = 0;
-
-	DisplayGrafics_SelectFont(&FreeSerifBoldItalic9pt7b);
-	draw_text(buffer, "WSTAWAJ !!!", 2, 58, 5);
-//	ChangeDateToArrayCharTime(ConvertArrayCharTime, Hours, Minutes, Seconds, Mode);
-	DisplayGrafics_SelectFont(&FreeSerifBoldItalic24pt7b);
-	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 33, 5);
-	//dodać budzik który bedzie sie ruszal, czyli odswiezac i zmieniac go dwa razy na sekunde
-	//poprzez togglowanie flagi
-	//albo usunac napis wstawaj i dac tylko czas i animacje budzika
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_FFT(uint8_t *const buffer,
@@ -1360,10 +1362,10 @@ void AppDisplay_SaveCurrentDisplayState(void)
 	if (SSD1322_Screen_State_temp != AppDisplay_GetSavedDisplayState())
 	{
 		if((SSD1322_Screen_State_temp != (ENUM_MAX_USER_DISPLAY)
-				&& (SSD1322_Screen_State_temp != SCREEN_WakeUp)
-				&& (SSD1322_Screen_State_temp != SCREEN_Welcome)
+				&& (SSD1322_Screen_State_temp != SCREEN_WAKEUP)
+				&& (SSD1322_Screen_State_temp != SCREEN_WELCOME)
 				&& (SSD1322_Screen_State_temp != SCREEN_OFF)
-				&& (SSD1322_Screen_State_temp != SCREEN_GoodBye)
+				&& (SSD1322_Screen_State_temp != SCREEN_GOODBYTE)
 				&& (SSD1322_Screen_State_temp != ENUM_MAX_INVIS_DISPLAY)
 				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_FRONT)
 				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_BACK)
