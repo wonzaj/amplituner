@@ -25,11 +25,12 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "display_api.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
+typedef StaticTimer_t osStaticTimerDef_t;
 /* USER CODE BEGIN PTD */
 
 /* USER CODE END PTD */
@@ -67,6 +68,14 @@ const osThreadAttr_t displayTask_attributes = {
   .stack_size = sizeof(displayTaskBuffer),
   .priority = (osPriority_t) osPriorityHigh,
 };
+/* Definitions for RefreshDisplayTimer */
+osTimerId_t RefreshDisplayTimerHandle;
+osStaticTimerDef_t RefreshDisplayTimerControlBlock;
+const osTimerAttr_t RefreshDisplayTimer_attributes = {
+  .name = "RefreshDisplayTimer",
+  .cb_mem = &RefreshDisplayTimerControlBlock,
+  .cb_size = sizeof(RefreshDisplayTimerControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -75,6 +84,7 @@ const osThreadAttr_t displayTask_attributes = {
 
 void StartDefaultTask(void *argument);
 void displayTaskFunction(void *argument);
+void RefershDisplayTimer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -96,8 +106,13 @@ void MX_FREERTOS_Init(void) {
   /* add semaphores, ... */
   /* USER CODE END RTOS_SEMAPHORES */
 
+  /* Create the timer(s) */
+  /* creation of RefreshDisplayTimer */
+  RefreshDisplayTimerHandle = osTimerNew(RefershDisplayTimer_Callback, osTimerPeriodic, NULL, &RefreshDisplayTimer_attributes);
+
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
+
   /* USER CODE END RTOS_TIMERS */
 
   /* USER CODE BEGIN RTOS_QUEUES */
@@ -134,6 +149,7 @@ void StartDefaultTask(void *argument)
   /* Infinite loop */
   for(;;)
   {
+
     osDelay(1);
   }
   /* USER CODE END StartDefaultTask */
@@ -149,12 +165,22 @@ void StartDefaultTask(void *argument)
 void displayTaskFunction(void *argument)
 {
   /* USER CODE BEGIN displayTaskFunction */
+  AppDisplay_OnInitTask();
   /* Infinite loop */
   for(;;)
   {
-    osDelay(1);
+	AppDisplay_RefreshDisplayTask();
+    osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
   }
   /* USER CODE END displayTaskFunction */
+}
+
+/* RefershDisplayTimer_Callback function */
+void RefershDisplayTimer_Callback(void *argument)
+{
+  /* USER CODE BEGIN RefershDisplayTimer_Callback */
+
+  /* USER CODE END RefershDisplayTimer_Callback */
 }
 
 /* Private application code --------------------------------------------------*/

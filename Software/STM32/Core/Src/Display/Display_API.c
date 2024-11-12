@@ -12,13 +12,16 @@
 //--------------------------------------------------------------
 // Typedefs
 //--------------------------------------------------------------
-RTC_typeOfAlarm_t RTC_typeOfAlarm;
-RTC_typeOfAlarm_t RTC_typeOfAlarm_A;
-RTC_typeOfAlarm_t RTC_typeOfAlarm_B;
-SSD1322_ScreenState_t SSD1322_Screen_State; //static
-SSD1322_ScreenState_t SSD1322_Screen_State_Saved; //static
-Clock_Data_Change_t Clock_Data_Time;
-AlarmDataChange_t AlarmDataChange;
+
+Display_Controls_t Display_Controls =
+{
+		.Screen_State = SSD1322_SCREEN_WakeUp,
+		.Screen_State_Saved = SSD1322_SCREEN_WakeUp,
+		.Refresh_Hz = DISPLAY_REFRESH_TIME_HZ,
+};
+
+ScreenState_t Screen_State; //static
+ScreenState_t SSD1322_Screen_State_Saved; //static
 led_power_state_t led_power_state;
 display_mode_t display_mode;
 
@@ -95,16 +98,40 @@ static const char *Disp_standby_str = "Standby"; //gasi wyświetlacz po 1 min br
 static const char *Disp_time_str = "Time"; //co godzine pokazuje zegar przez minute , czyli drugi wyswietlacz
 
 __attribute__((__unused__))static const char *FFT_front_left_str = "Front left";
-__attribute__((__unused__))static const char *FFT_front_right_str =
-		"Front right";
+__attribute__((__unused__))static const char *FFT_front_right_str = "Front right";
 __attribute__((__unused__))static const char *FFT_back_left_str = "Back left";
 __attribute__((__unused__))static const char *FFT_back_right_str = "Back right";
+//--------------------------------------------------------------
+// Static functions
+//--------------------------------------------------------------
+static void Display_Init(void);
+
+/**
+ *  @brief init display on start
+ */
+static void Display_Init(void)
+{
+	DisplayDriver_API_Init();
+	DisplayGrafics_SelectFont(&MACIEK_FONT);
+	DisplayDriver_FillBufferWithValue(Display_Buffer, 15);
+	DisplayDriver_TX_ImageBuff(Display_Buffer, 0, 0);
+}
 
 //--------------------------------------------------------------
 // Possible displayed screens
 //--------------------------------------------------------------
+void AppDisplay_OnInitTask(void)
+{
+	Display_Init();
+}
 
-void AppDisplay_RefreshDisplay(const SSD1322_ScreenState_t SSD1322_Screen_State)
+void AppDisplay_RefreshDisplayTask(void)
+{
+	AppDisplay_RefreshDisplay(Display_Controls.Screen_State);
+
+}
+
+void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 {
 	if (is_display_on_standby_flag == true)
 	{
@@ -121,88 +148,86 @@ void AppDisplay_RefreshDisplay(const SSD1322_ScreenState_t SSD1322_Screen_State)
 		}
 	}
 
-	switch (SSD1322_Screen_State)
+	switch (Screen_State)
 	{
 	case SSD1322_SCREEN_Welcome:
-		SSD1322_Screen_Welcome(DisplayOLEDBuffer);
+		SSD1322_Screen_Welcome(Display_Buffer);
 		break;
-	case SSD1322_SCREEN_TIME:
-		SSD1322_Screen_Time(DisplayOLEDBuffer);
+	case SCREEN_TIME:
+		SSD1322_Screen_Time(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_RADIO:
 
-		SSD1322_Screen_Radio(DisplayOLEDBuffer);
+		SSD1322_Screen_Radio(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_WakeUp:
 
-		SSD1322_Screen_WakeUp(DisplayOLEDBuffer);
+		SSD1322_Screen_WakeUp(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_FFT:
 		if (FFT_calc_done == 1)
 		{
-			SSD1322_Screen_FFT(DisplayOLEDBuffer, OutFreqArray);
+			SSD1322_Screen_FFT(Display_Buffer, OutFreqArray);
 		}
 		break;
 	case SSD1322_SCREEN_UVMETER:
 		//if(UV_meter_front_back == UV_METER_BACK)
 	{
-		SSD1322_Screen_UVMeter(DisplayOLEDBuffer, ADC_SamplesSUM[0],
-				ADC_SamplesSUM[3], UV_meter_front_back);
+		SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[0], ADC_SamplesSUM[3], UV_meter_front_back);
 	}
 		//else if(UV_meter_front_back == UV_METER_FRONT)
 		{
-			SSD1322_Screen_UVMeter(DisplayOLEDBuffer, ADC_SamplesSUM[2],
-					ADC_SamplesSUM[1], UV_meter_front_back);
+			SSD1322_Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[2], ADC_SamplesSUM[1], UV_meter_front_back);
 		}
 		break;
 	case SSD1322_SCREEN_OFF:
-		SSD1322_Screen_OFF(DisplayOLEDBuffer);
+		SSD1322_Screen_OFF(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_GoodBye:
-		SSD1322_Screen_GoodBye(DisplayOLEDBuffer);
+		SSD1322_Screen_GoodBye(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_SETCLOCK:
-		SSD1322_Screen_SetClock(DisplayOLEDBuffer);
+		SSD1322_Screen_SetClock(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_SETALARM:
-		SSD1322_Screen_SetAlarm(DisplayOLEDBuffer);
+		SSD1322_Screen_SetAlarm(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_SETTINGS:
-		SSD1322_Screen_Settings(DisplayOLEDBuffer);
+		SSD1322_Screen_Settings(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_SNAKE:
-		SSD1322_Screen_Snake(DisplayOLEDBuffer);
+		SSD1322_Screen_Snake(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_USB:
-		SSD1322_Screen_USB(DisplayOLEDBuffer);
+		SSD1322_Screen_USB(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_SETINPUT:
-		SSD1322_Screen_SetInput(DisplayOLEDBuffer);
+		SSD1322_Screen_SetInput(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_TIME_BOUNCING:
-		SSD1322_Screen_Time_Bouncing(DisplayOLEDBuffer);
+		SSD1322_Screen_Time_Bouncing(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_VOLUME_FRONT:
-		SSD1322_Screen_Encoder_Volume_Front(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Volume_Front(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_VOLUME_BACK:
-		SSD1322_Screen_Encoder_Volume_Back(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Volume_Back(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_LOUDNESS:
-		SSD1322_Screen_Encoder_Loudness(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Loudness(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_TREBLE:
-		SSD1322_Screen_Encoder_Treble(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Treble(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_MIDDLE:
-		SSD1322_Screen_Encoder_Middle(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Middle(Display_Buffer);
 		break;
 	case SSD1322_SCREEN_ENCODER_BASS:
-		SSD1322_Screen_Encoder_Bass(DisplayOLEDBuffer);
+		SSD1322_Screen_Encoder_Bass(Display_Buffer);
 		break;
 	default:
-		fill_buffer(DisplayOLEDBuffer, 0);
-		send_buffer_to_OLED(DisplayOLEDBuffer, 0, 0);
+		DisplayDriver_FillBufferWithValue(Display_Buffer, 0);
+		DisplayDriver_TX_ImageBuff(Display_Buffer, 0, 0);
 		break;
 	}
 }
@@ -212,28 +237,28 @@ void SSD1322_Screen_Welcome(uint8_t *const buffer)
 {
 	draw_text(buffer, "Przyjemnosc ze sluchania ", 20, 15, 15);
 	draw_text(buffer, "zapewnia ", 20, 36, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'M', 20, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'A', 38, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'C', 53, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'I', 68, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'E', 78, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(200);
 	draw_char(buffer, 'J', 93, 55, 15);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 	HAL_Delay(1000);
-	fill_buffer(buffer, 0);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Time(uint8_t *const buffer)
@@ -242,18 +267,18 @@ void SSD1322_Screen_Time(uint8_t *const buffer)
 //	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
-	fill_buffer(buffer, DISPLAY_BLACK);
-	select_font(&FreeSerifItalic24pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
+	DisplayGrafics_SelectFont(&FreeSerifItalic24pt7b);
 	//wywoływać tylko co sekunde i nie sprawdzac nie potrzebne innych wartości
 	//aktualizacje czasu wywolywac timerem co sekunde
 	/* Setting Time */
 //	ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
 	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 32, 5);
 	/* Setting Date */
-	select_font(&FreeSerifItalic9pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 //	ConvertDateToBuffer((2021 + sDate.Year), sDate.Month, sDate.WeekDay, sDate.Date);
 	draw_text(buffer, (char*) TestingArray, 2, 60, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Radio(uint8_t *const buffer)
@@ -272,16 +297,16 @@ void SSD1322_Screen_Radio(uint8_t *const buffer)
 	}
 
 //	freq_scaled = map(RDA5807_GetFrequency(), RADIO_MIN_FREQ, RADIO_MAX_FREQ, 20, 200);
-	fill_buffer(buffer, 0);
-	select_font(&FreeSerifBold9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
 
 //	ChangeDateToArrayChar(RDA5807_GetFrequency());
 	draw_text(buffer, (char*) ConvertArrayCharLong, 20, 13, 5);
 
 	/* draw radio info */
-	select_font(&FreeSerifBold9pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifBold9pt7b);
 //	draw_text(buffer, (char *)StationName, 150, 13, 5);
-	select_font(&MACIEK_FONT);
+	DisplayGrafics_SelectFont(&MACIEK_FONT);
 	if (prepare_RDS_text((char*) RDStext) == true)
 	{
 //		draw_text(buffer, (char *)RDStextbuffer, 20, 32, 5); //zwraca stringa
@@ -299,16 +324,16 @@ void SSD1322_Screen_Radio(uint8_t *const buffer)
 //	rssi_scaled = map(RDA5807_GetRSSI(), 0, 63, 0, 63);
 	draw_rect_filled(buffer, 0, 62 - rssi_scaled, 10, 63, 5);
 	/* Draw antenna */
-	select_font(&Custon_chars);
+	DisplayGrafics_SelectFont(&Custon_chars);
 	draw_char(buffer, '!', 0, 16, 5); // ! - anntena in custom chars
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_WakeUp(uint8_t *const buffer)
 {
 	//zwiększanie głośności podczas budzenia
-	fill_buffer(buffer, DISPLAY_BLACK);
+	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
 //	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 
@@ -318,23 +343,23 @@ void SSD1322_Screen_WakeUp(uint8_t *const buffer)
 
 	uint8_t Mode = 0;
 
-	select_font(&FreeSerifBoldItalic9pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifBoldItalic9pt7b);
 	draw_text(buffer, "WSTAWAJ !!!", 2, 58, 5);
 //	ChangeDateToArrayCharTime(ConvertArrayCharTime, Hours, Minutes, Seconds, Mode);
-	select_font(&FreeSerifBoldItalic24pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifBoldItalic24pt7b);
 	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 33, 5);
 	//dodać budzik który bedzie sie ruszal, czyli odswiezac i zmieniac go dwa razy na sekunde
 	//poprzez togglowanie flagi
 	//albo usunac napis wstawaj i dac tylko czas i animacje budzika
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_FFT(uint8_t *const buffer,
 		__attribute__((__unused__))  uint8_t *const FFT_out_buffer)
 {
 	FFT_calc_done = 0;
-	select_font(&FreeSerif9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 //	switch (FFT_channel_source)
 //	    {
 //		case FFT_front_left:
@@ -367,21 +392,21 @@ void SSD1322_Screen_FFT(uint8_t *const buffer,
 		j = j + 10;
 	}
 
-	select_font(&TomThumb);
+	DisplayGrafics_SelectFont(&TomThumb);
 	draw_text(buffer, "50", 10, 5, 5);
 	draw_text(buffer, "200", 50, 5, 5);
 	draw_text(buffer, "2k", 140, 5, 5);
 	draw_text(buffer, "20k", 220, 5, 5);
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel,
 		UV_meter_t right_channel, const uint8_t mode)
 {
 	//efekt spadającej wartości peak do włączenia
-	select_font(&FreeSerifItalic9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	left_channel = map(left_channel, 20, 2100, 25, 254); //dodać zabezpieczenie przed przekroczeniem zakresów
 	right_channel = map(right_channel, 20, 2100, 25, 254);
 
@@ -399,39 +424,39 @@ void SSD1322_Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel,
 
 	draw_char(buffer, 'L', 2, 23, 10); // powinien być wyświetlany czy to jest lewy front czy prawy front
 	draw_char(buffer, 'P', 2, 55, 10);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_OFF(uint8_t *const buffer)
 {
-	select_font(&FreeSerif9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "Screen_OFF  (:", 5, 32, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_GoodBye(uint8_t *const buffer)
 {
 	//dodać argument z wyświetlanym imieniem użytkownika i pożegnanie do niego
-	fill_buffer(buffer, 0);
-	select_font(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
 	draw_text(buffer, "GoodBye  (:", 5, 32, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_SetClock(uint8_t *const buffer)
 {
-	fill_buffer(buffer, 0);
-	select_font(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
 	draw_text(buffer, "SetClock  (:", 5, 32, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 {
 	/* Alaways reset display buffer to zero*/
-	fill_buffer(buffer, DISPLAY_BLACK);
-	select_font(&FreeSerifItalic9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 
 	/* Checks if display mode is set to preview set alarms or modify them  */
 	if (PreviewAlarm == true)
@@ -460,12 +485,12 @@ void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 		draw_text(buffer, "Alarm B", 172, 55, 5);
 
 		/* Drawing a pointer to selected ALARM.  */
-		select_font(&FreeSerifItalic24pt7b);
+		DisplayGrafics_SelectFont(&FreeSerifItalic24pt7b);
 //		ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm.AlarmTime.Hours, Alarm.AlarmTime.Minutes, 0, 1);
 		draw_text(buffer, (char*) ConvertArrayCharTime, 5, 32, 5);
 
 		/* Drawing alarm mode */
-		select_font(&FreeSerifItalic9pt7b);
+		DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 		Set_Alarm_Mode(RTC_typeOfAlarm);
 		draw_text(buffer, (char*) AlarmMode, 5, 60, 5);
 	}
@@ -481,7 +506,7 @@ void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 		{	//tutaj zmienic czcionkę na ładną
 			if (IS_ALARM_SET_A == true)
 			{
-				select_font(&FreeSerif9pt7b);
+				DisplayGrafics_SelectFont(&FreeSerif9pt7b);
 //				ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
 				draw_text(buffer, (char*) buffer, 2, 30, 5);
 				Set_Alarm_Mode(RTC_typeOfAlarm_A);
@@ -493,7 +518,7 @@ void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 			}
 			if (IS_ALARM_SET_B == true)
 			{
-				select_font(&FreeSerif9pt7b);
+				DisplayGrafics_SelectFont(&FreeSerif9pt7b);
 //				ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm_B.AlarmTime.Hours, Alarm_B.AlarmTime.Minutes, 0, 1);
 				draw_text(buffer, (char*) ConvertArrayCharTime, 2, 60, 5);
 				Set_Alarm_Mode(RTC_typeOfAlarm_B);
@@ -508,13 +533,13 @@ void SSD1322_Screen_SetAlarm(uint8_t *const buffer)
 		}
 	}
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Settings(uint8_t *const buffer)
 {
-	select_font(&FreeMonoOblique9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeMonoOblique9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 
 	if (settings_page == PAGE_SETTINGS_1)
 	{
@@ -540,7 +565,7 @@ void SSD1322_Screen_Settings(uint8_t *const buffer)
 	}
 
 	draw_pointer(buffer);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Snake(uint8_t *const buffer)
@@ -559,19 +584,19 @@ void SSD1322_Screen_Snake(uint8_t *const buffer)
 	//random_x = (rand()%100);
 	//random_y = (int)(rand() / (RAND_MAX + 1.0) * 100.0);
 
-	select_font(&FreeMonoOblique9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeMonoOblique9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 
 	draw_text(buffer, "SNAKE", 15, 15, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_USB(uint8_t *const buffer)
 {
-	select_font(&FreeSerif9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "USB", 5, 32, 5);
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Time_Bouncing(uint8_t *const buffer)
@@ -584,7 +609,7 @@ void SSD1322_Screen_Time_Bouncing(uint8_t *const buffer)
 
 //	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 //	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-	select_font(&FreeSansBold9pt7b);
+	DisplayGrafics_SelectFont(&FreeSansBold9pt7b);
 
 	if (get_random_coords(&random_x_to, &random_y_to) == true)
 	{
@@ -597,8 +622,8 @@ void SSD1322_Screen_Time_Bouncing(uint8_t *const buffer)
 
 void SSD1322_Screen_SetInput(uint8_t *const buffer)
 {
-	select_font(&FreeSerif9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "Front input:", 10, 20, 5);
 	draw_text(buffer, "Back  input:", 10, 50, 5);
 //	switch (TDA7719_config.set_input_front)
@@ -644,35 +669,35 @@ void SSD1322_Screen_SetInput(uint8_t *const buffer)
 //	    }
 	//TDA7719_config.set_input_front = TDA7719_config.audio_source;
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Volume_Front(uint8_t *const buffer)
 {
-	fill_buffer(buffer, 0);
-	select_font(&TomThumb);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&TomThumb);
 	draw_char(buffer, '0', 195, 53, 5);
 	draw_text(buffer, "-80", 2, 53, 5);
 	draw_text(buffer, "+15", 225, 53, 5);
-	select_font(&FreeSerifItalic9pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 	draw_text(buffer, "dB", 235, 63, 5);
 	draw_encoder_volume_front_scale(buffer);
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Volume_Back(uint8_t *const buffer)
 {
-	fill_buffer(buffer, 0);
-	select_font(&TomThumb);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&TomThumb);
 	draw_char(buffer, '0', 195, 53, 5);
 	draw_text(buffer, "-80", 2, 53, 5);
 	draw_text(buffer, "+15", 225, 53, 5);
-	select_font(&FreeSerifItalic9pt7b);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 	draw_text(buffer, "dB", 235, 63, 5);
 	draw_encoder_volume_back_scale(buffer);
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Loudness(uint8_t *const buffer)
@@ -682,15 +707,15 @@ void SSD1322_Screen_Encoder_Loudness(uint8_t *const buffer)
 		display_gain_tab[i] = 0;
 	}
 
-	select_font(&FreeSerif9pt7b);
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "LOUDNESS", 70, 15, 5);
-	select_font(&FreeSans9pt7b);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
 	draw_text(buffer, "Mid freq:", 25, 40, 5);
 	draw_text(buffer, "Gain:", 50, 63, 5);
 	draw_gain_and_freq_loudness(buffer);
 
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer)
@@ -700,10 +725,10 @@ void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer)
 		display_gain_tab[i] = 0;
 	}
 
-	select_font(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "TREBLE", 70, 15, 5);
-	select_font(&FreeSans9pt7b);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
 	draw_text(buffer, "Mid freq:", 25, 40, 5);
 	draw_text(buffer, "Gain:", 50, 63, 5);
 //	draw_gain_and_freq(encoderFilterTreble.gain - 16);
@@ -726,7 +751,7 @@ void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer)
 //	default:
 //		break;
 //	}
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Middle(uint8_t *const buffer)
@@ -737,10 +762,10 @@ void SSD1322_Screen_Encoder_Middle(uint8_t *const buffer)
 		display_gain_tab[i] = 0;
 	}
 
-	select_font(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "MIDDLE", 70, 15, 5);
-	select_font(&FreeSans9pt7b);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
 	draw_text(buffer, "Q fact:", 25, 40, 5);
 	draw_text(buffer, "Gain:", 50, 63, 5);
 //	draw_gain_and_freq(encoderFilterMiddle.gain - 16);
@@ -763,7 +788,7 @@ void SSD1322_Screen_Encoder_Middle(uint8_t *const buffer)
 //		default:
 //		break;
 //	    }
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 void SSD1322_Screen_Encoder_Bass(uint8_t *const buffer)
@@ -774,10 +799,10 @@ void SSD1322_Screen_Encoder_Bass(uint8_t *const buffer)
 		display_gain_tab[i] = 0;
 	}
 
-	select_font(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	fill_buffer(buffer, 0);
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
 	draw_text(buffer, "BASS", 70, 15, 5);
-	select_font(&FreeSans9pt7b);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
 	draw_text(buffer, "Q fact:", 25, 40, 5);
 	draw_text(buffer, "Gain:", 50, 63, 5);
 //	draw_gain_and_freq(encoderFilterBass.gain - 16);
@@ -800,7 +825,7 @@ void SSD1322_Screen_Encoder_Bass(uint8_t *const buffer)
 //		default:
 //		break;
 //	    }
-	send_buffer_to_OLED(buffer, 0, 0);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 //SSD1322_Screen_draw_signal_oscyloscope();
@@ -1225,7 +1250,7 @@ void draw_freq_scale(uint8_t *const buffer, uint16_t freq_scaled)
 void draw_alarmsSource(uint8_t *const buffer)
 {
 
-	select_font(&FreeMonoOblique9pt7b);
+	DisplayGrafics_SelectFont(&FreeMonoOblique9pt7b);
 //	switch (SettingsUserMenu.AlarmSource_A)
 //	{
 //	case JACK_1:
@@ -1273,7 +1298,7 @@ void draw_alarmsSource(uint8_t *const buffer)
 void draw_pointer(uint8_t *const buffer)
 {
 
-	select_font(&FreeSerif24pt7b);
+	DisplayGrafics_SelectFont(&FreeSerif24pt7b);
 //	switch (SettingsUserMenu.SETTINGS_USER_MENU)
 //	{
 //	case REFRESH_SCREEN_TIME:
@@ -1329,7 +1354,7 @@ void draw_refreshTime(uint8_t *const buffer)
 
 void draw_powerLED(uint8_t *const buffer)
 {
-	select_font(&FreeMonoOblique9pt7b);
+	DisplayGrafics_SelectFont(&FreeMonoOblique9pt7b);
 //	switch (SettingsUserMenu.Power_LED)
 //	{
 //	case POWER_OFF:
@@ -1354,7 +1379,7 @@ void draw_powerLED(uint8_t *const buffer)
 
 void draw_displayMode(uint8_t *const buffer)
 {
-	select_font(&FreeMonoOblique9pt7b);
+	DisplayGrafics_SelectFont(&FreeMonoOblique9pt7b);
 //	switch (SettingsUserMenu.Display_mode)
 //	{
 //	case Disp_normal:
@@ -1379,7 +1404,7 @@ void draw_displayMode(uint8_t *const buffer)
 //--------------------------------------------------------------
 void AppDisplay_SaveCurrentDisplayState(void)
 {
-	SSD1322_ScreenState_t SSD1322_Screen_State_temp =
+	ScreenState_t SSD1322_Screen_State_temp =
 			AppDisplay_GetDisplayState();
 
 	if (SSD1322_Screen_State_temp != AppDisplay_GetSavedDisplayState())
@@ -1409,18 +1434,18 @@ void AppDisplay_SaveCurrentDisplayState(void)
 
 void change_display_state(TIM_HandleTypeDef *htim)
 {
-	SSD1322_ScreenState_t SSD1322_Screen_State_temp =
+	ScreenState_t SSD1322_Screen_State_temp =
 			AppDisplay_GetDisplayState();
 
 //	if (SettingsUserMenu.RefreshScreenTime != 65535) // change display if timer is set
 	{
-		if ((SSD1322_Screen_State_temp >= SSD1322_SCREEN_TIME)
+		if ((SSD1322_Screen_State_temp >= SCREEN_TIME)
 				&& (SSD1322_Screen_State_temp <= SSD1322_SCREEN_TIME_BOUNCING))
 		{
 			AppDisplay_SetDisplayState(SSD1322_Screen_State_temp + 1);
 
 			if (SSD1322_SCREEN_SETINPUT == SSD1322_Screen_State_temp)
-				SSD1322_Screen_State_temp = SSD1322_SCREEN_TIME;
+				SSD1322_Screen_State_temp = SCREEN_TIME;
 			htim->Instance->CNT = 0;
 
 			/* Check if ADC is needed */
@@ -1738,25 +1763,25 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 
 		if (steep)
 		{
-			if (SSD1322_Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
+			if (Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
 				return;
-			fill_buffer(frame_buffer, 0);
+			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
 //			ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
 			draw_text(frame_buffer, (char*) ConvertArrayCharTime, y0, x0,
 					brightness);
-			send_buffer_to_OLED(frame_buffer, 0, 0);
+			DisplayDriver_TX_ImageBuff(frame_buffer, 0, 0);
 		}
 		else
 		{
-			if (SSD1322_Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
+			if (Screen_State != SSD1322_SCREEN_TIME_BOUNCING)
 				return;
-			fill_buffer(frame_buffer, 0);
+			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
 //			ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
 			draw_text(frame_buffer, (char*) ConvertArrayCharTime, x0, y0,
 					brightness);
-			send_buffer_to_OLED(frame_buffer, 0, 0);
+			DisplayDriver_TX_ImageBuff(frame_buffer, 0, 0);
 			//można dodać flagę volatile która jest sprawdzana jeżeli zmieniono ekran
 		}
 		err -= dy;
@@ -1768,33 +1793,21 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 	}
 }
 
-//====================== init display on start ========================//
-/**
- *  @brief init display on start
- */
-void display_init_on_start(void)
+ScreenState_t AppDisplay_GetDisplayState(void)
 {
-	SSD1322_API_Init();
-	select_font(&MACIEK_FONT);
-	fill_buffer(Display_Buffer, 15);
-	send_buffer_to_OLED(Display_Buffer, 0, 0);
+	return Screen_State;
 }
 
-SSD1322_ScreenState_t AppDisplay_GetDisplayState(void)
+void AppDisplay_SetDisplayState(ScreenState_t ScreenState)
 {
-	return SSD1322_Screen_State;
+	Screen_State = ScreenState;
 }
 
-void AppDisplay_SetDisplayState(SSD1322_ScreenState_t ScreenState)
-{
-	SSD1322_Screen_State = ScreenState;
-}
-
-SSD1322_ScreenState_t AppDisplay_GetSavedDisplayState(void)
+ScreenState_t AppDisplay_GetSavedDisplayState(void)
 {
 	return SSD1322_Screen_State_Saved;
 }
-void AppDisplay_SetSavedDisplayState(SSD1322_ScreenState_t ScreenState)
+void AppDisplay_SetSavedDisplayState(ScreenState_t ScreenState)
 {
 	SSD1322_Screen_State_Saved = ScreenState;
 }

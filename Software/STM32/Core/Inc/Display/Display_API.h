@@ -1,38 +1,41 @@
 #ifndef INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 #define INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 
-//#include <buttons/app_buttons.h>
-//#include "rtc.h"
+#include "rtc.h"
 #include "string.h"
 //#include "rng.h"
 #include "stdbool.h"
 #include "stdlib.h"
 
-#include "Display/SSD1322_API.h"
-//#include "Display/SSD1322_GFX.h"
-#include "Display/Fonts/FreeMono9pt7b.h"
-#include "Display/Fonts/Maciek.h"
-#include "Display/Fonts/FreeSerifItalic24pt7b.h"
-#include "Display/Fonts/FreeSerifItalic9pt7b.h"
-#include "Display/Fonts/FreeSerifBold9pt7b.h"
-#include "Display/Fonts/custom_chars.h"
-#include "Display/Fonts/FreeSerifBoldItalic24pt7b.h"
-#include "Display/Fonts/FreeSerifBoldItalic9pt7b.h"
-#include "Display/Fonts/FreeSerif9pt7b.h"
-#include "Display/Fonts/TomThumb.h"
-#include "Display/Fonts/FreeMonoOblique9pt7b.h"
-#include "Display/Fonts/FreeSansBold9pt7b.h"
-#include "Display/Fonts/FreeSans9pt7b.h"
-#include "Display/Fonts/FreeSerif24pt7b.h"
-
-//#include "Preamp/TDA7719.h"
-//#include "radio/RDA5807m.h"
-//#include "Encoders/app_encoders.h"
-//#include "buttons/hal_buttons.h"
+#include "app_buttons.h"
+#include "TDA7719.h"
+#include "RDA5807m.h"
+#include "app_encoders.h"
+#include "hal_buttons.h"
+#include "SSD1322_API.h"
+#include "SSD1322_GFX.h"
+// Fonts
+#include "FreeMono9pt7b.h"
+#include "Maciek.h"
+#include "FreeSerifItalic24pt7b.h"
+#include "FreeSerifItalic9pt7b.h"
+#include "FreeSerifBold9pt7b.h"
+#include "custom_chars.h"
+#include "FreeSerifBoldItalic24pt7b.h"
+#include "FreeSerifBoldItalic9pt7b.h"
+#include "FreeSerif9pt7b.h"
+#include "TomThumb.h"
+#include "FreeMonoOblique9pt7b.h"
+#include "FreeSansBold9pt7b.h"
+#include "FreeSans9pt7b.h"
+#include "FreeSerif24pt7b.h"
 
 //--------------------------------------------------------------
 // Defines
 //--------------------------------------------------------------
+#define DISPLAY_FPS				5	/* Too high value may affect systems's responsiveness */
+#define DISPLAY_REFRESH_TIME_HZ (1000/DISPLAY_FPS)
+
 #define PRZECINEK 44
 #define ASCII_DWUKROPEK 58
 #define ASCII_DIGIT_OFFSET 48
@@ -57,12 +60,12 @@
 //--------------------------------------------------------------
 // extern variables
 //--------------------------------------------------------------
-//extern RTC_TimeTypeDef 	 sTime;
-//extern RTC_DateTypeDef 	 sDate;
-//extern RTC_DateTypeDef 	 pDate;
-//extern RTC_AlarmTypeDef  Alarm_A;
-//extern RTC_AlarmTypeDef  Alarm_B;
-//extern RTC_AlarmTypeDef  Alarm;
+extern RTC_TimeTypeDef 	 sTime;
+extern RTC_DateTypeDef 	 sDate;
+extern RTC_DateTypeDef 	 pDate;
+extern RTC_AlarmTypeDef  Alarm_A;
+extern RTC_AlarmTypeDef  Alarm_B;
+extern RTC_AlarmTypeDef  Alarm;
 //extern RNG_HandleTypeDef hrng;
 
 //extern encoderFilter_t 	 encoderFilterTreble;
@@ -95,20 +98,10 @@ extern char AlarmMode[25];
 
 typedef uint16_t UV_meter_t;
 
-//
-typedef enum
-{
-    ONLY_ONE_TIME_ALARM = 1,
-    ONLY_WEEKENDS_ALARM,
-    EVERYDAY_ALARM,
-    MON_to_FRI_ALARM,
-    EXACT_DATE_ALRAM
-}RTC_typeOfAlarm_t;
-
 /* Most important enum. Declares display state */
 typedef enum
 {
-    SSD1322_SCREEN_TIME = 1,
+    SCREEN_TIME = 1,
     SSD1322_SCREEN_RADIO,
     SSD1322_SCREEN_FFT,
     SSD1322_SCREEN_UVMETER,
@@ -137,32 +130,7 @@ typedef enum
     SSD1322_SCREEN_ENCODER_RADIO,
     ENUM_MAX
 
-}SSD1322_ScreenState_t;
-
-
-typedef enum
-{
-    HOUR = 1,
-    MINUTE = 2,
-    DAYWEEK = 3,
-    DAY = 4,
-    MODE = 5,
-    SECOND = 6,
-    MONTH = 7,
-    YEAR = 8
-} Clock_Data_Change_t;
-
-
-typedef enum
-{
-    HOUR_ALARM = 1,
-    MINUTE_ALARM = 2,
-    DAYWEEK_ALARM = 3,
-    MODE_ALARM = 4,
-    SET_ALARM = 5,
-    PREVIEW_ALARM
-} AlarmDataChange_t;
-
+}ScreenState_t;
 
 typedef enum
 {
@@ -184,15 +152,27 @@ typedef enum
 
 }display_mode_t;
 
-SSD1322_ScreenState_t AppDisplay_GetDisplayState(void);
-void AppDisplay_SetDisplayState(SSD1322_ScreenState_t ScreenState);
+typedef struct
+{
+	ScreenState_t 	Screen_State;
+	ScreenState_t 	Screen_State_Saved;
+	uint32_t 		Refresh_Hz;
 
-SSD1322_ScreenState_t AppDisplay_GetSavedDisplayState(void);
-void AppDisplay_SetSavedDisplayState(SSD1322_ScreenState_t ScreenState);
+}Display_Controls_t;
+
+extern Display_Controls_t Display_Controls;
+
+ScreenState_t AppDisplay_GetDisplayState(void);
+void AppDisplay_SetDisplayState(ScreenState_t ScreenState);
+
+ScreenState_t AppDisplay_GetSavedDisplayState(void);
+void AppDisplay_SetSavedDisplayState(ScreenState_t ScreenState);
 //--------------------------------------------------------------
 // Possible displayed screens
 //--------------------------------------------------------------
-void AppDisplay_RefreshDisplay(const SSD1322_ScreenState_t SSD1322_Screen_State);
+void AppDisplay_OnInitTask(void);
+void AppDisplay_RefreshDisplayTask(void);
+void AppDisplay_RefreshDisplay(const ScreenState_t SSD1322_Screen_State);
 void SSD1322_Screen_Welcome(uint8_t *const buffer);
 void SSD1322_Screen_Time(uint8_t *const buffer);//, RTC_TimeTypeDef *RtcTime, RTC_DateTypeDef *RtcDate);
 void SSD1322_Screen_Radio(uint8_t *const buffer);
@@ -235,7 +215,6 @@ void draw_pointer(uint8_t *const buffer);
 void draw_refreshTime(uint8_t *const buffer);
 void draw_powerLED(uint8_t *const buffer);
 void draw_displayMode(uint8_t *const buffer);
-void display_init_on_start(void);
 
 //--------------------------------------------------------------
 // Other functions declarations
@@ -253,9 +232,5 @@ uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uin
 _Bool prepare_RDS_text(char *RDS_text);
 _Bool  get_random_coords(uint32_t *random_x, uint32_t *random_y);
 void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness);
-
-extern void Set_Alarm_Mode(RTC_typeOfAlarm_t typeOfAlarm);
-extern void switch_change_time(Clock_Data_Change_t Clock , _Bool add_subb);
-extern void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb);
 
 #endif /* INC_DISPLAY_OLED_DRAWS_DISPLAY_H_ */

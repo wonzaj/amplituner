@@ -68,7 +68,7 @@ enum SSD1322_mode_e
 
 void SSD1322_API_Send_Command(uint8_t command);
 void SSD1322_API_Send_Data(uint8_t data);
-void SSD1322_API_Init(void);
+void DisplayDriver_API_Init(void);
 void SSD1322_API_Sleep_On(void);
 void SSD1322_API_Sleep_Off(void);
 void SSD1322_API_Set_DisplayMode(enum SSD1322_mode_e mode);

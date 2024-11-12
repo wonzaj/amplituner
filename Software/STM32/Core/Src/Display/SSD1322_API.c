@@ -36,7 +36,7 @@ void SSD1322_API_Send_Data(uint8_t data)
 /**
  *  @brief Initializes SSD1322 OLED display.
  */
-void SSD1322_API_Init()
+void DisplayDriver_API_Init()
 {
 	SSD1322_HW_SetPin_RESET_LOW();  			//Reset pin low
 	SSD1322_HW_msDelay(1);                  	//1ms delay
@@ -264,7 +264,7 @@ void SSD1322_API_Send_Buffer(uint8_t *buffer, uint32_t buffer_size)
  *             y position of frame buffer part that will be displayed on OLED Useful for vertical scrolling.
 
  */
-void send_buffer_to_OLED(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y)
+void DisplayDriver_TX_ImageBuff(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y)
 {
 	SSD1322_API_Set_Window(0, 63, 0, 255);
 	SSD1322_API_Send_Buffer(frame_buffer + (start_y * DISPLAY_WIDTH / 2) + start_x, 8192);

@@ -39,7 +39,7 @@ void set_buffer_size(uint16_t _buffer_width, uint16_t buffer_height)
  *  @param[in] brightness
  *             brightness value of pixel (range 0-15 dec or 0x00-0x0F hex)
  */
-void fill_buffer(uint8_t *frame_buffer, uint8_t brightness)
+void DisplayDriver_FillBufferWithValue(uint8_t *frame_buffer, uint8_t brightness)
 {
 	uint8_t byte_value = (brightness << 4) | brightness;
 	uint32_t buffer_size = _buffer_height * _buffer_width / 2;
@@ -552,7 +552,7 @@ void draw_bitmap_compressed_4bit(uint8_t *frame_buffer, const uint8_t *bitmap, u
  *  @param[in] new_gfx_font
  *             pointer to font structure
  */
-void select_font(const GFXfont *new_gfx_font)
+void DisplayGrafics_SelectFont(const GFXfont *new_gfx_font)
 {
 	gfx_font = new_gfx_font;
 }
