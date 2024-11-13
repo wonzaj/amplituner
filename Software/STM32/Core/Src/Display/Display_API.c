@@ -26,8 +26,6 @@ Display_Controls_t Display_Controls =
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-
-static char ConvertArrayCharTime[10];
 static char TestingArray[40];
 static char ConvertArrayCharLong[6];
 static char display_gain_tab[10];
@@ -62,6 +60,11 @@ static void Screen_USB(uint8_t *const buffer);
 static void Screen_SetInput(uint8_t *const buffer);
 static void Screen_TimeBouncing(uint8_t *const buffer);
 static void Screen_Encoder_VolumeFront(uint8_t *const buffer);
+static void Screen_Encoder_Volume_Back(uint8_t *const buffer);
+static void Screen_Encoder_Loudness(uint8_t *const buffer);
+static void Screen_Encoder_Treble(uint8_t *const buffer);
+static void Screen_Encoder_Middle(uint8_t *const buffer);
+static void Screen_Encoder_Bass(uint8_t *const buffer);
 /**
  *  @brief init display api and drivers
  */
@@ -107,6 +110,8 @@ static void Screen_Welcome(uint8_t *const buffer)
 // ??
 static void Screen_Time(uint8_t *const buffer)
 {
+	char temp_array[10] = {0};
+
 	// do zegara dodac wybor roznych czcionek
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
@@ -116,8 +121,8 @@ static void Screen_Time(uint8_t *const buffer)
 	//wywoływać tylko co sekunde i nie sprawdzac nie potrzebne innych wartości
 	//aktualizacje czasu wywolywac timerem co sekunde
 	/* Setting Time */
-	ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
-	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 32, 5);
+	ChangeDateToArrayCharTime(temp_array, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
+	draw_text(buffer, (char*) temp_array, 2, 32, 5);
 	/* Setting Date */
 	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
 	ConvertDateToBuffer((2021 + sDate.Year), sDate.Month, sDate.WeekDay, sDate.Date);
@@ -175,6 +180,8 @@ static void Screen_Radio(uint8_t *const buffer)
 //
 static void Screen_WakeUp(uint8_t *const buffer)
 {
+	char temp_array[10] = {0};
+
 	//zwiększanie głośności podczas budzenia
 	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
@@ -188,9 +195,9 @@ static void Screen_WakeUp(uint8_t *const buffer)
 
 	DisplayGrafics_SelectFont(&FreeSerifBoldItalic9pt7b);
 	draw_text(buffer, "WSTAWAJ !!!", 2, 58, 5);
-	ChangeDateToArrayCharTime(ConvertArrayCharTime, Hours, Minutes, Seconds, Mode);
+	ChangeDateToArrayCharTime(temp_array, Hours, Minutes, Seconds, Mode);
 	DisplayGrafics_SelectFont(&FreeSerifBoldItalic24pt7b);
-	draw_text(buffer, (char*) ConvertArrayCharTime, 2, 33, 5);
+	draw_text(buffer, (char*) temp_array, 2, 33, 5);
 	//dodać budzik który bedzie sie ruszal, czyli odswiezac i zmieniac go dwa razy na sekunde
 	//poprzez togglowanie flagi
 	//albo usunac napis wstawaj i dac tylko czas i animacje budzika
@@ -298,6 +305,8 @@ static void Screen_SetClock(uint8_t *const buffer)
 //
 static void Screen_SetAlarm(uint8_t *const buffer)
 {
+	char temp_array[10] = {0};
+
 	/* Alaways reset display buffer to zero*/
 	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
 	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
@@ -330,8 +339,8 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 
 		/* Drawing a pointer to selected ALARM.  */
 		DisplayGrafics_SelectFont(&FreeSerifItalic24pt7b);
-//		ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm.AlarmTime.Hours, Alarm.AlarmTime.Minutes, 0, 1);
-		draw_text(buffer, (char*) ConvertArrayCharTime, 5, 32, 5);
+//		ChangeDateToArrayCharTime(temp_array, Alarm.AlarmTime.Hours, Alarm.AlarmTime.Minutes, 0, 1);
+		draw_text(buffer, (char*) temp_array, 5, 32, 5);
 
 		/* Drawing alarm mode */
 		DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
@@ -351,7 +360,7 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 			if (IS_ALARM_SET_A == true)
 			{
 				DisplayGrafics_SelectFont(&FreeSerif9pt7b);
-//				ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
+//				ChangeDateToArrayCharTime(temp_array, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
 				draw_text(buffer, (char*) buffer, 2, 30, 5);
 				Set_Alarm_Mode(RTC_typeOfAlarm_A);
 				draw_text(buffer, (char*) AlarmMode, 55, 30, 5);
@@ -363,8 +372,8 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 			if (IS_ALARM_SET_B == true)
 			{
 				DisplayGrafics_SelectFont(&FreeSerif9pt7b);
-//				ChangeDateToArrayCharTime(ConvertArrayCharTime, Alarm_B.AlarmTime.Hours, Alarm_B.AlarmTime.Minutes, 0, 1);
-				draw_text(buffer, (char*) ConvertArrayCharTime, 2, 60, 5);
+//				ChangeDateToArrayCharTime(temp_array, Alarm_B.AlarmTime.Hours, Alarm_B.AlarmTime.Minutes, 0, 1);
+				draw_text(buffer, (char*) temp_array, 2, 60, 5);
 				Set_Alarm_Mode(RTC_typeOfAlarm_B);
 				draw_text(buffer, (char*) AlarmMode, 55, 60, 5);
 			}
@@ -528,6 +537,149 @@ static void Screen_Encoder_VolumeFront(uint8_t *const buffer)
 
 	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
+//
+static void Screen_Encoder_Volume_Back(uint8_t *const buffer)
+{
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	DisplayGrafics_SelectFont(&TomThumb);
+	draw_char(buffer, '0', 195, 53, 5);
+	draw_text(buffer, "-80", 2, 53, 5);
+	draw_text(buffer, "+15", 225, 53, 5);
+	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
+	draw_text(buffer, "dB", 235, 63, 5);
+	draw_encoder_volume_back_scale(buffer);
+
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void Screen_Encoder_Loudness(uint8_t *const buffer)
+{
+	for (uint8_t i = 0; i < 10; ++i)
+	{
+		display_gain_tab[i] = 0;
+	}
+
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	draw_text(buffer, "LOUDNESS", 70, 15, 5);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
+	draw_text(buffer, "Mid freq:", 25, 40, 5);
+	draw_text(buffer, "Gain:", 50, 63, 5);
+	draw_gain_and_freq_loudness(buffer);
+
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void Screen_Encoder_Treble(uint8_t *const buffer)
+{
+	for (uint8_t i = 0; i < 10; ++i)
+	{
+		display_gain_tab[i] = 0;
+	}
+
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	draw_text(buffer, "TREBLE", 70, 15, 5);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
+	draw_text(buffer, "Mid freq:", 25, 40, 5);
+	draw_text(buffer, "Gain:", 50, 63, 5);
+	draw_gain_and_freq(encoderFilterTreble.gain - 16);
+	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
+
+	switch (encoderFilterTreble.centerFreq)
+	{
+		case 0:		//00 - flat
+			draw_text(buffer, "10 kHz", 100, 40, 5);
+		break;
+		case 1:		//01  - 400 Hz
+			draw_text(buffer, "12,5 kHz", 100, 40, 5);
+		break;
+		case 2:		//10  - 800 Hz
+			draw_text(buffer, "15 kHz", 100, 40, 5);
+		break;
+		case 3:		//11  - 2400 Hz
+			draw_text(buffer, "17.5 kHz", 100, 40, 5);
+		break;
+	default:
+		break;
+	}
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void Screen_Encoder_Middle(uint8_t *const buffer)
+{
+
+	for (uint8_t i = 0; i < 10; ++i)
+	{
+		display_gain_tab[i] = 0;
+	}
+
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	draw_text(buffer, "MIDDLE", 70, 15, 5);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
+	draw_text(buffer, "Q fact:", 25, 40, 5);
+	draw_text(buffer, "Gain:", 50, 63, 5);
+	draw_gain_and_freq(encoderFilterMiddle.gain - 16);
+	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
+
+	switch (encoderFilterMiddle.centerFreq)
+	    {
+		case 0:
+		    draw_text(buffer, "0.5", 100, 40, 5);
+		break;
+		case 1:
+		    draw_text(buffer, "0.75", 100, 40, 5);
+		break;
+		case 2:
+		    draw_text(buffer, "1", 100, 40, 5);
+		break;
+		case 3:
+		    draw_text(buffer, "1.25", 100, 40, 5);
+		break;
+		default:
+		break;
+	    }
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+//
+static void Screen_Encoder_Bass(uint8_t *const buffer)
+{
+
+	for (uint8_t i = 0; i < 10; ++i)
+	{
+		display_gain_tab[i] = 0;
+	}
+
+	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+	draw_text(buffer, "BASS", 70, 15, 5);
+	DisplayGrafics_SelectFont(&FreeSans9pt7b);
+	draw_text(buffer, "Q fact:", 25, 40, 5);
+	draw_text(buffer, "Gain:", 50, 63, 5);
+	draw_gain_and_freq(encoderFilterBass.gain - 16);
+	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
+
+	switch (encoderFilterBass.centerFreq)
+	    {
+		case 0:
+		    draw_text(buffer, "1.0", 100, 40, 5);
+		break;
+		case 1:
+		    draw_text(buffer, "1.25", 100, 40, 5);
+		break;
+		case 2:
+		    draw_text(buffer, "1.5", 100, 40, 5);
+		break;
+		case 3:
+		    draw_text(buffer, "2.0", 100, 40, 5);
+		break;
+		default:
+		break;
+	    }
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
+}
+
 //--------------------------------------------------------------
 // Possible displayed screens
 //--------------------------------------------------------------
@@ -617,167 +769,25 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 		Screen_Encoder_VolumeFront(Display_Buffer);
 		break;
 	case SCREEN_ENCODER_VOLUME_BACK:
-		SSD1322_Screen_Encoder_Volume_Back(Display_Buffer);
+		Screen_Encoder_Volume_Back(Display_Buffer);
 		break;
 	case SCREEN_ENCODER_LOUDNESS:
-		SSD1322_Screen_Encoder_Loudness(Display_Buffer);
+		Screen_Encoder_Loudness(Display_Buffer);
 		break;
 	case SCREEN_ENCODER_TREBLE:
-		SSD1322_Screen_Encoder_Treble(Display_Buffer);
+		Screen_Encoder_Treble(Display_Buffer);
 		break;
 	case SCREEN_ENCODER_MIDDLE:
-		SSD1322_Screen_Encoder_Middle(Display_Buffer);
+		Screen_Encoder_Middle(Display_Buffer);
 		break;
 	case SCREEN_ENCODER_BASS:
-		SSD1322_Screen_Encoder_Bass(Display_Buffer);
+		Screen_Encoder_Bass(Display_Buffer);
 		break;
 	default:
 		DisplayDriver_FillBufferWithValue(Display_Buffer, 0);
 		DisplayDriver_TX_ImageBuff(Display_Buffer, 0, 0);
 		break;
 	}
-}
-
-void SSD1322_Screen_Encoder_Volume_Back(uint8_t *const buffer)
-{
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	DisplayGrafics_SelectFont(&TomThumb);
-	draw_char(buffer, '0', 195, 53, 5);
-	draw_text(buffer, "-80", 2, 53, 5);
-	draw_text(buffer, "+15", 225, 53, 5);
-	DisplayGrafics_SelectFont(&FreeSerifItalic9pt7b);
-	draw_text(buffer, "dB", 235, 63, 5);
-	draw_encoder_volume_back_scale(buffer);
-
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Encoder_Loudness(uint8_t *const buffer)
-{
-	for (uint8_t i = 0; i < 10; ++i)
-	{
-		display_gain_tab[i] = 0;
-	}
-
-	DisplayGrafics_SelectFont(&FreeSerif9pt7b);
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	draw_text(buffer, "LOUDNESS", 70, 15, 5);
-	DisplayGrafics_SelectFont(&FreeSans9pt7b);
-	draw_text(buffer, "Mid freq:", 25, 40, 5);
-	draw_text(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq_loudness(buffer);
-
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer)
-{
-	for (uint8_t i = 0; i < 10; ++i)
-	{
-		display_gain_tab[i] = 0;
-	}
-
-	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	draw_text(buffer, "TREBLE", 70, 15, 5);
-	DisplayGrafics_SelectFont(&FreeSans9pt7b);
-	draw_text(buffer, "Mid freq:", 25, 40, 5);
-	draw_text(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterTreble.gain - 16);
-	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
-
-	switch (encoderFilterTreble.centerFreq)
-	{
-	case 0:		//00 - flat
-		draw_text(buffer, "10 kHz", 100, 40, 5);
-		break;
-	case 1:		//01  - 400 Hz
-		draw_text(buffer, "12,5 kHz", 100, 40, 5);
-		break;
-	case 2:		//10  - 800 Hz
-		draw_text(buffer, "15 kHz", 100, 40, 5);
-		break;
-	case 3:		//11  - 2400 Hz
-		draw_text(buffer, "17.5 kHz", 100, 40, 5);
-		break;
-	default:
-		break;
-	}
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Encoder_Middle(uint8_t *const buffer)
-{
-
-	for (uint8_t i = 0; i < 10; ++i)
-	{
-		display_gain_tab[i] = 0;
-	}
-
-	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	draw_text(buffer, "MIDDLE", 70, 15, 5);
-	DisplayGrafics_SelectFont(&FreeSans9pt7b);
-	draw_text(buffer, "Q fact:", 25, 40, 5);
-	draw_text(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterMiddle.gain - 16);
-	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
-
-	switch (encoderFilterMiddle.centerFreq)
-	    {
-		case 0:
-		    draw_text(buffer, "0.5", 100, 40, 5);
-		break;
-		case 1:
-		    draw_text(buffer, "0.75", 100, 40, 5);
-		break;
-		case 2:
-		    draw_text(buffer, "1", 100, 40, 5);
-		break;
-		case 3:
-		    draw_text(buffer, "1.25", 100, 40, 5);
-		break;
-		default:
-		break;
-	    }
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
-}
-
-void SSD1322_Screen_Encoder_Bass(uint8_t *const buffer)
-{
-
-	for (uint8_t i = 0; i < 10; ++i)
-	{
-		display_gain_tab[i] = 0;
-	}
-
-	DisplayGrafics_SelectFont(&FreeSerif9pt7b);	//niby można wyświetlać wykres
-	DisplayDriver_FillBufferWithValue(buffer, 0);
-	draw_text(buffer, "BASS", 70, 15, 5);
-	DisplayGrafics_SelectFont(&FreeSans9pt7b);
-	draw_text(buffer, "Q fact:", 25, 40, 5);
-	draw_text(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterBass.gain - 16);
-	draw_text(buffer, (char*) display_gain_tab, 100, 63, 5);
-
-	switch (encoderFilterBass.centerFreq)
-	    {
-		case 0:
-		    draw_text(buffer, "1.0", 100, 40, 5);
-		break;
-		case 1:
-		    draw_text(buffer, "1.25", 100, 40, 5);
-		break;
-		case 2:
-		    draw_text(buffer, "1.5", 100, 40, 5);
-		break;
-		case 3:
-		    draw_text(buffer, "2.0", 100, 40, 5);
-		break;
-		default:
-		break;
-	    }
-	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 
 //SSD1322_Screen_draw_signal_oscyloscope();
@@ -987,16 +997,13 @@ void draw_gain_and_freq(int8_t gainValue)
 		if (gainValue > 10)
 		{
 			display_gain_tab[0] = ASCII_MINUS;
-			display_gain_tab[1] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(1, gainValue);
-			display_gain_tab[2] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, gainValue);
+			display_gain_tab[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, gainValue);
+			display_gain_tab[2] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, gainValue);
 		}
 		else
 		{
 			display_gain_tab[0] = ASCII_MINUS;
-			display_gain_tab[1] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, gainValue);
+			display_gain_tab[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, gainValue);
 		}
 	}
 	else if ((gainValue > 0))
@@ -1004,16 +1011,13 @@ void draw_gain_and_freq(int8_t gainValue)
 		if (gainValue > 10)
 		{
 			display_gain_tab[0] = ASCII_PLUS;
-			display_gain_tab[1] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(1, gainValue);
-			display_gain_tab[2] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, gainValue);
+			display_gain_tab[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, gainValue);
+			display_gain_tab[2] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, gainValue);
 		}
 		else
 		{
 			display_gain_tab[0] = ASCII_PLUS;
-			display_gain_tab[1] = ASCII_DIGIT_OFFSET
-					+ SplitNumberToDignits(0, gainValue);
+			display_gain_tab[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, gainValue);
 		}
 	}
 	else 	//gain == 0
@@ -1025,8 +1029,7 @@ void draw_gain_and_freq(int8_t gainValue)
 }
 
 //heigh - 6 pixels, width - 8 pixels
-void draw_nutka1(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_nutka1(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_rect_filled(buffer, begin_x, begin_y, begin_x + 1, begin_y + 1, 5);// x = 19   y = 19
 	draw_rect_filled(buffer, begin_x + 4, begin_y, begin_x + 5, begin_y + 1, 5);
@@ -1037,8 +1040,7 @@ void draw_nutka1(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 5 pixels, width - 4 pixels
-void draw_nutka2(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_nutka2(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_rect_filled(buffer, begin_x, begin_y, begin_x + 1, begin_y + 1, 5);
 	draw_vline(buffer, begin_x + 1, begin_y - 1, begin_y - 3, 5);
@@ -1047,8 +1049,7 @@ void draw_nutka2(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 7 pixels, width - 6 pixels
-void draw_nutka3(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_nutka3(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_rect_filled(buffer, begin_x, begin_y, begin_x + 2, begin_y + 2, 5);
 	draw_vline(buffer, begin_x + 2, begin_y - 1, begin_y - 6, 5);
@@ -1058,8 +1059,7 @@ void draw_nutka3(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 8 pixels, width - 11 pixels
-void draw_nutka4(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_nutka4(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_rect_filled(buffer, begin_x + 1, begin_y, begin_x + 2, begin_y + 2, 5);
 	draw_rect_filled(buffer, begin_x + 6, begin_y, begin_x + 8, begin_y + 2, 5);
@@ -1073,8 +1073,7 @@ void draw_nutka4(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 8 pixels, width - 6 pixels
-void draw_nutka5(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_nutka5(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 
 {
 	draw_rect_filled(buffer, begin_x, begin_y, begin_x + 2, begin_y + 2, 5);
@@ -1085,8 +1084,7 @@ void draw_nutka5(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 11 pixels, width - 19 pixels
-void draw_speaker_left(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_speaker_left(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_hline(buffer, begin_y, begin_x + 2, begin_x + 11, 5);
 	draw_hline(buffer, begin_y - 16, begin_x + 3, begin_x + 11, 5);
@@ -1104,8 +1102,7 @@ void draw_speaker_left(uint8_t *const buffer, const int16_t begin_x,
 }
 
 //heigh - 11 pixels, width - 19 pixels
-void draw_speaker_right(uint8_t *const buffer, const int16_t begin_x,
-		const int16_t begin_y)
+void draw_speaker_right(uint8_t *const buffer, const int16_t begin_x, const int16_t begin_y)
 {
 	draw_hline(buffer, begin_y, begin_x, begin_x + 8, 5);
 	draw_hline(buffer, begin_y - 16, begin_x, begin_x + 8, 5);
@@ -1123,8 +1120,7 @@ void draw_speaker_right(uint8_t *const buffer, const int16_t begin_x,
 	draw_circle(buffer, begin_x + 4, begin_y - 12, 1, 5);
 }
 
-void draw_UV_rectangle_scale(uint8_t *const buffer,
-		const UV_meter_t left_channel, const UV_meter_t right_channel)
+void draw_UV_rectangle_scale(uint8_t *const buffer, const UV_meter_t left_channel, const UV_meter_t right_channel)
 {
 	for (uint16_t a = 20; a < 254; a = a + 18)
 	{
@@ -1148,8 +1144,7 @@ void draw_UV_rectangle_scale(uint8_t *const buffer,
 	}
 }
 
-void draw_UV_lines_scale(uint8_t *const buffer, const UV_meter_t left_channel,
-		const UV_meter_t right_channel)
+void draw_UV_lines_scale(uint8_t *const buffer, const UV_meter_t left_channel, const UV_meter_t right_channel)
 {
 	for (uint16_t b = 20; b < 254; b = b + 3)
 	{
@@ -1648,10 +1643,12 @@ _Bool get_random_coords(uint32_t *random_x, uint32_t *random_y)
 	return false;
 }
 
-void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
-		uint16_t y1, uint8_t brightness)
+void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1, uint16_t y1, uint8_t brightness)
 {
+	char temp_array[10] = {0};
 	int16_t steep = abs(y1 - y0) > abs(x1 - x0);
+
+
 	if (steep == 1)
 	{
 		uint16_t tmp = y0;
@@ -1695,24 +1692,22 @@ void make_array(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t x1,
 
 		if (steep)
 		{
-			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING)
-				return;
+			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING) return;
+
 			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
-			ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
-			draw_text(frame_buffer, (char*) ConvertArrayCharTime, y0, x0,
-					brightness);
+			ChangeDateToArrayCharTime(temp_array, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
+			draw_text(frame_buffer, (char*) temp_array, y0, x0, brightness);
 			DisplayDriver_TX_ImageBuff(frame_buffer, 0, 0);
 		}
 		else
 		{
-			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING)
-				return;
+			if (Display_Controls.Screen_State != SCREEN_TIME_BOUNCING) return;
+
 			DisplayDriver_FillBufferWithValue(frame_buffer, 0);
 			HAL_Delay(50);
-			ChangeDateToArrayCharTime(ConvertArrayCharTime, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
-			draw_text(frame_buffer, (char*) ConvertArrayCharTime, x0, y0,
-					brightness);
+			ChangeDateToArrayCharTime(temp_array, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
+			draw_text(frame_buffer, (char*) temp_array, x0, y0, brightness);
 			DisplayDriver_TX_ImageBuff(frame_buffer, 0, 0);
 			//można dodać flagę volatile która jest sprawdzana jeżeli zmieniono ekran
 		}

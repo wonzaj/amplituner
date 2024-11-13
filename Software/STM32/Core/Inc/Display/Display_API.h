@@ -173,12 +173,6 @@ void AppDisplay_OnInitTask(void);
 void AppDisplay_RefreshDisplayTask(void);
 void AppDisplay_RefreshDisplay(const ScreenState_t SSD1322_Screen_State);
 
-void SSD1322_Screen_Encoder_Volume_Back(uint8_t *const buffer);
-void SSD1322_Screen_Encoder_Loudness(uint8_t *const buffer);
-void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer);
-void SSD1322_Screen_Encoder_Middle(uint8_t *const buffer);
-void SSD1322_Screen_Encoder_Bass(uint8_t *const buffer);
-
 void draw_encoder_volume_front_scale(uint8_t *const buffer);
 void draw_encoder_volume_back_scale(uint8_t *const buffer);
 void draw_gain_and_freq_loudness(uint8_t *const buffer);
