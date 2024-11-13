@@ -6,6 +6,13 @@
 #include "config.h"
 #include "tim.h"
 
+extern encoderFilter_t encoderFilterTreble;
+extern encoderFilter_t encoderFilterMiddle;
+extern encoderFilter_t encoderFilterBass;
+extern encoderFilter_t encoderFilterLoudness;
+extern encoder_t encoderVolFront;
+extern encoder_t encoderVolBack;
+
 void AppEncoders_EncoderVolFront_Rotated(void);
 void AppEncoders_EncoderVolBack_Rotated(void);
 void AppEncoders_EncoderTreble_Rotated(void);

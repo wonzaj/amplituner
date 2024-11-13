@@ -111,10 +111,10 @@ typedef enum
     SCREEN_SETCLOCK,
     SCREEN_SETALARM,
     SCREEN_SETTINGS,
-    SCREEN_SNAKE,
     ENUM_MAX_USER_DISPLAY,
 
-    SCREEN_USB, //not used atm
+    SCREEN_SNAKE,	//not used atm
+    SCREEN_USB, 	//not used atm
 
     SCREEN_WAKEUP = 20,
     SCREEN_WELCOME,
@@ -173,18 +173,6 @@ void AppDisplay_OnInitTask(void);
 void AppDisplay_RefreshDisplayTask(void);
 void AppDisplay_RefreshDisplay(const ScreenState_t SSD1322_Screen_State);
 
-void SSD1322_Screen_FFT(uint8_t *const buffer, uint8_t *const FFT_out_buffer);
-void SSD1322_Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel, UV_meter_t right_channel, const uint8_t mode);
-void SSD1322_Screen_OFF(uint8_t *const buffer);
-void SSD1322_Screen_GoodBye(uint8_t *const buffer);
-void SSD1322_Screen_SetClock(uint8_t *const buffer);
-void SSD1322_Screen_SetAlarm(uint8_t *const buffer);
-void SSD1322_Screen_Settings(uint8_t *const buffer);
-void SSD1322_Screen_Snake(uint8_t *const buffer);
-void SSD1322_Screen_USB(uint8_t *const buffer);
-void SSD1322_Screen_Time_Bouncing(uint8_t *const buffer);
-void SSD1322_Screen_SetInput(uint8_t *const buffer);
-void SSD1322_Screen_Encoder_Volume_Front(uint8_t *const buffer);
 void SSD1322_Screen_Encoder_Volume_Back(uint8_t *const buffer);
 void SSD1322_Screen_Encoder_Loudness(uint8_t *const buffer);
 void SSD1322_Screen_Encoder_Treble(uint8_t *const buffer);
@@ -223,7 +211,7 @@ void ChangeDateToArrayChar(uint16_t frq);
 void ChangeDateToArrayCharTime(char *arrayChar,uint8_t hours, uint8_t minutes, uint8_t seconds,uint8_t mode);
 void ConvertDateToBuffer(uint16_t Year, uint8_t Month, uint8_t WeekDay, uint8_t Date);
 int16_t SplitNumberToDignits(int16_t position, int16_t number);
-uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max );
+uint32_t map(uint32_t x, uint32_t in_min, uint32_t in_max, uint32_t out_min, uint32_t out_max);
 
 _Bool prepare_RDS_text(char *RDS_text);
 _Bool  get_random_coords(uint32_t *random_x, uint32_t *random_y);

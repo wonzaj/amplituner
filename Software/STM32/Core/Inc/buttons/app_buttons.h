@@ -45,68 +45,55 @@ typedef struct
 
     enum
     {
-	ALARM_SOURCE_A,
-	ALARM_SOURCE_B,
-	REFRESH_SCREEN_TIME,
-	USER_NAME,
-	DISPLAY_MODE_ON_OFF,
-	POWER_LED
+    	ALARM_SOURCE_A,
+		ALARM_SOURCE_B,
+		REFRESH_SCREEN_TIME,
+		USER_NAME,
+		DISPLAY_MODE_ON_OFF,
+		POWER_LED
 
     } SETTINGS_USER_MENU;
 
 }SettingsUserMenu_t;
 
+extern SettingsUserMenu_t SettingsUserMenu;
 
-//Power button
 void Buttons_PowerButton_Pressed(void);
 void Buttons_PowerButton_Released(void);
 GPIO_PinState Buttons_PowerButton_GetState(void);
-//User button 1
 void Buttons_UserButton1_Pressed(void);
 void Buttons_UserButton1_Released(void);
 GPIO_PinState Buttons_UserButton1_GetState(void);
-//User button 2
 void Buttons_UserButton2_Pressed(void);
 void Buttons_UserButton2_Released(void);
 GPIO_PinState Buttons_UserButton2_GetState(void);
-//User button 3
 void Buttons_UserButton3_Pressed(void);
 void Buttons_UserButton3_Released(void);
 GPIO_PinState Buttons_UserButton3_GetState(void);
-//User button 4
 void Buttons_UserButton4_Pressed(void);
 void Buttons_UserButton4_Released(void);
 GPIO_PinState Buttons_UserButton4_GetState(void);
-// Encoder volume front
 void Buttons_EncoderVolFrontButton_Pressed(void);
 void Buttons_EncoderVolFrontButton_Released(void);
 GPIO_PinState Buttons_EncoderVolFrontButton_GetState(void);
-// Encoder volume back
 void Buttons_EncoderVolBackButton_Pressed(void);
 void Buttons_EncoderVolBackButton_Released(void);
 GPIO_PinState Buttons_EncoderVolBackButton_GetState(void);
-// Encoder volume treble
 void Buttons_EncoderTrebleButton_Pressed(void);
 void Buttons_EncoderTrebleButton_Released(void);
 GPIO_PinState Buttons_EncoderTrebleButton_GetState(void);
-// Encoder volume bass
 void Buttons_EncoderBassButton_Pressed(void);
 void Buttons_EncoderBassButton_Released(void);
 GPIO_PinState Buttons_EncoderBassButton_GetState(void);
-// Encoder volume middle
 void Buttons_EncoderMiddleButton_Pressed(void);
 void Buttons_EncoderMiddleButton_Released(void);
 GPIO_PinState Buttons_EncoderMiddleButton_GetState(void);
-// Encoder volume radio
 void Buttons_EncoderRadioButton_Pressed(void);
 void Buttons_EncoderRadioButton_Released(void);
 GPIO_PinState Buttons_EncoderRadioButton_GetState(void);
-// Encoder volume loudness
 void Buttons_EncoderLoudnessButton_Pressed(void);
 void Buttons_EncoderLoudnessButton_Released(void);
 GPIO_PinState Buttons_EncoderLoudnessButton_GetState(void);
-
-
 
 void Check_and_Set_Volume_back(void);
 void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight);
