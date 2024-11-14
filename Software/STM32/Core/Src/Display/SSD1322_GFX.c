@@ -552,7 +552,7 @@ void draw_bitmap_compressed_4bit(uint8_t *frame_buffer, const uint8_t *bitmap, u
  *  @param[in] new_gfx_font
  *             pointer to font structure
  */
-void DisplayGrafics_SelectFont(const GFXfont *new_gfx_font)
+void DisplayGFX_SelectFont(const GFXfont *new_gfx_font)
 {
 	gfx_font = new_gfx_font;
 }
@@ -636,7 +636,7 @@ void draw_char(uint8_t *frame_buffer, uint8_t c, uint16_t x, uint16_t y, uint8_t
  * 	@param[in] brightness
  *             brightness value of pixels (range 0-15 dec or 0x00-0x0F hex)
  */
-void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness)
+void DisplayGFX_DrawText(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness)
 {
     while (*text)
     {

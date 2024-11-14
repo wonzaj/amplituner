@@ -46,9 +46,9 @@ void draw_circle(uint8_t *frame_buffer, uint16_t x0, uint16_t y0, uint16_t r, ui
 void draw_bitmap(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size);
 void draw_bitmap_compressed_4bit(uint8_t *frame_buffer, const uint8_t *bitmap, uint16_t x0, uint16_t y0, uint16_t x_size, uint16_t y_size);
 
-void DisplayGrafics_SelectFont(const GFXfont *new_gfx_font);
+void DisplayGFX_SelectFont(const GFXfont *new_gfx_font);
 void draw_char(uint8_t *frame_buffer, uint8_t text, uint16_t x, uint16_t y, uint8_t brightness);
-void draw_text(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness);
+void DisplayGFX_DrawText(uint8_t *frame_buffer, const char* text, uint16_t x, uint16_t y, uint8_t brightness);
 
 void DisplayDriver_TX_ImageBuff(uint8_t *frame_buffer, uint16_t start_x, uint16_t start_y);
 
