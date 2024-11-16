@@ -58,6 +58,8 @@ typedef struct
 
 extern SettingsUserMenu_t SettingsUserMenu;
 
+void AppButtons_EventHandler(void);
+
 void Buttons_PowerButton_Pressed(void);
 void Buttons_PowerButton_Released(void);
 GPIO_PinState Buttons_PowerButton_GetState(void);

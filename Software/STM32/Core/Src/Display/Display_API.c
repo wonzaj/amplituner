@@ -801,26 +801,26 @@ void AppDisplay_SetSavedDisplayState(ScreenState_t ScreenState)
 
 void AppDisplay_SaveCurrentDisplayState(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp = AppDisplay_GetDisplayState();
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	if (SSD1322_Screen_State_temp != AppDisplay_GetSavedDisplayState())
+	if (Current_Screen_State != AppDisplay_GetSavedDisplayState())
 	{
-		if((SSD1322_Screen_State_temp != (ENUM_MAX_USER_DISPLAY)
-				&& (SSD1322_Screen_State_temp != SCREEN_WAKEUP)
-				&& (SSD1322_Screen_State_temp != SCREEN_WELCOME)
-				&& (SSD1322_Screen_State_temp != SCREEN_OFF)
-				&& (SSD1322_Screen_State_temp != SCREEN_GOODBYTE)
-				&& (SSD1322_Screen_State_temp != ENUM_MAX_INVIS_DISPLAY)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_FRONT)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_VOLUME_BACK)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_LOUDNESS)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_TREBLE)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_MIDDLE)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_BASS)
-				&& (SSD1322_Screen_State_temp != SCREEN_ENCODER_RADIO)
-				&& (SSD1322_Screen_State_temp != ENUM_MAX)))
+		if((Current_Screen_State != (ENUM_MAX_USER_DISPLAY)
+				&& (Current_Screen_State != SCREEN_WAKEUP)
+				&& (Current_Screen_State != SCREEN_WELCOME)
+				&& (Current_Screen_State != SCREEN_OFF)
+				&& (Current_Screen_State != SCREEN_GOODBYTE)
+				&& (Current_Screen_State != ENUM_MAX_INVIS_DISPLAY)
+				&& (Current_Screen_State != SCREEN_ENCODER_VOLUME_FRONT)
+				&& (Current_Screen_State != SCREEN_ENCODER_VOLUME_BACK)
+				&& (Current_Screen_State != SCREEN_ENCODER_LOUDNESS)
+				&& (Current_Screen_State != SCREEN_ENCODER_TREBLE)
+				&& (Current_Screen_State != SCREEN_ENCODER_MIDDLE)
+				&& (Current_Screen_State != SCREEN_ENCODER_BASS)
+				&& (Current_Screen_State != SCREEN_ENCODER_RADIO)
+				&& (Current_Screen_State != ENUM_MAX)))
 		{
-			AppDisplay_SetSavedDisplayState(SSD1322_Screen_State_temp);
+			AppDisplay_SetSavedDisplayState(Current_Screen_State);
 		}
 	}
 

@@ -26,10 +26,12 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "display_api.h"
+#include "hal_buttons.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
 typedef StaticTask_t osStaticThreadDef_t;
+typedef StaticQueue_t osStaticMessageQDef_t;
 typedef StaticTimer_t osStaticTimerDef_t;
 /* USER CODE BEGIN PTD */
 
@@ -51,9 +53,14 @@ typedef StaticTimer_t osStaticTimerDef_t;
 /* USER CODE END Variables */
 /* Definitions for defaultTask */
 osThreadId_t defaultTaskHandle;
+uint32_t defaultTaskBuffer[ 128 ];
+osStaticThreadDef_t defaultTaskControlBlock;
 const osThreadAttr_t defaultTask_attributes = {
   .name = "defaultTask",
-  .stack_size = 128 * 4,
+  .cb_mem = &defaultTaskControlBlock,
+  .cb_size = sizeof(defaultTaskControlBlock),
+  .stack_mem = &defaultTaskBuffer[0],
+  .stack_size = sizeof(defaultTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
 /* Definitions for displayTask */
@@ -67,6 +74,29 @@ const osThreadAttr_t displayTask_attributes = {
   .stack_mem = &displayTaskBuffer[0],
   .stack_size = sizeof(displayTaskBuffer),
   .priority = (osPriority_t) osPriorityHigh,
+};
+/* Definitions for buttonHandlerTa */
+osThreadId_t buttonHandlerTaHandle;
+uint32_t buttonHandlerTaskBuffer[ 128 ];
+osStaticThreadDef_t buttonHandlerTaskControlBlock;
+const osThreadAttr_t buttonHandlerTa_attributes = {
+  .name = "buttonHandlerTa",
+  .cb_mem = &buttonHandlerTaskControlBlock,
+  .cb_size = sizeof(buttonHandlerTaskControlBlock),
+  .stack_mem = &buttonHandlerTaskBuffer[0],
+  .stack_size = sizeof(buttonHandlerTaskBuffer),
+  .priority = (osPriority_t) osPriorityNormal,
+};
+/* Definitions for buttonHandlerQueue */
+osMessageQueueId_t buttonHandlerQueueHandle;
+uint8_t buttonHandlerQueueBuffer[ 16 * sizeof( Queue_ButtonEvent_t ) ];
+osStaticMessageQDef_t buttonHandlerQueueControlBlock;
+const osMessageQueueAttr_t buttonHandlerQueue_attributes = {
+  .name = "buttonHandlerQueue",
+  .cb_mem = &buttonHandlerQueueControlBlock,
+  .cb_size = sizeof(buttonHandlerQueueControlBlock),
+  .mq_mem = &buttonHandlerQueueBuffer,
+  .mq_size = sizeof(buttonHandlerQueueBuffer)
 };
 /* Definitions for RefreshDisplayTimer */
 osTimerId_t RefreshDisplayTimerHandle;
@@ -84,6 +114,7 @@ const osTimerAttr_t RefreshDisplayTimer_attributes = {
 
 void StartDefaultTask(void *argument);
 void displayTaskFunction(void *argument);
+void buttonHandlerTaskFunction(void *argument);
 void RefershDisplayTimer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -115,6 +146,10 @@ void MX_FREERTOS_Init(void) {
 
   /* USER CODE END RTOS_TIMERS */
 
+  /* Create the queue(s) */
+  /* creation of buttonHandlerQueue */
+  buttonHandlerQueueHandle = osMessageQueueNew (16, sizeof(Queue_ButtonEvent_t), &buttonHandlerQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -125,6 +160,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of displayTask */
   displayTaskHandle = osThreadNew(displayTaskFunction, NULL, &displayTask_attributes);
+
+  /* creation of buttonHandlerTa */
+  buttonHandlerTaHandle = osThreadNew(buttonHandlerTaskFunction, NULL, &buttonHandlerTa_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -150,7 +188,7 @@ void StartDefaultTask(void *argument)
   for(;;)
   {
 
-    osDelay(1);
+    osDelay(10);
   }
   /* USER CODE END StartDefaultTask */
 }
@@ -173,6 +211,25 @@ void displayTaskFunction(void *argument)
     osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
   }
   /* USER CODE END displayTaskFunction */
+}
+
+/* USER CODE BEGIN Header_buttonHandlerTaskFunction */
+/**
+* @brief Function implementing the buttonHandlerTa thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_buttonHandlerTaskFunction */
+void buttonHandlerTaskFunction(void *argument)
+{
+  /* USER CODE BEGIN buttonHandlerTaskFunction */
+  /* Infinite loop */
+  for(;;)
+  {
+	AppButtons_EventHandler();
+    osDelay(10);
+  }
+  /* USER CODE END buttonHandlerTaskFunction */
 }
 
 /* RefershDisplayTimer_Callback function */

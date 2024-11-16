@@ -2,10 +2,12 @@
 // Includes
 //--------------------------------------------------------------
 #include "app_buttons.h"
+
+#include "cmsis_os2.h"
 //--------------------------------------------------------------
 // Defines
 //--------------------------------------------------------------
-
+extern osMessageQueueId_t buttonHandlerQueueHandle;
 //--------------------------------------------------------------
 // Static variables
 //--------------------------------------------------------------
@@ -37,12 +39,6 @@ extern int16_t tempVolBackLeft;
 extern int16_t tempVolBackRight;
 
 extern uint16_t ADC_SamplesTEST[4];
-extern uint16_t gGPIO_Pin;
-extern _Bool volatile button_debou_state;
-//extern ADC_HandleTypeDef 	 hadc1;
-//extern ADC_HandleTypeDef 	 hadc2;
-//extern DMA_HandleTypeDef 	 hdma_adc1;
-//extern TIM_HandleTypeDef 	 htim6;
 
 extern volatile uint8_t ADC_IS_ON_flag;
 extern volatile uint8_t RADIO_IS_ON_back_flag;
@@ -78,6 +74,79 @@ static void Change_Down_Input(void);
 static void Change_Up_Input(void);
 static void Change_selected_setting(void);
 static void Read_Set_TimeAndDate(void);
+
+void AppButtons_EventHandler(void)
+{
+	Queue_ButtonEvent_t Queue_ButtonEvent = {0};
+
+	if(osMessageQueueGet(buttonHandlerQueueHandle, &Queue_ButtonEvent, 0U, osWaitForever) == osOK)
+	{
+		if(Queue_ButtonEvent.State == Button_Pressed)
+		{
+			switch (Queue_ButtonEvent.GPIO_Pin)
+			{
+				case POWER_BUTTON_Pin:
+					Buttons_PowerButton_Pressed();
+					break;
+				case USER_BUTTON_1_Pin:
+					Buttons_UserButton1_Pressed();
+					break;
+				case USER_BUTTON_2_Pin:
+					Buttons_UserButton2_Pressed();
+					break;
+				case USER_BUTTON_3_Pin:
+					Buttons_UserButton3_Pressed();
+					break;
+				case USER_BUTTON_4_Pin:
+					Buttons_UserButton4_Pressed();
+					break;
+				case ENCODER_BUTTON_VOL_FRONT_Pin:
+					Buttons_EncoderVolFrontButton_Pressed();
+					break;
+				case ENCODER_BUTTON_VOL_BACK_Pin:
+					Buttons_EncoderVolBackButton_Pressed();
+					break;
+				case ENCODER_BUTTON_TREBLE_Pin:
+					Buttons_PowerButton_Pressed();
+					break;
+				default:
+					break;
+			}
+		}
+		else if(Queue_ButtonEvent.State == Button_Released)
+		{
+			switch (Queue_ButtonEvent.GPIO_Pin)
+			{
+				case POWER_BUTTON_Pin:
+					Buttons_PowerButton_Released();
+					break;
+				case USER_BUTTON_1_Pin:
+					Buttons_UserButton1_Released();
+					break;
+				case USER_BUTTON_2_Pin:
+					Buttons_UserButton2_Released();
+					break;
+				case USER_BUTTON_3_Pin:
+					Buttons_UserButton3_Released();
+					break;
+				case USER_BUTTON_4_Pin:
+					Buttons_UserButton4_Released();
+					break;
+				case ENCODER_BUTTON_VOL_FRONT_Pin:
+					Buttons_EncoderVolFrontButton_Released();
+				case ENCODER_BUTTON_VOL_BACK_Pin:
+					Buttons_EncoderVolBackButton_Released();
+				case ENCODER_BUTTON_TREBLE_Pin:
+					Buttons_EncoderVolFrontButton_Released();
+					break;
+				default:
+					break;
+			}
+		}
+	}
+}
+
+
 
 //--------------------------------------------------------------
 /* Global Functions for handling buttons
@@ -149,23 +218,18 @@ void Buttons_PowerButton_Released(void)
 
 }
 
-GPIO_PinState Buttons_PowerButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(POWER_BUTTON_GPIO_Port, POWER_BUTTON_Pin);
-}
-
 //User button 1
 void Buttons_UserButton1_Pressed(void)
 {
-	ScreenState_t Screen_State_temp = AppDisplay_GetDisplayState();
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	if ((Screen_State_temp + 1) == ENUM_MAX_USER_DISPLAY)
+	if ((Current_Screen_State + 1) == ENUM_MAX_USER_DISPLAY)
 	{
 		AppDisplay_SetDisplayState(SCREEN_TIME);
 	}
 	else
 	{
-		AppDisplay_SetDisplayState(Screen_State_temp + 1);
+		AppDisplay_SetDisplayState(Current_Screen_State + 1);
 	}
 
 	if (ADC_IS_ON_flag == true)
@@ -175,7 +239,7 @@ void Buttons_UserButton1_Pressed(void)
 		ADC_IS_ON_flag = false;
 	}
 
-	switch (Screen_State_temp)
+	switch (Current_Screen_State)
 	{
 	case SCREEN_TIME:
 
@@ -221,11 +285,6 @@ void Buttons_UserButton1_Pressed(void)
 void Buttons_UserButton1_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_UserButton1_GetState(void)
-{
-	return HAL_GPIO_ReadPin(USER_BUTTON_1_GPIO_Port, USER_BUTTON_1_Pin);
 }
 
 //User button 2
@@ -287,11 +346,6 @@ void Buttons_UserButton2_Released(void)
 
 }
 
-GPIO_PinState Buttons_UserButton2_GetState(void)
-{
-	return HAL_GPIO_ReadPin(USER_BUTTON_2_GPIO_Port, USER_BUTTON_2_Pin);
-}
-
 //User button 3
 void Buttons_UserButton3_Pressed(void)
 {
@@ -339,11 +393,6 @@ void Buttons_UserButton3_Pressed(void)
 void Buttons_UserButton3_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_UserButton3_GetState(void)
-{
-	return HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin);
 }
 
 //User button 4
@@ -395,11 +444,6 @@ void Buttons_UserButton4_Released(void)
 
 }
 
-GPIO_PinState Buttons_UserButton4_GetState(void)
-{
-	return HAL_GPIO_ReadPin(USER_BUTTON_4_GPIO_Port, USER_BUTTON_4_Pin);
-}
-
 //--------------------------------------------------------------
 /* Global Functions for handling buttons
  *
@@ -436,8 +480,7 @@ void Buttons_EncoderVolFrontButton_Pressed(void)
 		TDA7719_SetVolume_RightFront(tempVolFrontRight, 0);
 		TDA7719_SetVolume_LeftRear(tempVolBackLeft, 0);
 		TDA7719_SetVolume_RightRear(tempVolBackLeft, 0);
-		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight,
-				tempVolBackLeft, tempVolBackLeft);
+		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight,tempVolBackLeft, tempVolBackLeft);
 		AppEncoders_SingleEncoderStart(ENCODER_VOL_FRONT);
 		//HAL_TIM_OC_Start_IT(&htim13, TIM_CHANNEL_1);
 		break;
@@ -464,12 +507,6 @@ void Buttons_EncoderVolFrontButton_Pressed(void)
 void Buttons_EncoderVolFrontButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderVolFrontButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_VOL_FRONT_GPIO_Port,
-			ENCODER_BUTTON_VOL_FRONT_Pin);
 }
 
 // Encoder volume back
@@ -514,12 +551,6 @@ void Buttons_EncoderVolBackButton_Pressed(void)
 void Buttons_EncoderVolBackButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderVolBackButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_VOL_BACK_GPIO_Port,
-			ENCODER_BUTTON_VOL_BACK_Pin);
 }
 
 // Encoder volume treble
