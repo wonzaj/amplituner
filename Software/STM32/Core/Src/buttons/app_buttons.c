@@ -1,28 +1,40 @@
-//--------------------------------------------------------------
-// Includes
-//--------------------------------------------------------------
+/**
+ ********************************************************************************
+ * @file    app_buttons.c
+ * @author  macie
+ * @date    Nov 16, 2024
+ * @brief   
+ ********************************************************************************
+ */
+
+/************************************
+ * INCLUDES
+ ************************************/
 #include "app_buttons.h"
 
 #include "cmsis_os2.h"
-//--------------------------------------------------------------
-// Defines
-//--------------------------------------------------------------
+/************************************
+ * EXTERN VARIABLES
+ ************************************/
 extern osMessageQueueId_t buttonHandlerQueueHandle;
-//--------------------------------------------------------------
-// Static variables
-//--------------------------------------------------------------
+/************************************
+ * PRIVATE MACROS AND DEFINES
+ ************************************/
+
+/************************************
+ * PRIVATE TYPEDEFS
+ ************************************/
+
+/************************************
+ * STATIC VARIABLES
+ ************************************/
 static uint8_t refresh_time = 1;
 static char letter = 'a';
 static uint8_t inc = 0; //97 - 'a'
-
-//--------------------------------------------------------------
-// typedefs
-//--------------------------------------------------------------
 FFT_channel_source_e FFT_channel_source = 1;
 SettingsUserMenu_t SettingsUserMenu;
 extern Clock_Data_Change_t Clock_Data_Time;
 extern AlarmDataChange_t AlarmDataChange;
-
 extern TDA7719_config_t TDA7719_config;
 extern savedUserSettings_t savedUserSettings;
 extern encoderFilter_t encoderFilterTreble;
@@ -31,39 +43,64 @@ extern encoderFilter_t encoderFilterBass;
 extern encoderFilter_t encoderFilterLoudness;
 extern encoder_t encoderVolFront;
 extern encoder_t encoderVolBack;
-
 extern uint8_t volumeMasterFlag;
 extern int16_t tempVolFrontLeft;
 extern int16_t tempVolFrontRight;
 extern int16_t tempVolBackLeft;
 extern int16_t tempVolBackRight;
-
+extern uint32_t SysTick_MiliSeconds;
+extern uint32_t SysTick_Seconds;
 extern uint16_t ADC_SamplesTEST[4];
-
 extern volatile uint8_t ADC_IS_ON_flag;
 extern volatile uint8_t RADIO_IS_ON_back_flag;
 extern volatile uint8_t RADIO_IS_ON_front_flag;
-
 extern const uint16_t refresh_time_values[7];
 extern uint8_t settings_page;
 extern uint8_t saved_seconds;
 extern uint8_t saved_minutes;
 extern char user_name[10];
 extern volatile uint8_t POWER_device_state_flag;
-
 extern uint8_t UV_meter_front_back;
 extern uint8_t UV_meter_numb_of_chan;
-
-extern uint32_t SysTick_MiliSeconds;
-extern uint32_t SysTick_Seconds;
-
 volatile uint8_t POWER_device_state_flag = 0;
 volatile uint8_t ADC_IS_ON_flag = 0;
 volatile uint8_t RADIO_IS_ON_front_flag;
 volatile uint8_t RADIO_IS_ON_back_flag;
-//--------------------------------------------------------------
-// Static functions declarations
-//--------------------------------------------------------------
+/************************************
+ * GLOBAL VARIABLES
+ ************************************/
+Device_config_t Device_Config =
+{
+		.isTurnedOn = TURNED_ON,
+};
+/************************************
+ * STATIC FUNCTION PROTOTYPES
+ ************************************/
+static void Buttons_PowerButton_Pressed(void);
+static void Buttons_PowerButton_Released(void);
+static void Buttons_UserButton1_Pressed(void);
+static void Buttons_UserButton1_Released(void);
+static void Buttons_UserButton2_Pressed(void);
+static void Buttons_UserButton2_Released(void);
+static void Buttons_UserButton3_Pressed(void);
+static void Buttons_UserButton3_Released(void);
+static void Buttons_UserButton4_Pressed(void);
+static void Buttons_UserButton4_Released(void);
+static void Buttons_EncoderVolFrontButton_Pressed(void);
+static void Buttons_EncoderVolFrontButton_Released(void);
+static void Buttons_EncoderVolBackButton_Pressed(void);
+static void Buttons_EncoderVolBackButton_Released(void);
+static void Buttons_EncoderTrebleButton_Pressed(void);
+static void Buttons_EncoderTrebleButton_Released(void);
+static void Buttons_EncoderBassButton_Pressed(void);
+static void Buttons_EncoderBassButton_Released(void);
+static void Buttons_EncoderMiddleButton_Pressed(void);
+static void Buttons_EncoderMiddleButton_Released(void);
+static void Buttons_EncoderRadioButton_Pressed(void);
+static void Buttons_EncoderRadioButton_Released(void);
+static void Buttons_EncoderLoudnessButton_Pressed(void);
+static void Buttons_EncoderLoudnessButton_Released(void);
+
 static void Save_Station_Freq_1(void);
 static void Save_Station_Freq_2(void);
 static void Change_FFT_source_Down(void);
@@ -74,152 +111,50 @@ static void Change_Down_Input(void);
 static void Change_Up_Input(void);
 static void Change_selected_setting(void);
 static void Read_Set_TimeAndDate(void);
-
-void AppButtons_EventHandler(void)
-{
-	Queue_ButtonEvent_t Queue_ButtonEvent = {0};
-
-	if(osMessageQueueGet(buttonHandlerQueueHandle, &Queue_ButtonEvent, 0U, osWaitForever) == osOK)
-	{
-		if(Queue_ButtonEvent.State == Button_Pressed)
-		{
-			switch (Queue_ButtonEvent.GPIO_Pin)
-			{
-				case POWER_BUTTON_Pin:
-					Buttons_PowerButton_Pressed();
-					break;
-				case USER_BUTTON_1_Pin:
-					Buttons_UserButton1_Pressed();
-					break;
-				case USER_BUTTON_2_Pin:
-					Buttons_UserButton2_Pressed();
-					break;
-				case USER_BUTTON_3_Pin:
-					Buttons_UserButton3_Pressed();
-					break;
-				case USER_BUTTON_4_Pin:
-					Buttons_UserButton4_Pressed();
-					break;
-				case ENCODER_BUTTON_VOL_FRONT_Pin:
-					Buttons_EncoderVolFrontButton_Pressed();
-					break;
-				case ENCODER_BUTTON_VOL_BACK_Pin:
-					Buttons_EncoderVolBackButton_Pressed();
-					break;
-				case ENCODER_BUTTON_TREBLE_Pin:
-					Buttons_PowerButton_Pressed();
-					break;
-				default:
-					break;
-			}
-		}
-		else if(Queue_ButtonEvent.State == Button_Released)
-		{
-			switch (Queue_ButtonEvent.GPIO_Pin)
-			{
-				case POWER_BUTTON_Pin:
-					Buttons_PowerButton_Released();
-					break;
-				case USER_BUTTON_1_Pin:
-					Buttons_UserButton1_Released();
-					break;
-				case USER_BUTTON_2_Pin:
-					Buttons_UserButton2_Released();
-					break;
-				case USER_BUTTON_3_Pin:
-					Buttons_UserButton3_Released();
-					break;
-				case USER_BUTTON_4_Pin:
-					Buttons_UserButton4_Released();
-					break;
-				case ENCODER_BUTTON_VOL_FRONT_Pin:
-					Buttons_EncoderVolFrontButton_Released();
-				case ENCODER_BUTTON_VOL_BACK_Pin:
-					Buttons_EncoderVolBackButton_Released();
-				case ENCODER_BUTTON_TREBLE_Pin:
-					Buttons_EncoderVolFrontButton_Released();
-					break;
-				default:
-					break;
-			}
-		}
-	}
-}
-
-
-
-//--------------------------------------------------------------
-/* Global Functions for handling buttons
- *
- * There are four buttons:
- * - Change screen
- * - Accept
- * - Set value up
- * - Set value down
- */
-//--------------------------------------------------------------
-//Power button
-void Buttons_PowerButton_Pressed(void)
+/************************************
+ * STATIC FUNCTIONS
+ ************************************/
+static void Buttons_PowerButton_Pressed(void)
 {
 	//stopniowo zmniejszać głośność przez kilka sekund - opcja do włączenia w settings
 	//w między czasie albo na końcu odpalić ekran pożegnalny
 
 	/* if power button is pressed while device is ON*/
-	if (POWER_device_state_flag == 1)
+	if (Device_Config.isTurnedOn == TURNED_ON)
 	{
-		//change global flag
-		POWER_device_state_flag = 0;
-		//turn off display
+		Device_Config.isTurnedOn = TURNED_OFF;
 		SSD1322_API_Sleep_On();
-		//turn off radio
 		RDA5807_PowerOff();
-		//turn off preamp
-		TDA7719_SetSoftMute(0, 1);     //change to deinit TDA
-		//change power led mode
-		SettingsUserMenu.Power_LED = 1;
-		//save to eeprom
+		TDA7719_SetSoftMute(0, 1);
 		EEPROM_Save_FilterSettings(&encoderFilterTreble, &encoderFilterMiddle, &encoderFilterBass, &encoderFilterLoudness);
 		EEPROM_Save_UserSetting(&savedUserSettings);
 		EEPROM_Save_VolumeSettings(&encoderVolFront, &encoderVolBack);
-		//turn off interupts from encoders and buttons (expect from power button)
-//			__NVIC_DisableIRQ(IRQn);
-		//turn off relay
-		//HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState);
+		HAL_Buttons_IRQ_TurnOff();
+		// Mute high power amplituner section
 	}
 
-	else if (POWER_device_state_flag == 0) //schować w funkcje, która będzie wywoływana przy starcie systemu, albo przy starcie będzie inny startup routine
+	else if (Device_Config.isTurnedOn == TURNED_OFF)
 	{
-		POWER_device_state_flag = 1;
-		//turn on display
+		Device_Config.isTurnedOn = TURNED_ON;
 		SSD1322_API_Sleep_On();
-		//turn on radio
 		RDA5807_PowerOn();
-		//RDA5807_Init();
-		//turn off preamp
-		//TDA7719_init();
+		RDA5807_Init();
+		TDA7719_init();
 		TDA7719_SetSoftMute(1, 1);
-		//change power led mode
-		SettingsUserMenu.Power_LED = 1;
-		//read from eeprom settings
 		EEPROM_Read_FilterSettings(&encoderFilterTreble, &encoderFilterMiddle, &encoderFilterBass, &encoderFilterLoudness);
 		EEPROM_Read_UserSetting(&savedUserSettings);
 		EEPROM_Read_VolumeSettings(&encoderVolFront, &encoderVolBack);
-		//turn on interupts from encoders and buttons (expect from power button)
-		//__NVIC_EnableIRQ(IRQn);
-		//turn on relay
-		//HAL_GPIO_WritePin(GPIOx, GPIO_Pin, PinState);
-
+		HAL_Buttons_IRQ_TurnOn();
 	}
-
 }
 
-void Buttons_PowerButton_Released(void)
+static void Buttons_PowerButton_Released(void)
 {
 
 }
 
 //User button 1
-void Buttons_UserButton1_Pressed(void)
+static void Buttons_UserButton1_Pressed(void)
 {
 	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
@@ -282,13 +217,13 @@ void Buttons_UserButton1_Pressed(void)
 	}
 }
 
-void Buttons_UserButton1_Released(void)
+static void Buttons_UserButton1_Released(void)
 {
 
 }
 
 //User button 2
-void Buttons_UserButton2_Pressed(void)
+static void Buttons_UserButton2_Pressed(void)
 {
 	ScreenState_t SSD1322_Screen_State_temp =
 			AppDisplay_GetDisplayState();
@@ -341,13 +276,13 @@ void Buttons_UserButton2_Pressed(void)
 	}
 }
 
-void Buttons_UserButton2_Released(void)
+static void Buttons_UserButton2_Released(void)
 {
 
 }
 
 //User button 3
-void Buttons_UserButton3_Pressed(void)
+static void Buttons_UserButton3_Pressed(void)
 {
 	ScreenState_t SSD1322_Screen_State_temp =
 			AppDisplay_GetDisplayState();
@@ -390,13 +325,13 @@ void Buttons_UserButton3_Pressed(void)
 	}
 }
 
-void Buttons_UserButton3_Released(void)
+static void Buttons_UserButton3_Released(void)
 {
 
 }
 
 //User button 4
-void Buttons_UserButton4_Pressed(void)
+static void Buttons_UserButton4_Pressed(void)
 {
 	ScreenState_t SSD1322_Screen_State_temp =
 			AppDisplay_GetDisplayState();
@@ -439,26 +374,12 @@ void Buttons_UserButton4_Pressed(void)
 	}
 }
 
-void Buttons_UserButton4_Released(void)
+static void Buttons_UserButton4_Released(void)
 {
 
 }
 
-//--------------------------------------------------------------
-/* Global Functions for handling buttons
- *
- * There are seven buttons from seven encoders
- * - Volume front
- * - Volume back
- * - Loudness
- * - Treble
- * - Middle
- * - Bass
- * - Radio Seek
- */
-//--------------------------------------------------------------
-// Encoder volume front
-void Buttons_EncoderVolFrontButton_Pressed(void)
+static void Buttons_EncoderVolFrontButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
@@ -504,13 +425,13 @@ void Buttons_EncoderVolFrontButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderVolFrontButton_Released(void)
+static void Buttons_EncoderVolFrontButton_Released(void)
 {
 
 }
 
 // Encoder volume back
-void Buttons_EncoderVolBackButton_Pressed(void)
+static void Buttons_EncoderVolBackButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
@@ -548,13 +469,13 @@ void Buttons_EncoderVolBackButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderVolBackButton_Released(void)
+static void Buttons_EncoderVolBackButton_Released(void)
 {
 
 }
 
 // Encoder volume treble
-void Buttons_EncoderTrebleButton_Pressed(void)
+static void Buttons_EncoderTrebleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
@@ -580,19 +501,13 @@ void Buttons_EncoderTrebleButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderTrebleButton_Released(void)
+static void Buttons_EncoderTrebleButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderTrebleButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_TREBLE_GPIO_Port,
-			ENCODER_BUTTON_TREBLE_Pin);
 }
 
 // Encoder volume bass
-void Buttons_EncoderBassButton_Pressed(void)
+static void Buttons_EncoderBassButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
@@ -615,19 +530,13 @@ void Buttons_EncoderBassButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderBassButton_Released(void)
+static void Buttons_EncoderBassButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderBassButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_BASS_GPIO_Port,
-			ENCODER_BUTTON_BASS_Pin);
 }
 
 // Encoder volume middle
-void Buttons_EncoderMiddleButton_Pressed(void)
+static void Buttons_EncoderMiddleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
@@ -653,38 +562,26 @@ void Buttons_EncoderMiddleButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderMiddleButton_Released(void)
+static void Buttons_EncoderMiddleButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderMiddleButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_MIDDLE_GPIO_Port,
-			ENCODER_BUTTON_MIDDLE_Pin);
 }
 
 // Encoder volume radio
-void Buttons_EncoderRadioButton_Pressed(void)
+static void Buttons_EncoderRadioButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_RADIO);
 	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 }
 
-void Buttons_EncoderRadioButton_Released(void)
+static void Buttons_EncoderRadioButton_Released(void)
 {
 
-}
-
-GPIO_PinState Buttons_EncoderRadioButton_GetState(void)
-{
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_RADIO_GPIO_Port,
-			ENCODER_BUTTON_RADIO_Pin);
 }
 
 // Encoder volume loudness
-void Buttons_EncoderLoudnessButton_Pressed(void)
+static void Buttons_EncoderLoudnessButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
@@ -710,30 +607,131 @@ void Buttons_EncoderLoudnessButton_Pressed(void)
 	}
 }
 
-void Buttons_EncoderLoudnessButton_Released(void)
+static void Buttons_EncoderLoudnessButton_Released(void)
 {
 
 }
-
-GPIO_PinState Buttons_EncoderLoudnessButton_GetState(void)
+/************************************
+ * GLOBAL FUNCTIONS
+ ************************************/
+void AppButtons_EventHandler(void)
 {
-	return HAL_GPIO_ReadPin(ENCODER_BUTTON_LOUD_GPIO_Port,
-			ENCODER_BUTTON_LOUD_Pin);
+	Queue_ButtonEvent_t Queue_ButtonEvent = {0};
+
+	if(osMessageQueueGet(buttonHandlerQueueHandle, &Queue_ButtonEvent, 0U, osWaitForever) == osOK)
+	{
+		if(Queue_ButtonEvent.State == Button_Pressed)
+		{
+			switch (Queue_ButtonEvent.GPIO_Pin)
+			{
+				case POWER_BUTTON_Pin:
+					Buttons_PowerButton_Pressed();
+					break;
+				case USER_BUTTON_1_Pin:
+					Buttons_UserButton1_Pressed();
+					break;
+				case USER_BUTTON_2_Pin:
+					Buttons_UserButton2_Pressed();
+					break;
+				case USER_BUTTON_3_Pin:
+					Buttons_UserButton3_Pressed();
+					break;
+				case USER_BUTTON_4_Pin:
+					Buttons_UserButton4_Pressed();
+					break;
+				case ENCODER_BUTTON_VOL_FRONT_Pin:
+					Buttons_EncoderVolFrontButton_Pressed();
+					break;
+				case ENCODER_BUTTON_VOL_BACK_Pin:
+					Buttons_EncoderVolBackButton_Pressed();
+					break;
+				case ENCODER_BUTTON_LOUD_Pin:
+					Buttons_EncoderLoudnessButton_Pressed();
+					break;
+				case ENCODER_BUTTON_TREBLE_Pin:
+					Buttons_EncoderTrebleButton_Pressed();
+					break;
+				case ENCODER_BUTTON_BASS_Pin:
+					Buttons_EncoderBassButton_Pressed();
+					break;
+				case ENCODER_BUTTON_MIDDLE_Pin:
+					Buttons_EncoderMiddleButton_Pressed();
+					break;
+				case ENCODER_BUTTON_RADIO_Pin:
+					Buttons_EncoderRadioButton_Pressed();
+					break;
+				default:
+					break;
+			}
+		}
+		else if(Queue_ButtonEvent.State == Button_Released)
+		{
+			switch (Queue_ButtonEvent.GPIO_Pin)
+			{
+				case POWER_BUTTON_Pin:
+					Buttons_PowerButton_Released();
+					break;
+				case USER_BUTTON_1_Pin:
+					Buttons_UserButton1_Released();
+					break;
+				case USER_BUTTON_2_Pin:
+					Buttons_UserButton2_Released();
+					break;
+				case USER_BUTTON_3_Pin:
+					Buttons_UserButton3_Released();
+					break;
+				case USER_BUTTON_4_Pin:
+					Buttons_UserButton4_Released();
+					break;
+				case ENCODER_BUTTON_VOL_FRONT_Pin:
+					Buttons_EncoderVolFrontButton_Released();
+					break;
+				case ENCODER_BUTTON_VOL_BACK_Pin:
+					Buttons_EncoderVolBackButton_Released();
+					break;
+				case ENCODER_BUTTON_LOUD_Pin:
+					Buttons_EncoderLoudnessButton_Released();
+					break;
+				case ENCODER_BUTTON_TREBLE_Pin:
+					Buttons_EncoderTrebleButton_Released();
+					break;
+				case ENCODER_BUTTON_BASS_Pin:
+					Buttons_EncoderBassButton_Released();
+					break;
+				case ENCODER_BUTTON_MIDDLE_Pin:
+					Buttons_EncoderMiddleButton_Released();
+					break;
+				case ENCODER_BUTTON_RADIO_Pin:
+					Buttons_EncoderRadioButton_Released();
+					break;
+				default:
+					break;
+			}
+		}
+	}
 }
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Volume master takes into account attenuator of each channel and front and back volume aswell
-void TDA7719_SetVolume_Master(const int16_t VolFrontLeft,
-		const int16_t VolFrontRight, const int16_t VolBackLeft,
-		const int16_t VolBackRight)
+void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight)
 {
 	//write to diffrent TDA7719 register depending on value
-	if ((encoderVolFront.volumeMaster <= 94)
-			&& (encoderVolFront.volumeMaster >= 80))
+	if ((encoderVolFront.volumeMaster <= 94) && (encoderVolFront.volumeMaster >= 80))
 	{
 		TDA7719_SetVolume((encoderVolFront.volumeMaster) - 79, 0, 0);
 	}
-	else if ((encoderVolFront.volumeMaster >= 0)
-			&& (encoderVolFront.volumeMaster <= 79))
+	else if ((encoderVolFront.volumeMaster >= 0) && (encoderVolFront.volumeMaster <= 79))
 	{
 		TDA7719_SetVolume_LeftFront((VolFrontLeft), 0);
 		TDA7719_SetVolume_RightFront((VolFrontRight), 0);
@@ -743,8 +741,7 @@ void TDA7719_SetVolume_Master(const int16_t VolFrontLeft,
 }
 
 // Sets volume just for both front channels
-void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft,
-		const int16_t VolFrontRight)
+void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft, const int16_t VolFrontRight)
 {
 
 	if (VolFrontLeft <= -79)
@@ -761,8 +758,7 @@ void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft,
 
 // Checks if given value (volume) is given range
 // It also increments or decrements value depending on CNT register upgraded by volume front encoder
-void Check_Volume_Range_Front(volatile int8_t *const volume,
-		const uint8_t maxVolume)
+void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume)
 {
 	static int16_t TimerDiff1;
 	static uint16_t LastTimerCounter1;
@@ -781,8 +777,7 @@ void Check_Volume_Range_Front(volatile int8_t *const volume,
 }
 
 // Sets volume just for both back channels
-void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft,
-		const int16_t VolBackRight)
+void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft, const int16_t VolBackRight)
 {
 	if (VolBackLeft <= -79)
 		TDA7719_SetVolume_LeftRear(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
@@ -798,8 +793,7 @@ void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft,
 
 // Checks if given value (volume) is given range
 // It also increments or decrements value depending on CNT register upgraded by volume back encoder
-void Check_Volume_Range_Back(volatile int8_t *const volume,
-		const uint8_t maxVolume)
+void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume)
 {
 	static int16_t TimerDiff2;
 	static uint16_t LastTimerCounter2;
@@ -819,8 +813,7 @@ void Check_Volume_Range_Back(volatile int8_t *const volume,
 
 // Checks if given value (loudness attenuator, center freqency, soft step, high boost) is given range
 // It also increments or decrements value depending on CNT register upgraded by loudness encoder
-void Check_Loudness_Param_Range(volatile int8_t *const gain,
-		const uint8_t maxGain)
+void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -860,8 +853,7 @@ void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 
 // Checks if given value (loudness, middle Q Factor, soft step) is given range
 // It also increments or decrements value depending on CNT register upgraded by middle encoder
-void Check_Middle_Param_Range(volatile int8_t *const gain,
-		const uint8_t maxGain)
+void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -881,8 +873,7 @@ void Check_Middle_Param_Range(volatile int8_t *const gain,
 
 // Checks if given value (loudness, treble Q Factor, soft step) is given range
 // It also increments or decrements value depending on CNT register upgraded by treble encoder
-void Check_Treble_Param_Range(volatile int8_t *const gain,
-		const uint8_t maxGain)
+void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -900,11 +891,6 @@ void Check_Treble_Param_Range(volatile int8_t *const gain,
 	}
 }
 
-//--------------------------------------------------------------
-// Static functions definictions
-//--------------------------------------------------------------
-
-//
 static void Save_Station_Freq_2(void)
 {
 	static uint32_t button_tim;

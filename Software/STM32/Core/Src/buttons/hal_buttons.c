@@ -267,14 +267,3 @@ void HAL_Buttons_IRQ_TurnOn(void)
 	__NVIC_EnableIRQ(EXTI9_5_IRQn);
 	__NVIC_EnableIRQ(EXTI15_10_IRQn);
 }
-
-void HAL_Buttons_PowerButton_SetPWM(uint8_t pwm_value)
-{
-	//__HAL_TIM_SET_COMPARE(&htim10, TIM_CHANNEL_1, pwm_value);
-}
-
-void HAL_Buttons_PowerButton_Init(void)
-{
-	//HAL_TIM_PWM_Start(&htim10, TIM_CHANNEL_1);
-	//__HAL_TIM_SET_COMPARE(&htim10, TIM_CHANNEL_1, 0);
-}

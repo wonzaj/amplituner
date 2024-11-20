@@ -27,6 +27,7 @@
 /* USER CODE BEGIN Includes */
 #include "display_api.h"
 #include "hal_buttons.h"
+#include "hal_butt_pwr_LEDs.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -87,6 +88,18 @@ const osThreadAttr_t buttonHandlerTa_attributes = {
   .stack_size = sizeof(buttonHandlerTaskBuffer),
   .priority = (osPriority_t) osPriorityNormal,
 };
+/* Definitions for powerLEDRefresh */
+osThreadId_t powerLEDRefreshHandle;
+uint32_t powerLEDRefreshBuffer[ 128 ];
+osStaticThreadDef_t powerLEDRefreshControlBlock;
+const osThreadAttr_t powerLEDRefresh_attributes = {
+  .name = "powerLEDRefresh",
+  .cb_mem = &powerLEDRefreshControlBlock,
+  .cb_size = sizeof(powerLEDRefreshControlBlock),
+  .stack_mem = &powerLEDRefreshBuffer[0],
+  .stack_size = sizeof(powerLEDRefreshBuffer),
+  .priority = (osPriority_t) osPriorityLow,
+};
 /* Definitions for buttonHandlerQueue */
 osMessageQueueId_t buttonHandlerQueueHandle;
 uint8_t buttonHandlerQueueBuffer[ 16 * sizeof( Queue_ButtonEvent_t ) ];
@@ -115,6 +128,7 @@ const osTimerAttr_t RefreshDisplayTimer_attributes = {
 void StartDefaultTask(void *argument);
 void displayTaskFunction(void *argument);
 void buttonHandlerTaskFunction(void *argument);
+void powerLEDRefreshFunction(void *argument);
 void RefershDisplayTimer_Callback(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
@@ -163,6 +177,9 @@ void MX_FREERTOS_Init(void) {
 
   /* creation of buttonHandlerTa */
   buttonHandlerTaHandle = osThreadNew(buttonHandlerTaskFunction, NULL, &buttonHandlerTa_attributes);
+
+  /* creation of powerLEDRefresh */
+  powerLEDRefreshHandle = osThreadNew(powerLEDRefreshFunction, NULL, &powerLEDRefresh_attributes);
 
   /* USER CODE BEGIN RTOS_THREADS */
   /* add threads, ... */
@@ -230,6 +247,26 @@ void buttonHandlerTaskFunction(void *argument)
     osDelay(10);
   }
   /* USER CODE END buttonHandlerTaskFunction */
+}
+
+/* USER CODE BEGIN Header_powerLEDRefreshFunction */
+/**
+* @brief Function implementing the powerLEDRefresh thread.
+* @param argument: Not used
+* @retval None
+*/
+/* USER CODE END Header_powerLEDRefreshFunction */
+void powerLEDRefreshFunction(void *argument)
+{
+  /* USER CODE BEGIN powerLEDRefreshFunction */
+	HAL_PowerButtonLEDs_Init();
+  /* Infinite loop */
+  for(;;)
+  {
+	HAL_PowerButtonLEDs_Task();
+    osDelay(20);
+  }
+  /* USER CODE END powerLEDRefreshFunction */
 }
 
 /* RefershDisplayTimer_Callback function */

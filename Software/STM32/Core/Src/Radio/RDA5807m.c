@@ -18,7 +18,16 @@ unsigned int RDA5807M_WriteRegDef[6] =
 // 0100 0000 0000 0000
 RDA5807m_RDS_info_t RDA5807m_RDS_info;
 
-int rdsready, tuneok, nochannel, rdssynchro, stereo, freq, signal, fmready, fmstation, rdsblockerror;
+int rdsready;
+int tuneok;
+int nochannel;
+int rdssynchro;
+int stereo;
+int freq;
+int signal_strength;
+int fmready;
+int fmstation;
+int rdsblockerror;
 unsigned int RDA5807M_WriteReg[8], RDA5807M_ReadReg[7], RDA5807M_RDS[32];
 
 char refresh[70];
@@ -205,7 +214,7 @@ uint16_t RDA5807_GetFrequency(void)
 
 uint16_t RDA5807_GetRSSI(void)
 {
-	return signal;
+	return signal_strength;
 }
 
 void RDA5807_RDS()
@@ -257,7 +266,7 @@ void RDA5807_Read()
 	rdssynchro = RDA5807M_ReadReg[0] & 0x1000;//if rdssynchro = 1000 rds decoder syncrhonized
 	stereo = RDA5807M_ReadReg[0] & 0x0400; //if stereo = 0 station is mono else stereo
 	freq = (((RDA5807M_ReadReg[0] & 0x03FF) * 100) + 87000);//return freq ex 102600KHz > 102.6MHz
-	signal = RDA5807M_ReadReg[1] >> 9;			//return signal strength rssi
+	signal_strength = RDA5807M_ReadReg[1] >> 9;			//return signal strength rssi
 	fmready = RDA5807M_ReadReg[1] & 0x0008; 	//if fmready = 8 > fm is ready
 	fmstation = RDA5807M_ReadReg[1] & 0x0100; //if fmstation = 100 fm station is true
 	rdsblockerror = RDA5807M_ReadReg[1] & 0x000C;//check for rds blocks errors

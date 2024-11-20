@@ -1,14 +1,14 @@
 /**
  ********************************************************************************
- * @file    hal_buttons.h
+ * @file    butt_pwr_LEDs_effects.h
  * @author  macie
- * @date    Nov 15, 2024
+ * @date    Nov 19, 2024
  * @brief   
  ********************************************************************************
  */
 
-#ifndef INC_BUTTONS_HAL_BUTTONS_H_
-#define INC_BUTTONS_HAL_BUTTONS_H_
+#ifndef INC_BUTT_PWR_LEDS_EFFECTS_H_
+#define INC_BUTT_PWR_LEDS_EFFECTS_H_
 
 #ifdef __cplusplus
 extern "C" {
@@ -21,34 +21,33 @@ extern "C" {
 /************************************
  * MACROS AND DEFINES
  ************************************/
+#define NBR_OF_REFRESH_STYLES 8
 
+#define UPANDDOWN_REFRESHSTYLE		0
+#define EXPONENTIAL_REFRESHSTYLE		1
+#define SINUSOIDAL_REFRESHSTYLE		2
+#define BREATHING_REFRESHSTYLE		3
+#define LOGARITHM_REFRESHSTYLE		4
+#define STEPDIM_REFRESHSTYLE			5
+#define ZIGZAC_REFRESHSTYLE			6
+#define LINEARDIM_REFRESHSTYLE		7
 /************************************
  * TYPEDEFS
  ************************************/
-typedef enum
-{
-	Button_Pressed,
-	Button_Released
-}Button_State_t;
-
-typedef struct
-{
-	uint16_t GPIO_Pin;
-	Button_State_t State;
-}Queue_ButtonEvent_t;
-
+typedef uint8_t(*RefreshLEDStyle)(uint8_t);
 /************************************
  * EXPORTED VARIABLES
  ************************************/
-
+extern const RefreshLEDStyle RefreshLEDStyles[NBR_OF_REFRESH_STYLES];
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
-void HAL_Buttons_IRQ_TurnOff(void);
-void HAL_Buttons_IRQ_TurnOn(void);
+void Butt_pwr_LEDs_effect_refresh_Red(void);
+void Butt_pwr_LEDs_effect_refresh_Yellow(void);
+void Butt_pwr_LEDs_effect_refresh_Green(void);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif
+#endif 

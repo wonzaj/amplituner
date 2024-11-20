@@ -1,8 +1,22 @@
-#ifndef INC_BUTTONS_H_
-#define INC_BUTTONS_H_
-//--------------------------------------------------------------
-// Includes
-//--------------------------------------------------------------
+/**
+ ********************************************************************************
+ * @file    app_buttons.h
+ * @author  macie
+ * @date    Nov 16, 2024
+ * @brief   
+ ********************************************************************************
+ */
+
+#ifndef INC_BUTTONS_APP_BUTTONS_H_
+#define INC_BUTTONS_APP_BUTTONS_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+/************************************
+ * INCLUDES
+ ************************************/
 #include "hal_buttons.h"
 #include "eeprom.h"
 #include "TDA7719.h"
@@ -15,24 +29,18 @@
 #include "time.h"
 #include "math.h"
 #include "rtc.h"
-
-//--------------------------------------------------------------
-// Defines
-//--------------------------------------------------------------
+/************************************
+ * MACROS AND DEFINES
+ ************************************/
 #define VOLUME_MUTE 96
 #define UV_METER_FRONT 0
 #define UV_METER_BACK  1
 
 #define POWER_BUTTON_PWM_MAX_VALUE 200
 #define POWER_BUTTON_PWM_MIN_VALUE 0
-
-//--------------------------------------------------------------
-// Typedefs
-//--------------------------------------------------------------
-
-//Defines source for FFT calculation
-//May be changed by button
-
+/************************************
+ * TYPEDEFS
+ ************************************/
 typedef struct
 {
 
@@ -56,46 +64,26 @@ typedef struct
 
 }SettingsUserMenu_t;
 
+enum
+{
+	TURNED_ON,
+	TURNED_OFF
+};
+
+
+typedef struct
+{
+	uint8_t isTurnedOn;
+
+}Device_config_t;
+/************************************
+ * EXPORTED VARIABLES
+ ************************************/
 extern SettingsUserMenu_t SettingsUserMenu;
-
+/************************************
+ * GLOBAL FUNCTION PROTOTYPES
+ ************************************/
 void AppButtons_EventHandler(void);
-
-void Buttons_PowerButton_Pressed(void);
-void Buttons_PowerButton_Released(void);
-GPIO_PinState Buttons_PowerButton_GetState(void);
-void Buttons_UserButton1_Pressed(void);
-void Buttons_UserButton1_Released(void);
-GPIO_PinState Buttons_UserButton1_GetState(void);
-void Buttons_UserButton2_Pressed(void);
-void Buttons_UserButton2_Released(void);
-GPIO_PinState Buttons_UserButton2_GetState(void);
-void Buttons_UserButton3_Pressed(void);
-void Buttons_UserButton3_Released(void);
-GPIO_PinState Buttons_UserButton3_GetState(void);
-void Buttons_UserButton4_Pressed(void);
-void Buttons_UserButton4_Released(void);
-GPIO_PinState Buttons_UserButton4_GetState(void);
-void Buttons_EncoderVolFrontButton_Pressed(void);
-void Buttons_EncoderVolFrontButton_Released(void);
-GPIO_PinState Buttons_EncoderVolFrontButton_GetState(void);
-void Buttons_EncoderVolBackButton_Pressed(void);
-void Buttons_EncoderVolBackButton_Released(void);
-GPIO_PinState Buttons_EncoderVolBackButton_GetState(void);
-void Buttons_EncoderTrebleButton_Pressed(void);
-void Buttons_EncoderTrebleButton_Released(void);
-GPIO_PinState Buttons_EncoderTrebleButton_GetState(void);
-void Buttons_EncoderBassButton_Pressed(void);
-void Buttons_EncoderBassButton_Released(void);
-GPIO_PinState Buttons_EncoderBassButton_GetState(void);
-void Buttons_EncoderMiddleButton_Pressed(void);
-void Buttons_EncoderMiddleButton_Released(void);
-GPIO_PinState Buttons_EncoderMiddleButton_GetState(void);
-void Buttons_EncoderRadioButton_Pressed(void);
-void Buttons_EncoderRadioButton_Released(void);
-GPIO_PinState Buttons_EncoderRadioButton_GetState(void);
-void Buttons_EncoderLoudnessButton_Pressed(void);
-void Buttons_EncoderLoudnessButton_Released(void);
-GPIO_PinState Buttons_EncoderLoudnessButton_GetState(void);
 
 void Check_and_Set_Volume_back(void);
 void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight);
@@ -116,4 +104,8 @@ void AppButtons_PowerButton_Init(void);
 float AppButtons_ConvertPWM(float val);
 
 
-#endif /* INC_BUTTONS_H_ */
+#ifdef __cplusplus
+}
+#endif
+
+#endif 
