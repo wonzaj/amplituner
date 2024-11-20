@@ -22,18 +22,15 @@ Display_Controls_t Display_Controls =
 		.Screen_State_Saved 	= SCREEN_WELCOME,
 		.Refresh_Hz 			= DISPLAY_REFRESH_TIME_HZ,
 		.OnStandbyMode_flag 	= false,
+		.CurrentDisplayMode 	= DISPLAY_NORMAL_MODE,
 };
 
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-static char ConvertArrayCharLong[6];
-
 _Bool IS_ALARM_SET_A;
 _Bool IS_ALARM_SET_B;
 
-const uint16_t refresh_time_values[7] =
-{ 0, 55001, 55000, 27500, 13750, 4580, 6 }; //0 first element, 6 last element, 2 OFF
 uint8_t settings_page = 0;
 uint8_t saved_seconds = 0;
 uint8_t saved_minutes = 0;
@@ -48,7 +45,7 @@ static void Screen_Time(uint8_t *const buffer);
 static void Screen_Radio(uint8_t *const buffer);
 static void Screen_WakeUp(uint8_t *const buffer);
 static void Screen_FFT(uint8_t *const buffer, uint8_t *const FFT_out_buffer);
-static void Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel, UV_meter_t right_channel, const uint8_t mode);
+static void Screen_UVMeter(uint8_t *const buffer);
 static void Screen_OFF(uint8_t *const buffer);
 static void Screen_GoodBye(uint8_t *const buffer);
 static void Screen_SetClock(uint8_t *const buffer);
@@ -254,25 +251,30 @@ static void Screen_FFT(uint8_t *const buffer, uint8_t *const FFT_out_buffer)
 	}
 }
 //
-static void Screen_UVMeter(uint8_t *const buffer, UV_meter_t left_channel, UV_meter_t right_channel, const uint8_t mode)
+static void Screen_UVMeter(uint8_t *const buffer)
 {
-	//efekt spadającej wartości peak do włączenia
+	uint8_t Audio_Value_Source 	= AudioVis_GetSource();
+	UV_meter_t Audio_LeftChannel 	= 0;
+	UV_meter_t Audio_RightChannel 	= 0;
+
+	AudioVis_GetValuesForDisplay(&Audio_LeftChannel, &Audio_RightChannel);
+
 	DisplayGFX_SelectFont(&FreeSerifItalic9pt7b);
 	DisplayDriver_FillBufferWithValue(buffer, 0);
-	left_channel = map(left_channel, 20, 2100, 25, 254); //dodać zabezpieczenie przed przekroczeniem zakresów
-	right_channel = map(right_channel, 20, 2100, 25, 254);
+	Audio_LeftChannel = map(Audio_LeftChannel, 20, 2100, 25, 254);
+	Audio_RightChannel = map(Audio_RightChannel, 20, 2100, 25, 254);
 
-	if(mode == UV_METER_FRONT)
+	if(Audio_Value_Source == UV_METER_FRONT)
 	{
 		//draw front label
 	}
-	else if(mode == UV_METER_BACK)
+	else if(Audio_Value_Source == UV_METER_BACK)
 	{
 		//draw back label
 	}
 
-	draw_UV_rectangle_scale(buffer, left_channel, right_channel);
-	draw_UV_lines_scale(buffer, left_channel, right_channel);
+	draw_UV_rectangle_scale(buffer, Audio_LeftChannel, Audio_RightChannel);
+	draw_UV_lines_scale(buffer, Audio_LeftChannel, Audio_RightChannel);
 
 	draw_char(buffer, 'L', 2, 23, 10); // powinien być wyświetlany czy to jest lewy front czy prawy front
 	draw_char(buffer, 'P', 2, 55, 10);
@@ -718,14 +720,7 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 		Screen_FFT(Display_Buffer, OutFreqArray);
 		break;
 	case SCREEN_UVMETER:
-		if(UV_meter_front_back == UV_METER_BACK)
-		{
-			Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[0], ADC_SamplesSUM[3], UV_meter_front_back);
-		}
-		else if(UV_meter_front_back == UV_METER_FRONT)
-		{
-			Screen_UVMeter(Display_Buffer, ADC_SamplesSUM[2], ADC_SamplesSUM[1], UV_meter_front_back);
-		}
+		Screen_UVMeter(Display_Buffer);
 		break;
 	case SCREEN_OFF:
 		Screen_OFF(Display_Buffer);
@@ -805,12 +800,12 @@ void AppDisplay_SaveCurrentDisplayState(void)
 
 	if (Current_Screen_State != AppDisplay_GetSavedDisplayState())
 	{
-		if((Current_Screen_State != (ENUM_MAX_USER_DISPLAY)
+		if((Current_Screen_State != (SCREEN_STATE_ENUM_MAX_USER_DISPLAY)
 				&& (Current_Screen_State != SCREEN_WAKEUP)
 				&& (Current_Screen_State != SCREEN_WELCOME)
 				&& (Current_Screen_State != SCREEN_OFF)
 				&& (Current_Screen_State != SCREEN_GOODBYTE)
-				&& (Current_Screen_State != ENUM_MAX_INVIS_DISPLAY)
+				&& (Current_Screen_State != SCREEN_STATE_ENUM_MAX_INVIS_DISPLAY)
 				&& (Current_Screen_State != SCREEN_ENCODER_VOLUME_FRONT)
 				&& (Current_Screen_State != SCREEN_ENCODER_VOLUME_BACK)
 				&& (Current_Screen_State != SCREEN_ENCODER_LOUDNESS)
@@ -818,7 +813,7 @@ void AppDisplay_SaveCurrentDisplayState(void)
 				&& (Current_Screen_State != SCREEN_ENCODER_MIDDLE)
 				&& (Current_Screen_State != SCREEN_ENCODER_BASS)
 				&& (Current_Screen_State != SCREEN_ENCODER_RADIO)
-				&& (Current_Screen_State != ENUM_MAX)))
+				&& (Current_Screen_State != SCREEN_STATE_ENUM_MAX)))
 		{
 			AppDisplay_SetSavedDisplayState(Current_Screen_State);
 		}

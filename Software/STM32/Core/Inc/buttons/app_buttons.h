@@ -33,8 +33,6 @@ extern "C" {
  * MACROS AND DEFINES
  ************************************/
 #define VOLUME_MUTE 96
-#define UV_METER_FRONT 0
-#define UV_METER_BACK  1
 
 #define POWER_BUTTON_PWM_MAX_VALUE 200
 #define POWER_BUTTON_PWM_MIN_VALUE 0
@@ -70,10 +68,10 @@ enum
 	TURNED_OFF
 };
 
-
 typedef struct
 {
 	uint8_t isTurnedOn;
+	uint8_t isFFTtoCalculate;
 
 }Device_config_t;
 /************************************
@@ -95,8 +93,6 @@ void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGa
 void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
 void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
 void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
-
-extern void set_change_time_of_display(const uint16_t counter_period);
 
 void AppButtons_PowerButton_SetPWMValue(uint8_t pwm_value);
 void AppButtons_PowerButton_StateUpdate(void);

@@ -9,20 +9,56 @@
 //--------------------------------------------------------------
 // Includes
 //--------------------------------------------------------------
-#include "fft.h"
+#include <audio_visualizer/fft.h>
 
 uint8_t OutFreqArray[21];
 //arm_rfft_fast_instance_f32 FFTHandler;
 uint16_t ADC_In[FFT_SAMPLES];
+FFT_channel_source_e FFT_channel_source = 1;
 float FFTInBuffer[FFT_SAMPLES];
 float FFTOutBuffer[FFT_SAMPLES];
 volatile uint8_t Samples_ready;
 volatile uint8_t FFT_calc_done = 0;
+volatile uint8_t ADC_IS_ON_flag = 0;
 
 //--------------------------------------------------------------
 // Functions definitions
 //--------------------------------------------------------------
+void FFT_Start_Measurements(void)
+{
+	if (ADC_IS_ON_flag != 1)
+	{
+		//HAL_TIM_Base_Start(&htim6);
+		//HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
+		ADC_IS_ON_flag = 1;
+	}
+}
 
+void FFT_Stop_ADC_Measurements(void)
+{
+	//hal_time_base_stop
+	//hal_Adc_stop_dma
+	ADC_IS_ON_flag = 0;
+}
+//
+void FFT_ChangeSource_Up(void)
+{
+	FFT_channel_source--;
+	if (FFT_channel_source == FFT_ch_src_enum_MIN)
+	{
+		FFT_channel_source = FFT_back_right;
+	}
+}
+
+//
+void FFT_ChangeSource_Down(void)
+{
+	FFT_channel_source++;
+	if (FFT_channel_source >= FFT_ch_src_enum_MAX)
+	{
+		FFT_channel_source = FFT_front_left;
+	}
+}
 //
 void calc_FFT_scale(void)
     {

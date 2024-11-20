@@ -223,14 +223,6 @@ void SSD1322_API_Send_Buffer(uint8_t *buffer, uint32_t buffer_size)
 	SSD1322_HW_SetPin_CS_HIGH();
 }
 
-//====================== set change time of display ========================//
-/**
- *  @brief sets time of refresh between displays states
- */
-//void set_change_time_of_display(const uint16_t counter_period)
-//    {
-//	htim15.Instance->CCR1 = counter_period;
-//    }
 //====================== display on standby mode routine ========================//
 /**
  *  @brief

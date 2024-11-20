@@ -46,6 +46,7 @@ static uint8_t RefreshLogarithmicBrighten(uint8_t pwm_val);
 static uint8_t RefreshStepDim(uint8_t pwm_val);
 static uint8_t RefreshZigzagEffect(uint8_t pwm_val);
 static uint8_t RefreshLinearDimSlow(uint8_t pwm_val);
+static float ConvertPWM(float val);
 
 const RefreshLEDStyle RefreshLEDStyles[NBR_OF_REFRESH_STYLES] =
 {
@@ -56,7 +57,8 @@ const RefreshLEDStyle RefreshLEDStyles[NBR_OF_REFRESH_STYLES] =
 		RefreshLogarithmicBrighten,
 		RefreshStepDim,
 		RefreshZigzagEffect,
-		RefreshLinearDimSlow
+		RefreshLinearDimSlow,
+		ConvertPWM
 };
 /************************************
  * STATIC FUNCTIONS
@@ -189,6 +191,14 @@ static uint8_t RefreshLinearDimSlow(uint8_t pwm_val)
 
     pwm_val = intensity;
     return pwm_val;
+}
+
+// change linear scale to more eye-friendly
+static float ConvertPWM(float val)
+{
+	const float k = 0.06f;
+	const float x0 = 100.0f;
+	return 200.0f / (1.0f + exp(-k * (val - x0)));
 }
 /************************************
  * GLOBAL FUNCTIONS

@@ -28,13 +28,9 @@ extern osMessageQueueId_t buttonHandlerQueueHandle;
 /************************************
  * STATIC VARIABLES
  ************************************/
-static uint8_t refresh_time = 1;
-static char letter = 'a';
+static char Current_letter = 'a';
 static uint8_t inc = 0; //97 - 'a'
-FFT_channel_source_e FFT_channel_source = 1;
 SettingsUserMenu_t SettingsUserMenu;
-extern Clock_Data_Change_t Clock_Data_Time;
-extern AlarmDataChange_t AlarmDataChange;
 extern TDA7719_config_t TDA7719_config;
 extern savedUserSettings_t savedUserSettings;
 extern encoderFilter_t encoderFilterTreble;
@@ -51,10 +47,8 @@ extern int16_t tempVolBackRight;
 extern uint32_t SysTick_MiliSeconds;
 extern uint32_t SysTick_Seconds;
 extern uint16_t ADC_SamplesTEST[4];
-extern volatile uint8_t ADC_IS_ON_flag;
 extern volatile uint8_t RADIO_IS_ON_back_flag;
 extern volatile uint8_t RADIO_IS_ON_front_flag;
-extern const uint16_t refresh_time_values[7];
 extern uint8_t settings_page;
 extern uint8_t saved_seconds;
 extern uint8_t saved_minutes;
@@ -63,7 +57,6 @@ extern volatile uint8_t POWER_device_state_flag;
 extern uint8_t UV_meter_front_back;
 extern uint8_t UV_meter_numb_of_chan;
 volatile uint8_t POWER_device_state_flag = 0;
-volatile uint8_t ADC_IS_ON_flag = 0;
 volatile uint8_t RADIO_IS_ON_front_flag;
 volatile uint8_t RADIO_IS_ON_back_flag;
 /************************************
@@ -72,6 +65,7 @@ volatile uint8_t RADIO_IS_ON_back_flag;
 Device_config_t Device_Config =
 {
 		.isTurnedOn = TURNED_ON,
+		.isFFTtoCalculate = 0,
 };
 /************************************
  * STATIC FUNCTION PROTOTYPES
@@ -103,14 +97,11 @@ static void Buttons_EncoderLoudnessButton_Released(void);
 
 static void Save_Station_Freq_1(void);
 static void Save_Station_Freq_2(void);
-static void Change_FFT_source_Down(void);
-static void Change_FFT_source_Up(void);
-static void Change_Down_Settings(void);
-static void Change_Up_Settings(void);
+static void SettingsChange_Down(void);
+static void SettingsChange_Up(void);
 static void Change_Down_Input(void);
 static void Change_Up_Input(void);
-static void Change_selected_setting(void);
-static void Read_Set_TimeAndDate(void);
+static void SettingsChange_Selected(void);
 /************************************
  * STATIC FUNCTIONS
  ************************************/
@@ -158,20 +149,13 @@ static void Buttons_UserButton1_Pressed(void)
 {
 	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	if ((Current_Screen_State + 1) == ENUM_MAX_USER_DISPLAY)
+	if ((Current_Screen_State + 1) == SCREEN_STATE_ENUM_MAX_USER_DISPLAY)
 	{
 		AppDisplay_SetDisplayState(SCREEN_TIME);
 	}
 	else
 	{
 		AppDisplay_SetDisplayState(Current_Screen_State + 1);
-	}
-
-	if (ADC_IS_ON_flag == true)
-	{
-		//HAL_TIM_Base_Stop(&htim6);
-		//HAL_ADC_Stop_DMA(&hadc2);
-		ADC_IS_ON_flag = false;
 	}
 
 	switch (Current_Screen_State)
@@ -183,15 +167,10 @@ static void Buttons_UserButton1_Pressed(void)
 
 		break;
 	case SCREEN_FFT:
-		//HAL_TIM_Base_Start(&htim6);
-		//HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
-		ADC_IS_ON_flag = true;
+		FFT_Start_Measurements();
 		break;
 	case SCREEN_UVMETER:
-		//HAL_TIM_Base_Start(&htim6);
-		//HAL_ADC_Start_DMA(&hadc2, (uint32_t *)ADC_SamplesTEST, UV_meter_numb_of_chan);
-		ADC_IS_ON_flag = true;
-		//set flag indicating that adc is on
+		AudioVis_Start_Measurements();
 		break;
 	case SCREEN_SETCLOCK:
 
@@ -225,10 +204,9 @@ static void Buttons_UserButton1_Released(void)
 //User button 2
 static void Buttons_UserButton2_Pressed(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	switch (SSD1322_Screen_State_temp)
+	switch (Current_Screen_State)
 	{
 	case SCREEN_TIME:
 		break;
@@ -239,6 +217,7 @@ static void Buttons_UserButton2_Pressed(void)
 		//po wcisnięciu budzika można ustawić czy się wyłącza muzyka
 		break;
 	case SCREEN_FFT:
+		// Change scaling factor in y or x on fft graph
 		break;
 	case SCREEN_UVMETER:
 		break;
@@ -247,21 +226,13 @@ static void Buttons_UserButton2_Pressed(void)
 	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
-		Clock_Data_Time++;
-		if (9 == Clock_Data_Time)
-		{
-			Clock_Data_Time = 1;
-		}
+		Time_ChangeSelected_TimeComponent();
 		break;
 	case SCREEN_SETALARM:
-		AlarmDataChange++;
-		if (7 == AlarmDataChange)
-		{
-			AlarmDataChange = 1;
-		}
+		Time_ChangeSelected_AlarmComponent();
 		break;
 	case SCREEN_SETTINGS:
-		Change_selected_setting();
+		SettingsChange_Selected();
 		break;
 	case SCREEN_USB:
 		//tutaj akcept wejście w folder albo otworzenie pliku
@@ -284,10 +255,9 @@ static void Buttons_UserButton2_Released(void)
 //User button 3
 static void Buttons_UserButton3_Pressed(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	switch (SSD1322_Screen_State_temp)
+	switch (Current_Screen_State)
 	{
 	case SCREEN_TIME:
 		break;
@@ -297,28 +267,27 @@ static void Buttons_UserButton3_Pressed(void)
 	case SCREEN_WAKEUP:
 		break;
 	case SCREEN_FFT:
-		Change_FFT_source_Down();
+		FFT_ChangeSource_Down();
 		break;
 	case SCREEN_UVMETER:
-		UV_meter_front_back = UV_METER_BACK; // zmienić nazwe, wrzucić do odpowiedniego modulu wrzucić do funkcji do odpowiedniego modułu
-		break;
+		AudioVis_ChangeSource_Front();
 	case SCREEN_OFF:
 		break;
 	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
-		switch_change_time(Clock_Data_Time, 0); //zmienic nazwe i wrzucic do odpowiedniego modułu
+		Time_ReadAndSet_TimeAndDate(CHANGE_VALUE_UP);
 		break;
 	case SCREEN_SETALARM:
-		switch_change_alarm(AlarmDataChange, 0); //zmienic nazwe i wrzucic do odpowiedniego modułu
+		Time_ReadAndSet_Alarms(CHANGE_VALUE_UP);
 		break;
 	case SCREEN_SETTINGS:
-		Change_Down_Settings(); //zmienic nazwe i wrzucic do odpowiedniego modułu
+		SettingsChange_Down();
 		break;
 	case SCREEN_USB:
 		break;
 	case SCREEN_SETINPUT:
-		Change_Down_Input();   //zmienic nazwe i wrzucic do odpowiedniego modułu
+		Change_Down_Input();
 		break;
 	default:
 		break;
@@ -333,41 +302,40 @@ static void Buttons_UserButton3_Released(void)
 //User button 4
 static void Buttons_UserButton4_Pressed(void)
 {
-	ScreenState_t SSD1322_Screen_State_temp =
-			AppDisplay_GetDisplayState();
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
-	switch (SSD1322_Screen_State_temp)
+	switch (Current_Screen_State)
 	{
 	case SCREEN_TIME:
 		break;
 	case SCREEN_RADIO:
-		Save_Station_Freq_2(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
+		Save_Station_Freq_2();
 		break;
 	case SCREEN_WAKEUP:
 		break;
 	case SCREEN_FFT:
-		Change_FFT_source_Up();	// zmienić nazwe, wrzucić do odpowiedniego modulu
+		FFT_ChangeSource_Up();
 		break;
 	case SCREEN_UVMETER:
-		UV_meter_front_back = UV_METER_FRONT;// zmienić nazwe, wrzucić do odpowiedniego modulu wrzucić do funkcji do odpowiedniego modułu
+		AudioVis_ChangeSource_Back();
 		break;
 	case SCREEN_OFF:
 		break;
 	case SCREEN_GOODBYTE:
 		break;
 	case SCREEN_SETCLOCK:
-		Read_Set_TimeAndDate();	//zmienic nazwe i wrzucic do odpowiedniego modułus
+		Time_ReadAndSet_TimeAndDate(CHANGE_VALUE_DOWN);
 		break;
 	case SCREEN_SETALARM:
-		switch_change_alarm(AlarmDataChange, 1);//zmienic nazwe i wrzucic do odpowiedniego modułu
+		Time_ReadAndSet_Alarms(CHANGE_VALUE_DOWN);
 		break;
 	case SCREEN_SETTINGS:
-		Change_Up_Settings();//zmienic nazwe i wrzucic do odpowiedniego modułu
+		SettingsChange_Up();
 		break;
 	case SCREEN_USB:
 		break;
 	case SCREEN_SETINPUT:
-		Change_Up_Input();	//zmienic nazwe i wrzucic do odpowiedniego modułu
+		Change_Up_Input();
 		break;
 	default:
 		break;
@@ -923,14 +891,12 @@ static void Save_Station_Freq_1(void)
 	static uint32_t button_timer;
 	static uint32_t button_timer1;
 
-	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin)
-			== GPIO_PIN_RESET)
+	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin) == GPIO_PIN_RESET)
 	{
 		button_timer = HAL_GetTick();
 	}
 
-	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin)
-			== GPIO_PIN_SET)
+	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin) == GPIO_PIN_SET)
 	{
 		button_timer1 = HAL_GetTick();
 
@@ -948,7 +914,7 @@ static void Save_Station_Freq_1(void)
 }
 
 //
-static void Change_selected_setting(void)
+static void SettingsChange_Selected(void)
 {
 	switch (SettingsUserMenu.SETTINGS_USER_MENU)
 	{
@@ -978,152 +944,135 @@ static void Change_selected_setting(void)
 }
 
 //
-static void Change_Down_Settings(void)
+static void SettingsChange_Down(void)
 {
-	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin) == GPIO_PIN_RESET)
+	switch (SettingsUserMenu.SETTINGS_USER_MENU)
 	{
-		switch (SettingsUserMenu.SETTINGS_USER_MENU)
+	case ALARM_SOURCE_A:
+		SettingsUserMenu.AlarmSource_A++;
+		if (SettingsUserMenu.AlarmSource_A == 3)
+			SettingsUserMenu.AlarmSource_A = RADIO;
+		if (SettingsUserMenu.AlarmSource_A == 7)
+			SettingsUserMenu.AlarmSource_A = JACK_1;
+		break;
+	case ALARM_SOURCE_B:
+		SettingsUserMenu.AlarmSource_B++;
+		if (SettingsUserMenu.AlarmSource_B == 3)
+			SettingsUserMenu.AlarmSource_B = RADIO;
+		if (SettingsUserMenu.AlarmSource_B == 7)
+			SettingsUserMenu.AlarmSource_B = JACK_1;
+		break;
+	case REFRESH_SCREEN_TIME:
+	{
+		if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 		{
-		case ALARM_SOURCE_A:
-			SettingsUserMenu.AlarmSource_A++;
-			if (SettingsUserMenu.AlarmSource_A == 3)
-				SettingsUserMenu.AlarmSource_A = RADIO;
-			if (SettingsUserMenu.AlarmSource_A == 7)
-				SettingsUserMenu.AlarmSource_A = JACK_1;
-			break;
-		case ALARM_SOURCE_B:
-			SettingsUserMenu.AlarmSource_B++;
-			if (SettingsUserMenu.AlarmSource_B == 3)
-				SettingsUserMenu.AlarmSource_B = RADIO;
-			if (SettingsUserMenu.AlarmSource_B == 7)
-				SettingsUserMenu.AlarmSource_B = JACK_1;
-			break;
-		case REFRESH_SCREEN_TIME:
-		{
-			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
-			{
-				SettingsUserMenu.RefreshScreenTime = 65535;
-				break;
-			}
-			refresh_time--;
-			if (refresh_time == 0)
-				refresh_time = 5;
-			SettingsUserMenu.RefreshScreenTime =
-					refresh_time_values[refresh_time];
-			//set_change_time_of_display(SettingsUserMenu.RefreshScreenTime);
-		}
-			break;
-		case USER_NAME:
-		{
-			inc++;
-			if (inc == 10)
-				inc = 0;
-		}
-			break;
-		case DISPLAY_MODE_ON_OFF:
-		{
-			//go to sleep mode after no actions is taken after 3 sec
-			SettingsUserMenu.Display_mode++;
-			if (SettingsUserMenu.Display_mode == 5)
-				SettingsUserMenu.Display_mode = 1;
-			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
-				SettingsUserMenu.RefreshScreenTime = 65535;
-			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
-			{
-				Display_Controls.OnStandbyMode_flag = true;
-				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-				saved_seconds = sTime.Seconds;
-				saved_minutes = sTime.Minutes;
-			}
-			else
-			{
-				Display_Controls.OnStandbyMode_flag = false;
-			}
-		}
-			break;
-		case POWER_LED:
-		{
-			SettingsUserMenu.Power_LED++;
-			if (SettingsUserMenu.Power_LED == 6)
-				SettingsUserMenu.Power_LED = 1;
-		}
-			break;
-		default:
+			SettingsUserMenu.RefreshScreenTime = 65535;
 			break;
 		}
 	}
+		break;
+	case USER_NAME:
+	{
+		inc++;
+		if (inc == 10)
+			inc = 0;
+	}
+		break;
+	case DISPLAY_MODE_ON_OFF:
+	{
+		//go to sleep mode after no actions is taken after 3 sec
+		SettingsUserMenu.Display_mode++;
+		if (SettingsUserMenu.Display_mode == 5)
+			SettingsUserMenu.Display_mode = 1;
+		if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
+			SettingsUserMenu.RefreshScreenTime = 65535;
+		if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
+		{
+			Display_Controls.OnStandbyMode_flag = true;
+			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+			saved_seconds = sTime.Seconds;
+			saved_minutes = sTime.Minutes;
+		}
+		else
+		{
+			Display_Controls.OnStandbyMode_flag = false;
+		}
+	}
+		break;
+	case POWER_LED:
+	{
+		SettingsUserMenu.Power_LED++;
+		if (SettingsUserMenu.Power_LED == 6)
+			SettingsUserMenu.Power_LED = 1;
+	}
+		break;
+	default:
+		break;
+	}
+
 }
 
 //
-static void Change_Up_Settings(void)
+static void SettingsChange_Up(void)
 {
-	if (HAL_GPIO_ReadPin(USER_BUTTON_4_GPIO_Port, USER_BUTTON_4_Pin) == GPIO_PIN_RESET)
+	switch (SettingsUserMenu.SETTINGS_USER_MENU)
 	{
-		switch (SettingsUserMenu.SETTINGS_USER_MENU)
+	case ALARM_SOURCE_A:
+		SettingsUserMenu.AlarmSource_A--;
+		if (SettingsUserMenu.AlarmSource_A == 4)
+			SettingsUserMenu.AlarmSource_A = JACK_2;
+		if (SettingsUserMenu.AlarmSource_A == 255)
+			SettingsUserMenu.AlarmSource_A = MICROPHONE_USB;
+		break;
+	case ALARM_SOURCE_B:
+		SettingsUserMenu.AlarmSource_B--;
+		if (SettingsUserMenu.AlarmSource_B == 4)
+			SettingsUserMenu.AlarmSource_B = JACK_2;
+		if (SettingsUserMenu.AlarmSource_B == 255)
+			SettingsUserMenu.AlarmSource_B = MICROPHONE_USB;
+		break;
+	case REFRESH_SCREEN_TIME:
+	{
+		if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
 		{
-		case ALARM_SOURCE_A:
-			SettingsUserMenu.AlarmSource_A--;
-			if (SettingsUserMenu.AlarmSource_A == 4)
-				SettingsUserMenu.AlarmSource_A = JACK_2;
-			if (SettingsUserMenu.AlarmSource_A == 255)
-				SettingsUserMenu.AlarmSource_A = MICROPHONE_USB;
-			break;
-		case ALARM_SOURCE_B:
-			SettingsUserMenu.AlarmSource_B--;
-			if (SettingsUserMenu.AlarmSource_B == 4)
-				SettingsUserMenu.AlarmSource_B = JACK_2;
-			if (SettingsUserMenu.AlarmSource_B == 255)
-				SettingsUserMenu.AlarmSource_B = MICROPHONE_USB;
-			break;
-		case REFRESH_SCREEN_TIME:
-		{
-			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
-			{
-				SettingsUserMenu.RefreshScreenTime = 65535;
-				break;
-			}
-			refresh_time++;
-			if (refresh_time == 6)
-				refresh_time = 1;
-			SettingsUserMenu.RefreshScreenTime =
-					refresh_time_values[refresh_time];
-			//set_change_time_of_display(SettingsUserMenu.RefreshScreenTime);
-		}
-			break;
-		case USER_NAME:
-			letter++;
-			if (letter == '{')
-				letter = 'a';
-			user_name[inc] = letter;
-			break;
-		case DISPLAY_MODE_ON_OFF:
-			SettingsUserMenu.Display_mode--;
-			if (SettingsUserMenu.Display_mode == 0)
-				SettingsUserMenu.Display_mode = 4;
-			if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
-				SettingsUserMenu.RefreshScreenTime = 65535;
-			if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
-			{
-				Display_Controls.OnStandbyMode_flag = true;
-				HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-				HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-				saved_seconds = sTime.Seconds;
-				saved_minutes = sTime.Minutes;
-			}
-			else
-			{
-				Display_Controls.OnStandbyMode_flag = false;
-			}
-			break;
-		case POWER_LED:
-			SettingsUserMenu.Power_LED--;
-			if (SettingsUserMenu.Power_LED == 0)
-				SettingsUserMenu.Power_LED = 5;
-			break;
-		default:
+			SettingsUserMenu.RefreshScreenTime = 65535;
 			break;
 		}
+	}
+		break;
+	case USER_NAME:
+		Current_letter++;
+		if (Current_letter == '{')
+			Current_letter = 'a';
+		user_name[inc] = Current_letter;
+		break;
+	case DISPLAY_MODE_ON_OFF:
+		SettingsUserMenu.Display_mode--;
+		if (SettingsUserMenu.Display_mode == 0)
+			SettingsUserMenu.Display_mode = 4;
+		if (SettingsUserMenu.Display_mode == DISPLAY_NORMAL_MODE)
+			SettingsUserMenu.RefreshScreenTime = 65535;
+		if (SettingsUserMenu.Display_mode == DISPLAY_STANDBY)
+		{
+			Display_Controls.OnStandbyMode_flag = true;
+			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+			saved_seconds = sTime.Seconds;
+			saved_minutes = sTime.Minutes;
+		}
+		else
+		{
+			Display_Controls.OnStandbyMode_flag = false;
+		}
+		break;
+	case POWER_LED:
+		SettingsUserMenu.Power_LED--;
+		if (SettingsUserMenu.Power_LED == 0)
+			SettingsUserMenu.Power_LED = 5;
+		break;
+	default:
+		break;
 	}
 }
 
@@ -1209,44 +1158,6 @@ static void Change_Up_Input(void)
 
 }
 
-//
-static void Change_FFT_source_Up(void)
-{
-	FFT_channel_source--;
-	if (FFT_channel_source == FFT_ch_src_enum_MIN)
-	{
-		FFT_channel_source = FFT_back_right;
-	}
-
-}
-
-//
-static void Change_FFT_source_Down(void)
-{
-	FFT_channel_source++;
-	if (FFT_channel_source >= FFT_ch_src_enum_MAX)
-	{
-		FFT_channel_source = FFT_front_left;
-	}
-
-}
-
-//
-static void Read_Set_TimeAndDate(void)
-{
-	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-	switch_change_time(Clock_Data_Time, 1);
-	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-}
-
-void AppButtons_PowerButton_SetPWMValue(uint8_t pwm_value)
-{
-	HAL_Buttons_PowerButton_SetPWM(pwm_value);
-}
-
 void AppButtons_PowerButton_StateUpdate(void)
 {
 	static uint32_t miliseconds = 0;
@@ -1261,24 +1172,24 @@ void AppButtons_PowerButton_StateUpdate(void)
 		case POWER_OFF:
 			if (countingUp_or_countingDown)
 			{
-				AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+				//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			}
 			else
 			{
-				AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+				//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			}
 			break;
 		case POWER_ON:
-			AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+			//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			break;
 		case Always_OFF:
-			AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MIN_VALUE);
+			//AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MIN_VALUE);
 			break;
 		case ALWAYS_ON:
-			AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MAX_VALUE);
+			//AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MAX_VALUE);
 			break;
 		case CHANGE_BRIGHTNESS:
-			AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
+			//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
 			break;
 			//może case gdzie użytkownik podaje parametr określający jasność
 		default:
@@ -1289,13 +1200,5 @@ void AppButtons_PowerButton_StateUpdate(void)
 
 void AppButtons_PowerButton_Init(void)
 {
-	HAL_Buttons_PowerButton_Init();
-}
 
-// change linear scale to more eye-friendly
-float AppButtons_ConvertPWM(float val)
-{
-	const float k = 0.06f;
-	const float x0 = 100.0f;
-	return 200.0f / (1.0f + exp(-k * (val - x0)));
 }

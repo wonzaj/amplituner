@@ -17,21 +17,58 @@ _Bool PreviewAlarm = true;
 char AlarmMode[25];
 
 /* Alarms variables */
-RTC_TimeTypeDef sTime;
-RTC_DateTypeDef sDate;
-RTC_AlarmTypeDef Alarm_A;
-RTC_AlarmTypeDef Alarm_B;
-RTC_AlarmTypeDef Alarm;
-RTC_typeOfAlarm_t RTC_typeOfAlarm;
-RTC_typeOfAlarm_t RTC_typeOfAlarm_A;
-RTC_typeOfAlarm_t RTC_typeOfAlarm_B;
+RTC_TimeTypeDef 		sTime;
+RTC_DateTypeDef 		sDate;
+RTC_AlarmTypeDef 		Alarm_A;
+RTC_AlarmTypeDef 		Alarm_B;
+RTC_AlarmTypeDef 		Alarm;
+RTC_typeOfAlarm_t 	RTC_typeOfAlarm;
+RTC_typeOfAlarm_t 	RTC_typeOfAlarm_A;
+RTC_typeOfAlarm_t 	RTC_typeOfAlarm_B;
 
-Clock_Data_Change_t Clock_Data_Time;
-AlarmDataChange_t AlarmDataChange;
+TimeComponent_t 		Current_TimeComponent;
+AlarmTimeComponent_t 	AlarmDataChange;
+
+static void Time_Update_AlarmComponent_Value(uint8_t up_or_down);
+static void Time_Update_TimeComponent_Value(uint8_t up_or_down);
 //--------------------------------------------------------------
 // Function definitions
 //--------------------------------------------------------------
 
+void Time_ChangeSelected_TimeComponent(void)
+{
+	Current_TimeComponent++;
+
+	if (TIME_PARAMETER_ENUMMAX == Current_TimeComponent)
+	{
+		Current_TimeComponent = HOUR;
+	}
+}
+
+void Time_ChangeSelected_AlarmComponent(void)
+{
+	AlarmDataChange++;
+
+	if (ALARMTIMECOMPONENT_MAXENUM == AlarmDataChange)
+	{
+		AlarmDataChange = HOUR_ALARM;
+	}
+}
+//
+void Time_ReadAndSet_TimeAndDate(uint8_t up_or_down)
+{
+	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+	Time_Update_TimeComponent_Value(up_or_down);
+	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
+	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
+
+}
+
+void Time_ReadAndSet_Alarms(uint8_t up_or_down)
+{
+	Time_Update_AlarmComponent_Value(up_or_down);
+}
 //
 void SetAlarm(__attribute__((__unused__))RTC_AlarmTypeDef Alarm_)
 {
@@ -144,92 +181,6 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 }
 
 //
-void switch_change_time(Clock_Data_Change_t Clock, _Bool add_subb)
-{
-	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-	switch (Clock)
-	{
-	case HOUR:
-		if (add_subb)
-			sTime.Hours--;
-		else
-			sTime.Hours++;
-		if (sTime.Hours == UINT8_MAX)
-			sTime.Hours = 23;
-		if (IS_RTC_HOUR24(sTime.Hours) != true)
-			sTime.Hours = 0x00;
-		break;
-	case MINUTE:
-		if (add_subb)
-			sTime.Minutes--;
-		else
-			sTime.Minutes++;
-		if (sTime.Minutes == UINT8_MAX)
-			sTime.Minutes = 59;
-		if (IS_RTC_MINUTES(sTime.Minutes) != true)
-			sTime.Minutes = 0x00;
-		break;
-	case SECOND:
-		if (add_subb)
-			sTime.Seconds--;
-		else
-			sTime.Seconds++;
-		if (sTime.Seconds == UINT8_MAX)
-			sTime.Seconds = 59;
-		if (IS_RTC_SECONDS(sTime.Seconds) != true)
-			sTime.Seconds = 0x00;
-		break;
-	case DAYWEEK:
-		if (add_subb)
-			sDate.WeekDay--;
-		else
-			sDate.WeekDay++;
-		if (sDate.WeekDay == UINT8_MAX)
-			sDate.WeekDay = 7;
-		if (IS_RTC_WEEKDAY(sDate.WeekDay) != true)
-			sDate.WeekDay = 0x00;
-		break;
-	case DAY:
-		if (add_subb)
-			sDate.Date--;
-		else
-			sDate.Date++;
-		if (sDate.Date == UINT8_MAX)
-			sDate.Date = 30;
-		if (IS_RTC_DATE(sDate.Date) != true)
-			sDate.Date = 0x00;
-		break;
-	case MONTH:
-		if (add_subb)
-			sDate.Month--;
-		else
-			sDate.Month++;
-		if (sDate.Month == UINT8_MAX)
-			sDate.Month = 12;
-		if (IS_RTC_MONTH(sDate.Month) != true)
-			sDate.Month = 0x00;
-		break;
-	case YEAR:
-		if (add_subb)
-			sDate.Year--;
-		else
-			sDate.Year++;
-		if (sDate.Year == UINT8_MAX)
-			sDate.Year = 0;
-		if (IS_RTC_YEAR(sDate.Year) != true)
-			sDate.Year = 0x00;
-		break;
-	default:
-		//reset all values
-		break;
-	}
-	HAL_RTC_SetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-	HAL_RTC_SetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-}
-
-//
 void Set_Alarm_Mode(RTC_typeOfAlarm_t typeOfAlarm)
 {
 	// zrobic z napisow consty
@@ -256,14 +207,14 @@ void Set_Alarm_Mode(RTC_typeOfAlarm_t typeOfAlarm)
 }
 
 //
-void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
+static void Time_Update_AlarmComponent_Value(uint8_t up_or_down)
 {
 	//dodać wyswietlanie ustawionego alarmu, może jednocześnie albo wybieralnie
 	//w wyswietlaniu użyć HAL_RTC_GetAlarm
 	switch (AlarmDataChange)
 	{
 	case HOUR_ALARM:
-		if (add_subb == true)
+		if (up_or_down == true)
 			Alarm.AlarmTime.Hours--;
 		else
 			Alarm.AlarmTime.Hours++;
@@ -275,7 +226,7 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 			Alarm.AlarmTime.Hours = 0x00;
 		break;
 	case MINUTE_ALARM:
-		if (add_subb == true)
+		if (up_or_down == true)
 			Alarm.AlarmTime.Minutes--;
 		else
 			Alarm.AlarmTime.Minutes++;
@@ -288,7 +239,7 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 		if (Alarm.AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_WEEKDAY)
 		{
 			//dodać zeby wyświetlało także dany dzień tygodnia w tym przypadku
-			if (add_subb == true)
+			if (up_or_down == true)
 				Alarm.AlarmDateWeekDay--;
 			else
 				Alarm.AlarmDateWeekDay++;
@@ -299,7 +250,7 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 		}
 		else if (Alarm.AlarmDateWeekDaySel == RTC_ALARMDATEWEEKDAYSEL_DATE)
 		{
-			if (add_subb == true)
+			if (up_or_down == true)
 				Alarm.AlarmDateWeekDay--;
 			else
 				Alarm.AlarmDateWeekDay++;
@@ -310,16 +261,15 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 		}
 		break;
 	case MODE_ALARM:
-		if (add_subb == true)
+		if (up_or_down == true)
 			RTC_typeOfAlarm++;
 		else
 			RTC_typeOfAlarm--;
 		if (RTC_typeOfAlarm == UINT8_MAX)
-			RTC_typeOfAlarm = 1; //przepełnienie
+			RTC_typeOfAlarm = 1;
 		else if (RTC_typeOfAlarm == 6)
 			RTC_typeOfAlarm = 1;
-		if ((RTC_typeOfAlarm == ONLY_WEEKENDS_ALARM)
-				|| (RTC_typeOfAlarm == MON_to_FRI_ALARM))
+		if ((RTC_typeOfAlarm == ONLY_WEEKENDS_ALARM) || (RTC_typeOfAlarm == MON_to_FRI_ALARM))
 			Alarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_WEEKDAY;
 		else
 			Alarm.AlarmDateWeekDaySel = RTC_ALARMDATEWEEKDAYSEL_DATE;
@@ -329,18 +279,18 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 			Alarm.AlarmMask = RTC_ALARMMASK_DATEWEEKDAY;
 		break;
 	case SET_ALARM:
-		if (add_subb == false) // button down  alarm_set_A_or_B - true - alarm A, false - alarm B
+		if (up_or_down == false)
 		{
 			if (alarm_set_A_or_B == true)
-				alarm_set_A_or_B = false; //dać enum false pierwszy i dać alarm_a
+				alarm_set_A_or_B = false;
 			else
 				alarm_set_A_or_B = true;
 		}
-		else if (add_subb == true) //button up
+		else if (up_or_down == true)
 		{
 			if (alarm_set_A_or_B == true)
 			{
-				if (IS_ALARM_SET_A == false) //if alarm is set FLAG then deactive by pressing this button
+				if (IS_ALARM_SET_A == false)
 				{
 					Alarm_A = Alarm;
 					Alarm_A.Alarm = RTC_ALARM_A;
@@ -382,6 +332,86 @@ void switch_change_alarm(AlarmDataChange_t AlarmDataChange, _Bool add_subb)
 			PreviewAlarm = true;
 		break;
 	default:
+		break;
+	}
+}
+
+static void Time_Update_TimeComponent_Value(uint8_t up_or_down)
+{
+	switch (Current_TimeComponent)
+	{
+	case HOUR:
+		if (up_or_down)
+			sTime.Hours--;
+		else
+			sTime.Hours++;
+		if (sTime.Hours == UINT8_MAX)
+			sTime.Hours = 23;
+		if (IS_RTC_HOUR24(sTime.Hours) != true)
+			sTime.Hours = 0x00;
+		break;
+	case MINUTE:
+		if (up_or_down)
+			sTime.Minutes--;
+		else
+			sTime.Minutes++;
+		if (sTime.Minutes == UINT8_MAX)
+			sTime.Minutes = 59;
+		if (IS_RTC_MINUTES(sTime.Minutes) != true)
+			sTime.Minutes = 0x00;
+		break;
+	case SECOND:
+		if (up_or_down)
+			sTime.Seconds--;
+		else
+			sTime.Seconds++;
+		if (sTime.Seconds == UINT8_MAX)
+			sTime.Seconds = 59;
+		if (IS_RTC_SECONDS(sTime.Seconds) != true)
+			sTime.Seconds = 0x00;
+		break;
+	case DAYWEEK:
+		if (up_or_down)
+			sDate.WeekDay--;
+		else
+			sDate.WeekDay++;
+		if (sDate.WeekDay == UINT8_MAX)
+			sDate.WeekDay = 7;
+		if (IS_RTC_WEEKDAY(sDate.WeekDay) != true)
+			sDate.WeekDay = 0x00;
+		break;
+	case DAY:
+		if (up_or_down)
+			sDate.Date--;
+		else
+			sDate.Date++;
+		if (sDate.Date == UINT8_MAX)
+			sDate.Date = 30;
+		if (IS_RTC_DATE(sDate.Date) != true)
+			sDate.Date = 0x00;
+		break;
+	case MONTH:
+		if (up_or_down)
+			sDate.Month--;
+		else
+			sDate.Month++;
+		if (sDate.Month == UINT8_MAX)
+			sDate.Month = 12;
+		if (IS_RTC_MONTH(sDate.Month) != true)
+			sDate.Month = 0x00;
+		break;
+	case YEAR:
+		if (up_or_down)
+			sDate.Year--;
+		else
+			sDate.Year++;
+		if (sDate.Year == UINT8_MAX)
+			sDate.Year = 0;
+		if (IS_RTC_YEAR(sDate.Year) != true)
+			sDate.Year = 0x00;
+		break;
+	default:
+		//reset all values
 		break;
 	}
 }

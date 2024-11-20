@@ -1,5 +1,5 @@
-#ifndef INC_ANALOG_FFT_H_
-#define INC_ANALOG_FFT_H_
+#ifndef INC_AUDIO_VISUALIZER_FFT_H_
+#define INC_AUDIO_VISUALIZER_FFT_H_
 
 //--------------------------------------------------------------
 // Defines
@@ -39,16 +39,22 @@ extern uint8_t 					OutFreqArray[21];
 extern float 					FFTInBuffer[FFT_SAMPLES];
 extern volatile uint8_t 		FFT_calc_done;
 extern float 					FFTOutBuffer[FFT_SAMPLES];
-extern volatile uint8_t FFT_calc_done;
+extern volatile uint8_t 	FFT_calc_done;
 //extern arm_rfft_fast_instance_f32 FFTHandler;
+extern volatile uint8_t ADC_IS_ON_flag;
 
 //--------------------------------------------------------------
 // Functions declarations
 //--------------------------------------------------------------
+void FFT_Start_Measurements(void);
+void FFT_Stop_ADC_Measurements(void);
+void FFT_ChangeSource_Up(void);
+void FFT_ChangeSource_Down(void);
+
 void calc_FFT_scale(void);
 void check_FFT_flag(void);
 void CalculateFFT(void);
 float complexABS(float real, float compl);
 
 
-#endif /* INC_ANALOG_FFT_H_ */
+#endif /* INC_AUDIO_VISUALIZER_FFT_H_ */

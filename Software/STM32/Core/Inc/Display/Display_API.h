@@ -1,6 +1,8 @@
 #ifndef INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 #define INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 
+#include <audio_visualizer/fft.h>
+#include <audio_visualizer/UVmeter.h>
 #include "rtc.h"
 #include "string.h"
 //#include "rng.h"
@@ -14,7 +16,6 @@
 #include "hal_buttons.h"
 #include "SSD1322_API.h"
 #include "SSD1322_GFX.h"
-#include "fft.h"
 
 //--------------------------------------------------------------
 // Defines
@@ -52,14 +53,6 @@ extern RTC_DateTypeDef 	 pDate;
 extern RTC_AlarmTypeDef  Alarm_A;
 extern RTC_AlarmTypeDef  Alarm_B;
 extern RTC_AlarmTypeDef  Alarm;
-//extern RNG_HandleTypeDef hrng;
-
-//extern encoderFilter_t 	 encoderFilterTreble;
-//extern encoderFilter_t	 encoderFilterMiddle;
-//extern encoderFilter_t	 encoderFilterBass;
-//extern encoderFilter_t	 encoderFilterLoudness;
-//extern encoder_t 	 encoderVolFront;
-//extern encoder_t	 encoderVolBack;
 extern volatile uint8_t RADIO_IS_ON_front_flag;
 extern volatile uint8_t RADIO_IS_ON_back_flag;
 // buffer for display
@@ -91,10 +84,10 @@ typedef enum
     SCREEN_UVMETER,
     SCREEN_TIME_BOUNCING,
     SCREEN_SETINPUT,
-    SCREEN_SETCLOCK,
+    SCREEN_SETCLOCK,	// mozliwosci set clock dac do time
     SCREEN_SETALARM,
     SCREEN_SETTINGS,
-    ENUM_MAX_USER_DISPLAY,
+    SCREEN_STATE_ENUM_MAX_USER_DISPLAY,
 
     SCREEN_SNAKE,	//not used atm
     SCREEN_USB, 	//not used atm
@@ -103,7 +96,7 @@ typedef enum
     SCREEN_WELCOME,
     SCREEN_OFF,
     SCREEN_GOODBYTE,
-    ENUM_MAX_INVIS_DISPLAY,
+    SCREEN_STATE_ENUM_MAX_INVIS_DISPLAY,
 
     SCREEN_ENCODER_VOLUME_FRONT = 30,
     SCREEN_ENCODER_VOLUME_BACK,
@@ -112,7 +105,7 @@ typedef enum
     SCREEN_ENCODER_MIDDLE,
     SCREEN_ENCODER_BASS,
     SCREEN_ENCODER_RADIO,
-    ENUM_MAX
+	SCREEN_STATE_ENUM_MAX
 
 }ScreenState_t;
 
@@ -133,13 +126,15 @@ typedef enum
     DISPLAY_STANDBY,
     DISPLAY_TIME,
 
-}display_mode_t;
+}Display_Mode_t;
 
 typedef struct
 {
-	ScreenState_t 	Screen_State;
-	ScreenState_t 	Screen_State_Saved;
-	uint32_t 		Refresh_Hz;
+	ScreenState_t 		Screen_State;
+	ScreenState_t 		Screen_State_Saved;
+	uint32_t 			Refresh_Hz;
+	uint32_t 			AutoChangeScreenTime_ms;
+	Display_Mode_t 	CurrentDisplayMode;
 
 	_Bool OnStandbyMode_flag;
 
