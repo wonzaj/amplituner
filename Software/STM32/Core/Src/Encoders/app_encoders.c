@@ -32,6 +32,13 @@ savedUserSettings_t savedUserSettings;
 //--------------------------------------------------------------
 extern uint8_t volumeMasterFlag;
 
+static void Check_and_Set_Volume_back(void);
+static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume);
+static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume);
+static void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
+static void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
+static void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
+static void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
 //--------------------------------------------------------------
 // Function definition
 //--------------------------------------------------------------
@@ -39,7 +46,6 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
 
 	switch (encoderVolFront.audioOutputState)
 	{
@@ -217,6 +223,16 @@ void AppEncoders_EncoderLoudness_Rotated(void)
 	TDA7719_SetLoudness(encoderFilterLoudness.gain, encoderFilterLoudness.centerFreq, encoderFilterLoudness.high_boost, encoderFilterLoudness.soft_step);
 }
 
+void AppEncoders_SingleEncoderStop(TIM_HandleTypeDef *htim)
+{
+	HAL_Encoder_SingleEncoderStop(htim);
+}
+
+void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim)
+{
+	HAL_Encoder_SingleEncoderStart(htim);
+}
+
 void check_volumes_ranges(void)
 {
 	if (volumeMasterFlag == 1)
@@ -240,12 +256,122 @@ void check_volumes_ranges(void)
 	if (tempVolBackRight <= -79)		tempVolBackRight  = -79;
 }
 
-void AppEncoders_SingleEncoderStop(TIM_HandleTypeDef *htim)
+// Checks if given value (volume) is given range
+// It also increments or decrements value depending on CNT register upgraded by volume front encoder
+void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume)
 {
-	HAL_Encoder_SingleEncoderStop(htim);
+	static int16_t TimerDiff1;
+	static uint16_t LastTimerCounter1;
+
+	TimerDiff1 = htim5.Instance->CNT - LastTimerCounter1;
+	if (TimerDiff1 >= 4 || TimerDiff1 <= -4)
+	{
+		TimerDiff1 /= 4;
+		(*volume) += (int8_t) TimerDiff1;
+		if ((*volume) > maxVolume)
+			(*volume) = maxVolume;
+		if ((*volume) < 0)
+			(*volume) = 0;
+		LastTimerCounter1 = htim5.Instance->CNT;
+	}
 }
 
-void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim)
+// Checks if given value (volume) is given range
+// It also increments or decrements value depending on CNT register upgraded by volume back encoder
+void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume)
 {
-	HAL_Encoder_SingleEncoderStart(htim);
+	static int16_t TimerDiff2;
+	static uint16_t LastTimerCounter2;
+
+	TimerDiff2 = htim3.Instance->CNT - LastTimerCounter2;
+	if (TimerDiff2 >= 4 || TimerDiff2 <= -4)
+	{
+		TimerDiff2 /= 4;
+		(*volume) += (int8_t) TimerDiff2;
+		if ((*volume) > maxVolume)
+			(*volume) = maxVolume;
+		if ((*volume) < 0)
+			(*volume) = 0;
+		LastTimerCounter2 = htim3.Instance->CNT;
+	}
+}
+
+// Checks if given value (loudness attenuator, center freqency, soft step, high boost) is given range
+// It also increments or decrements value depending on CNT register upgraded by loudness encoder
+void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+{
+	static int16_t TimerDiff3;
+	static uint16_t LastTimerCounter3;
+
+	TimerDiff3 = htim8.Instance->CNT - LastTimerCounter3;
+	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
+	{
+		TimerDiff3 /= 4;
+		(*gain) += (int8_t) TimerDiff3;
+		if ((*gain) >= maxGain)
+			(*gain) = maxGain;
+		if ((*gain) <= 0)
+			(*gain) = 0;
+		LastTimerCounter3 = htim8.Instance->CNT;
+	}
+}
+
+// Checks if given value (loudness, Bass Q Factor, soft step) is given range
+// It also increments or decrements value depending on CNT register upgraded by bass encoder
+void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+{
+	static int16_t TimerDiff3;
+	static uint16_t LastTimerCounter3;
+
+	TimerDiff3 = htim2.Instance->CNT - LastTimerCounter3;
+	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
+	{
+		TimerDiff3 /= 4;
+		(*gain) += (int8_t) TimerDiff3;
+		if ((*gain) >= maxGain)
+			(*gain) = maxGain;
+		if ((*gain) <= 0)
+			(*gain) = 0;
+		LastTimerCounter3 = htim2.Instance->CNT;
+	}
+}
+
+// Checks if given value (loudness, middle Q Factor, soft step) is given range
+// It also increments or decrements value depending on CNT register upgraded by middle encoder
+void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+{
+	static int16_t TimerDiff3;
+	static uint16_t LastTimerCounter3;
+
+	TimerDiff3 = HAL_Encoders_Middle_GetRotateValue() - LastTimerCounter3;
+	if(TimerDiff3 >= 4 || TimerDiff3 <= -4)
+	{
+		// TimerDiff3 /= 4;
+		(*gain) += (int8_t) TimerDiff3;
+		if ((*gain) >= maxGain)
+			(*gain) = maxGain;
+		if ((*gain) <= 0)
+			(*gain) = 0;
+		LastTimerCounter3 = HAL_Encoders_Middle_GetRotateValue();
+	}
+}
+
+// Checks if given value (loudness, treble Q Factor, soft step) is given range
+// It also increments or decrements value depending on CNT register upgraded by treble encoder
+void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+{
+	static int16_t TimerDiff3;
+	static uint16_t LastTimerCounter3;
+
+	TimerDiff3 = htim1.Instance->CNT - LastTimerCounter3;
+	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
+	{
+		TimerDiff3 /= 4;
+		(*gain) += (int8_t) TimerDiff3;
+		if ((*gain) >= maxGain)
+			(*gain) = maxGain;
+		if ((*gain) <= 0)
+			(*gain) = 0;
+		LastTimerCounter3 = htim1.Instance->CNT;
+	}
 }

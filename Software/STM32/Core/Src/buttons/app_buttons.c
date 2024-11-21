@@ -582,6 +582,11 @@ static void Buttons_EncoderLoudnessButton_Released(void)
 /************************************
  * GLOBAL FUNCTIONS
  ************************************/
+void AppButtons_PowerButton_Init(void)
+{
+
+}
+
 void AppButtons_EventHandler(void)
 {
 	Queue_ButtonEvent_t Queue_ButtonEvent = {0};
@@ -676,186 +681,6 @@ void AppButtons_EventHandler(void)
 					break;
 			}
 		}
-	}
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-// Volume master takes into account attenuator of each channel and front and back volume aswell
-void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight)
-{
-	//write to diffrent TDA7719 register depending on value
-	if ((encoderVolFront.volumeMaster <= 94) && (encoderVolFront.volumeMaster >= 80))
-	{
-		TDA7719_SetVolume((encoderVolFront.volumeMaster) - 79, 0, 0);
-	}
-	else if ((encoderVolFront.volumeMaster >= 0) && (encoderVolFront.volumeMaster <= 79))
-	{
-		TDA7719_SetVolume_LeftFront((VolFrontLeft), 0);
-		TDA7719_SetVolume_RightFront((VolFrontRight), 0);
-		TDA7719_SetVolume_LeftRear((VolBackLeft), 0);
-		TDA7719_SetVolume_RightRear((VolBackRight), 0);
-	}
-}
-
-// Sets volume just for both front channels
-void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft, const int16_t VolFrontRight)
-{
-
-	if (VolFrontLeft <= -79)
-		TDA7719_SetVolume_LeftFront(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
-	else
-		TDA7719_SetVolume_LeftFront(VolFrontLeft, 0);
-
-	if (VolFrontRight <= -79)
-		TDA7719_SetVolume_RightFront(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
-	else
-		TDA7719_SetVolume_RightFront(VolFrontRight, 0);
-
-}
-
-// Checks if given value (volume) is given range
-// It also increments or decrements value depending on CNT register upgraded by volume front encoder
-void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume)
-{
-	static int16_t TimerDiff1;
-	static uint16_t LastTimerCounter1;
-
-	//TimerDiff1 = htim5.Instance->CNT - LastTimerCounter1;
-	if (TimerDiff1 >= 4 || TimerDiff1 <= -4)
-	{
-		TimerDiff1 /= 4;
-		(*volume) += (int8_t) TimerDiff1;
-		if ((*volume) > maxVolume)
-			(*volume) = maxVolume;
-		if ((*volume) < 0)
-			(*volume) = 0;
-		//LastTimerCounter1 = htim5.Instance->CNT;
-	}
-}
-
-// Sets volume just for both back channels
-void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft, const int16_t VolBackRight)
-{
-	if (VolBackLeft <= -79)
-		TDA7719_SetVolume_LeftRear(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
-	else
-		TDA7719_SetVolume_LeftRear(VolBackLeft, 0);
-
-	if (VolBackRight <= -79)
-		TDA7719_SetVolume_RightRear(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
-	else
-		TDA7719_SetVolume_RightRear(VolBackRight, 0);
-
-}
-
-// Checks if given value (volume) is given range
-// It also increments or decrements value depending on CNT register upgraded by volume back encoder
-void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume)
-{
-	static int16_t TimerDiff2;
-	static uint16_t LastTimerCounter2;
-
-	//TimerDiff2 = htim3.Instance->CNT - LastTimerCounter2;
-	if (TimerDiff2 >= 4 || TimerDiff2 <= -4)
-	{
-		TimerDiff2 /= 4;
-		(*volume) += (int8_t) TimerDiff2;
-		if ((*volume) > maxVolume)
-			(*volume) = maxVolume;
-		if ((*volume) < 0)
-			(*volume) = 0;
-		//LastTimerCounter2 = htim3.Instance->CNT;
-	}
-}
-
-// Checks if given value (loudness attenuator, center freqency, soft step, high boost) is given range
-// It also increments or decrements value depending on CNT register upgraded by loudness encoder
-void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
-{
-	static int16_t TimerDiff3;
-	static uint16_t LastTimerCounter3;
-
-	//TimerDiff3 = htim8.Instance->CNT - LastTimerCounter3;
-	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
-	{
-		TimerDiff3 /= 4;
-		(*gain) += (int8_t) TimerDiff3;
-		if ((*gain) >= maxGain)
-			(*gain) = maxGain;
-		if ((*gain) <= 0)
-			(*gain) = 0;
-		//LastTimerCounter3 = htim8.Instance->CNT;
-	}
-}
-
-// Checks if given value (loudness, Bass Q Factor, soft step) is given range
-// It also increments or decrements value depending on CNT register upgraded by bass encoder
-void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
-{
-	static int16_t TimerDiff3;
-	static uint16_t LastTimerCounter3;
-
-	//TimerDiff3 = htim2.Instance->CNT - LastTimerCounter3;
-	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
-	{
-		TimerDiff3 /= 4;
-		(*gain) += (int8_t) TimerDiff3;
-		if ((*gain) >= maxGain)
-			(*gain) = maxGain;
-		if ((*gain) <= 0)
-			(*gain) = 0;
-		//LastTimerCounter3 = htim2.Instance->CNT;
-	}
-}
-
-// Checks if given value (loudness, middle Q Factor, soft step) is given range
-// It also increments or decrements value depending on CNT register upgraded by middle encoder
-void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
-{
-	static int16_t TimerDiff3;
-	static uint16_t LastTimerCounter3;
-
-	TimerDiff3 = HAL_Encoders_Middle_GetRotateValue() - LastTimerCounter3;
-	//if(TimerDiff3 >= 4 || TimerDiff3 <= -4)
-	{
-		// TimerDiff3 /= 4;
-		(*gain) += (int8_t) TimerDiff3;
-		if ((*gain) >= maxGain)
-			(*gain) = maxGain;
-		if ((*gain) <= 0)
-			(*gain) = 0;
-		LastTimerCounter3 = HAL_Encoders_Middle_GetRotateValue();
-	}
-}
-
-// Checks if given value (loudness, treble Q Factor, soft step) is given range
-// It also increments or decrements value depending on CNT register upgraded by treble encoder
-void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
-{
-	static int16_t TimerDiff3;
-	static uint16_t LastTimerCounter3;
-
-	//TimerDiff3 = htim1.Instance->CNT - LastTimerCounter3;
-	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
-	{
-		TimerDiff3 /= 4;
-		(*gain) += (int8_t) TimerDiff3;
-		if ((*gain) >= maxGain)
-			(*gain) = maxGain;
-		if ((*gain) <= 0)
-			(*gain) = 0;
-		//LastTimerCounter3 = htim1.Instance->CNT;
 	}
 }
 
@@ -1155,50 +980,5 @@ static void Change_Up_Input(void)
 		break;
 	}
 	TDA7719_SetSecondInput(TDA7719_config.set_input_back);
-
-}
-
-void AppButtons_PowerButton_StateUpdate(void)
-{
-	static uint32_t miliseconds = 0;
-	_Bool countingUp_or_countingDown = false;
-
-	if ((miliseconds + 10) <= SysTick_MiliSeconds)
-	{
-		miliseconds = SysTick_MiliSeconds;
-
-		switch (SettingsUserMenu.Power_LED)
-		{
-		case POWER_OFF:
-			if (countingUp_or_countingDown)
-			{
-				//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
-			}
-			else
-			{
-				//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
-			}
-			break;
-		case POWER_ON:
-			//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
-			break;
-		case Always_OFF:
-			//AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MIN_VALUE);
-			break;
-		case ALWAYS_ON:
-			//AppButtons_PowerButton_SetPWMValue(POWER_BUTTON_PWM_MAX_VALUE);
-			break;
-		case CHANGE_BRIGHTNESS:
-			//AppButtons_PowerButton_SetPWMValue(AppButtons_ConvertPWM(miliseconds % POWER_BUTTON_PWM_MAX_VALUE));
-			break;
-			//może case gdzie użytkownik podaje parametr określający jasność
-		default:
-			break;
-		}
-	}
-}
-
-void AppButtons_PowerButton_Init(void)
-{
 
 }

@@ -51,12 +51,13 @@ typedef struct
 
     enum
     {
-    	ALARM_SOURCE_A,
-		ALARM_SOURCE_B,
-		REFRESH_SCREEN_TIME,
-		USER_NAME,
-		DISPLAY_MODE_ON_OFF,
-		POWER_LED
+    	ALARM_SOURCE_A 		= 1,
+		ALARM_SOURCE_B		= 2,
+		REFRESH_SCREEN_TIME	= 3,
+		USER_NAME			= 4,
+		DISPLAY_MODE_ON_OFF	= 5,
+		POWER_LED			= 6,
+		SETTINGS_USER_MENU_ENUM_MAX
 
     } SETTINGS_USER_MENU;
 
@@ -82,23 +83,7 @@ extern SettingsUserMenu_t SettingsUserMenu;
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
 void AppButtons_EventHandler(void);
-
-void Check_and_Set_Volume_back(void);
-void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight);
-void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume);
-void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume);
-void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft, const int16_t VolBackRight);
-void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft,const int16_t VolFrontRight);
-void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
-void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
-void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
-void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
-
-void AppButtons_PowerButton_SetPWMValue(uint8_t pwm_value);
-void AppButtons_PowerButton_StateUpdate(void);
 void AppButtons_PowerButton_Init(void);
-float AppButtons_ConvertPWM(float val);
-
 
 #ifdef __cplusplus
 }

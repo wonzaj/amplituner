@@ -23,7 +23,6 @@ uint8_t TDA7719_registers[TDA7719_Registers_size];
 //--------------------------------------------------------------
 // Function definitions
 //--------------------------------------------------------------
-
 //Function used for prototyping and initialing preamp on startup of MCU
 void TDA7719_init(void)
 {
@@ -142,6 +141,53 @@ void TDA7719_PowerOff(void)
 
 }
 
+// Volume master takes into account attenuator of each channel and front and back volume aswell
+void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight)
+{
+	//write to diffrent TDA7719 register depending on value
+	if ((encoderVolFront.volumeMaster <= 94) && (encoderVolFront.volumeMaster >= 80))
+	{
+		TDA7719_SetVolume((encoderVolFront.volumeMaster) - 79, 0, 0);
+	}
+	else if ((encoderVolFront.volumeMaster >= 0) && (encoderVolFront.volumeMaster <= 79))
+	{
+		TDA7719_SetVolume_LeftFront((VolFrontLeft), 0);
+		TDA7719_SetVolume_RightFront((VolFrontRight), 0);
+		TDA7719_SetVolume_LeftRear((VolBackLeft), 0);
+		TDA7719_SetVolume_RightRear((VolBackRight), 0);
+	}
+}
+
+// Sets volume just for both front channels
+void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft, const int16_t VolFrontRight)
+{
+
+	if (VolFrontLeft <= -79)
+		TDA7719_SetVolume_LeftFront(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
+	else
+		TDA7719_SetVolume_LeftFront(VolFrontLeft, 0);
+
+	if (VolFrontRight <= -79)
+		TDA7719_SetVolume_RightFront(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
+	else
+		TDA7719_SetVolume_RightFront(VolFrontRight, 0);
+
+}
+
+// Sets volume just for both back channels
+void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft, const int16_t VolBackRight)
+{
+	if (VolBackLeft <= -79)
+		TDA7719_SetVolume_LeftRear(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
+	else
+		TDA7719_SetVolume_LeftRear(VolBackLeft, 0);
+
+	if (VolBackRight <= -79)
+		TDA7719_SetVolume_RightRear(VOLUME_MUTE, 0); //0 - mute, 79 - max_volume
+	else
+		TDA7719_SetVolume_RightRear(VolBackRight, 0);
+
+}
 //====================== Input configuration / main selector ========================//
 /**
  *  @brief Sets input for main source

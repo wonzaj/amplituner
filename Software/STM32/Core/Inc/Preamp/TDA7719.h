@@ -69,6 +69,9 @@ extern TDA7719_Control_t 				TDA7719_Controls_t;
 //--------------------------------------------------------------
 // Function declaration
 //--------------------------------------------------------------
+void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight);
+void TDA7719_SetVolumeBack_LeftRight(const int16_t VolBackLeft, const int16_t VolBackRight);
+void TDA7719_SetVolumeFront_LeftRight(const int16_t VolFrontLeft,const int16_t VolFrontRight);
 
 void TDA7719_SetMainInput(int8_t const input);
 void TDA7719_SetInputGain(_Bool const input_gain);
