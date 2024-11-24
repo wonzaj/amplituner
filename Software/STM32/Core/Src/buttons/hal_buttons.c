@@ -217,29 +217,17 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 			break;
 
 		case ENCODER_MIDDLE_1_Pin:
-			Queue_ButtonEvent.GPIO_Pin = ENCODER_MIDDLE_1_Pin;
-
 			if (HAL_GPIO_ReadPin(ENCODER_MIDDLE_1_GPIO_Port, ENCODER_MIDDLE_1_Pin) == GPIO_PIN_RESET)
 			{
-				Queue_ButtonEvent.State = Button_Pressed;
+				HAL_Encoders_Middle_1_FallingEdge();
 			}
 			else if (HAL_GPIO_ReadPin(ENCODER_MIDDLE_1_GPIO_Port, ENCODER_MIDDLE_1_Pin) == GPIO_PIN_SET)
 			{
-				Queue_ButtonEvent.State = Button_Released;
+
 			}
 			break;
-
 		case ENCODER_MIDDLE_2_Pin:
-			Queue_ButtonEvent.GPIO_Pin = ENCODER_MIDDLE_2_Pin;
 
-			if (HAL_GPIO_ReadPin(ENCODER_MIDDLE_2_GPIO_Port, ENCODER_MIDDLE_2_Pin) == GPIO_PIN_RESET)
-			{
-				Queue_ButtonEvent.State = Button_Pressed;
-			}
-			else if (HAL_GPIO_ReadPin(ENCODER_MIDDLE_2_GPIO_Port, ENCODER_MIDDLE_2_Pin) == GPIO_PIN_SET)
-			{
-				Queue_ButtonEvent.State = Button_Released;
-			}
 			break;
 		default:
 			break;

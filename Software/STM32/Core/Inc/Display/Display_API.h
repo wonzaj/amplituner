@@ -57,8 +57,6 @@ extern RTC_AlarmTypeDef  Alarm_B;
 extern RTC_AlarmTypeDef  Alarm;
 extern volatile uint8_t RADIO_IS_ON_front_flag;
 extern volatile uint8_t RADIO_IS_ON_back_flag;
-// buffer for display
-extern uint8_t 		DisplayOLEDBuffer[];
 
 extern uint8_t UV_meter_front_back;
 extern uint32_t ADC_SamplesSUM[4];

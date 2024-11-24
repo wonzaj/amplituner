@@ -12,6 +12,7 @@
 #include "Display_Draws.h"
 
 extern SettingsUserMenu_t SettingsUserMenu;
+extern Device_Cfg_Audio_t Device_Cfg_Audio;
 
 //--------------------------------------------------------------
 // Typedefs
@@ -586,10 +587,10 @@ static void Screen_Encoder_Treble(uint8_t *const buffer)
 	DisplayGFX_SelectFont(&FreeSans9pt7b);
 	DisplayGFX_DrawText(buffer, "Mid freq:", 25, 40, 5);
 	DisplayGFX_DrawText(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterTreble.gain - 16, temp_array_treble);
+	draw_gain_and_freq(Device_Cfg_Audio.Treble.gain - 16, temp_array_treble);
 	DisplayGFX_DrawText(buffer, (char*) temp_array_treble, 100, 63, 5);
 
-	switch (encoderFilterTreble.centerFreq)
+	switch (Device_Cfg_Audio.Treble.centerFreq)
 	{
 		case 0:		//00 - flat
 			DisplayGFX_DrawText(buffer, "10 kHz", 100, 40, 5);
@@ -619,10 +620,10 @@ static void Screen_Encoder_Middle(uint8_t *const buffer)
 	DisplayGFX_SelectFont(&FreeSans9pt7b);
 	DisplayGFX_DrawText(buffer, "Q fact:", 25, 40, 5);
 	DisplayGFX_DrawText(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterMiddle.gain - 16, temp_array_middle);
+	draw_gain_and_freq(Device_Cfg_Audio.Middle.gain - 16, temp_array_middle);
 	DisplayGFX_DrawText(buffer, (char*) temp_array_middle, 100, 63, 5);
 
-	switch (encoderFilterMiddle.centerFreq)
+	switch (Device_Cfg_Audio.Middle.centerFreq)
 	    {
 		case 0:
 		    DisplayGFX_DrawText(buffer, "0.5", 100, 40, 5);
@@ -652,10 +653,10 @@ static void Screen_Encoder_Bass(uint8_t *const buffer)
 	DisplayGFX_SelectFont(&FreeSans9pt7b);
 	DisplayGFX_DrawText(buffer, "Q fact:", 25, 40, 5);
 	DisplayGFX_DrawText(buffer, "Gain:", 50, 63, 5);
-	draw_gain_and_freq(encoderFilterBass.gain - 16, temp_array_bass);
+	draw_gain_and_freq(Device_Cfg_Audio.Bass.gain - 16, temp_array_bass);
 	DisplayGFX_DrawText(buffer, (char*) temp_array_bass, 100, 63, 5);
 
-	switch (encoderFilterBass.centerFreq)
+	switch (Device_Cfg_Audio.Bass.centerFreq)
 	    {
 		case 0:
 		    DisplayGFX_DrawText(buffer, "1.0", 100, 40, 5);

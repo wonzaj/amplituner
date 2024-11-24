@@ -8,30 +8,25 @@
 //--------------------------------------------------------------
 // Defines
 //--------------------------------------------------------------
-
+#define OFFSET_VOLUME 						79
+#define ENCODER_MAX_VOLUME_FRONT_MASTER		94
+#define ENCODER_MAX_VOLUME_FRONT_LEFTRIGHT	79
+#define ENCODER_MAX_VOLUME_BACK_LEFTRIGHT	79
 //--------------------------------------------------------------
 // Variables
 //--------------------------------------------------------------
 extern osMessageQueueId_t refreshTimerQueueHandle;
 static uint32_t RefreshTimer = 0;
 
-encoderFilter_t encoderFilterTreble;
-encoderFilter_t encoderFilterMiddle;
-encoderFilter_t encoderFilterBass;
-encoderFilter_t encoderFilterLoudness;
-encoder_t encoderVolFront;
-encoder_t encoderVolBack;
-
-
 savedUserSettings_t savedUserSettings =
 {
 
 };
-Device_config_Volumes_t Device_config_Volumes =
-{
-		.volumeMasterFlag = 0,
-};
 
+Device_Cfg_Audio_t Device_Cfg_Audio =
+{
+
+};
 //--------------------------------------------------------------
 // external variables
 //--------------------------------------------------------------
@@ -62,39 +57,39 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderVolFront.audioOutputState)
+	switch (Device_Cfg_Audio.VolFront.audioOutputState)
 	{
 	case MASTER:
-		Check_Volume_Range_Front(&encoderVolFront.volumeMaster, 94);
-		if (encoderVolFront.volumeMaster >= 80)
-			Device_config_Volumes.volumeMasterFlag = 1;
+		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeMaster, ENCODER_MAX_VOLUME_FRONT_MASTER);
+		if (Device_Cfg_Audio.VolFront.volumeMaster >= 80)
+			Device_Cfg_Audio.volumeMasterFlag = 1;
 		else
-			Device_config_Volumes.volumeMasterFlag = 0;
-		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
+			Device_Cfg_Audio.volumeMasterFlag = 0;
+		TDA7719_SetVolume_Master(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight, Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
 		break;
 	case MUTE:
 		//jak wyłącze przerwanie on enkodera to teraz nie bedzie tutaj kod wchodził
 		//więc może jakieś zerowanie rejestru CNT.
 		break;
 	case MASTER_V2:
-		Check_Volume_Range_Front(&encoderVolFront.volumeMaster, 94);
-		if (encoderVolFront.volumeMaster >= 80)
-			Device_config_Volumes.volumeMasterFlag = 1;
+		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeMaster, ENCODER_MAX_VOLUME_FRONT_MASTER);
+		if (Device_Cfg_Audio.VolFront.volumeMaster >= 80)
+			Device_Cfg_Audio.volumeMasterFlag = 1;
 		else
-			Device_config_Volumes.volumeMasterFlag = 0;
-		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
+			Device_Cfg_Audio.volumeMasterFlag = 0;
+		TDA7719_SetVolume_Master(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight, Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
 		break;
 	case NORMAL:
-		Check_Volume_Range_Front(&encoderVolFront.volumeLeftRight, 79);
-		TDA7719_SetVolumeFront_LeftRight(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight);
+		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeLeftRight, ENCODER_MAX_VOLUME_FRONT_LEFTRIGHT);
+		TDA7719_SetVolumeFront_LeftRight(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight);
 		break;
 	case ATTE_LEFT:
-		Check_Volume_Range_Front(&encoderVolFront.volumeLeft, 79);
-		TDA7719_SetVolume_LeftFront(Device_config_Volumes.tempVolFrontLeft, 0); //0 - 79
+		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeLeft, ENCODER_MAX_VOLUME_FRONT_LEFTRIGHT);
+		TDA7719_SetVolume_LeftFront(Device_Cfg_Audio.tempVolFrontLeft, 0); //0 - 79
 		break;
 	case ATTE_RIGHT:
-		Check_Volume_Range_Front(&encoderVolFront.volumeRight, 79);
-		TDA7719_SetVolume_RightFront(Device_config_Volumes.tempVolFrontRight, 0);
+		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeRight, ENCODER_MAX_VOLUME_FRONT_LEFTRIGHT);
+		TDA7719_SetVolume_RightFront(Device_Cfg_Audio.tempVolFrontRight, 0);
 		break;
 	default:
 		break;
@@ -107,26 +102,26 @@ void AppEncoders_EncoderVolBack_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderVolBack.audioOutputState)
+	switch (Device_Cfg_Audio.VolBack.audioOutputState)
 	{
 	case NORMAL:
-		Check_Volume_Range_Back(&encoderVolBack.volumeLeftRight, 79);
-		TDA7719_SetVolumeBack_LeftRight(Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
+		Check_Volume_Range_Back(&Device_Cfg_Audio.VolBack.volumeLeftRight, ENCODER_MAX_VOLUME_BACK_LEFTRIGHT);
+		TDA7719_SetVolumeBack_LeftRight(Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
 		break;
 	case MUTE:
 		//no action for encoder
 		break;
 	case NORMAL_V2:
-		Check_Volume_Range_Back(&encoderVolBack.volumeLeftRight, 79);
-		TDA7719_SetVolumeBack_LeftRight(Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
+		Check_Volume_Range_Back(&Device_Cfg_Audio.VolBack.volumeLeftRight, ENCODER_MAX_VOLUME_BACK_LEFTRIGHT);
+		TDA7719_SetVolumeBack_LeftRight(Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
 		break;
 	case ATTE_LEFT:
-		Check_Volume_Range_Back(&encoderVolBack.volumeLeft, 79);
-		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
+		Check_Volume_Range_Back(&Device_Cfg_Audio.VolBack.volumeLeft, ENCODER_MAX_VOLUME_BACK_LEFTRIGHT);
+		TDA7719_SetVolume_LeftRear(Device_Cfg_Audio.tempVolBackLeft, 0);
 		break;
 	case ATTE_RIGHT:
-		Check_Volume_Range_Back(&encoderVolBack.volumeRight, 79);
-		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackLeft, 0);
+		Check_Volume_Range_Back(&Device_Cfg_Audio.VolBack.volumeRight, ENCODER_MAX_VOLUME_BACK_LEFTRIGHT);
+		TDA7719_SetVolume_RightRear(Device_Cfg_Audio.tempVolBackLeft, 0);
 		break;
 	default:
 		break;
@@ -139,21 +134,21 @@ void AppEncoders_EncoderTreble_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterTreble.buttonControl)
+	switch (Device_Cfg_Audio.Treble.buttonControl)
 	{
 	case SET_GAIN:
-		Check_Treble_Param_Range(&encoderFilterTreble.gain, 30);
+		Check_Treble_Param_Range(&Device_Cfg_Audio.Treble.gain, 30);
 		break;
 	case SET_CENTER_FREQ:
-		Check_Treble_Param_Range(&encoderFilterTreble.centerFreq, 3);
+		Check_Treble_Param_Range(&Device_Cfg_Audio.Treble.centerFreq, 3);
 		break;
 	case SET_SOFT_STEP:
-		Check_Treble_Param_Range(&encoderFilterTreble.soft_step, 1);
+		Check_Treble_Param_Range(&Device_Cfg_Audio.Treble.soft_step, 1);
 		break;
 	default:
 		break;
 	}
-	TDA7719_SetTreble(encoderFilterTreble.gain - 16, encoderFilterTreble.centerFreq, encoderFilterTreble.soft_step);
+	TDA7719_SetTreble(Device_Cfg_Audio.Treble.gain - 16, Device_Cfg_Audio.Treble.centerFreq, Device_Cfg_Audio.Treble.soft_step);
 }
 
 void AppEncoders_EncoderBass_Rotated(void)
@@ -162,22 +157,22 @@ void AppEncoders_EncoderBass_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterBass.buttonControl)
+	switch (Device_Cfg_Audio.Bass.buttonControl)
 	{
 	case SET_GAIN:
-		Check_Bass_Param_Range(&encoderFilterBass.gain, 30);
+		Check_Bass_Param_Range(&Device_Cfg_Audio.Bass.gain, 30);
 		break;
 	case SET_CENTER_FREQ:
-		Check_Bass_Param_Range(&encoderFilterBass.centerFreq, 3);
+		Check_Bass_Param_Range(&Device_Cfg_Audio.Bass.centerFreq, 3);
 		break;
 	case SET_SOFT_STEP:
-		Check_Bass_Param_Range(&encoderFilterBass.soft_step, 1);
+		Check_Bass_Param_Range(&Device_Cfg_Audio.Bass.soft_step, 1);
 		break;
 	default:
-		encoderFilterBass.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Bass.buttonControl = SET_GAIN;
 		break;
 	}
-	TDA7719_SetBass(encoderFilterBass.gain - 16, encoderFilterBass.centerFreq, encoderFilterBass.soft_step);
+	TDA7719_SetBass(Device_Cfg_Audio.Bass.gain - 16, Device_Cfg_Audio.Bass.centerFreq, Device_Cfg_Audio.Bass.soft_step);
 }
 
 void AppEncoders_EncoderMiddle_Rotated(void)
@@ -186,21 +181,21 @@ void AppEncoders_EncoderMiddle_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterMiddle.buttonControl)
+	switch (Device_Cfg_Audio.Middle.buttonControl)
 	{
 	case SET_GAIN:
-		Check_Middle_Param_Range(&encoderFilterMiddle.gain, 30);
+		Check_Middle_Param_Range(&Device_Cfg_Audio.Middle.gain, 30);
 		break;
 	case SET_CENTER_FREQ:
-		Check_Middle_Param_Range(&encoderFilterMiddle.centerFreq, 3);
+		Check_Middle_Param_Range(&Device_Cfg_Audio.Middle.centerFreq, 3);
 		break;
 	case SET_SOFT_STEP:
-		Check_Middle_Param_Range(&encoderFilterMiddle.soft_step, 1);
+		Check_Middle_Param_Range(&Device_Cfg_Audio.Middle.soft_step, 1);
 		break;
 	default:
 		break;
 	}
-	TDA7719_SetMiddle(encoderFilterMiddle.gain - 16, encoderFilterMiddle.centerFreq, encoderFilterMiddle.soft_step);
+	TDA7719_SetMiddle(Device_Cfg_Audio.Middle.gain - 16, Device_Cfg_Audio.Middle.centerFreq, Device_Cfg_Audio.Middle.soft_step);
 }
 
 void AppEncoders_EncoderRadio_Rotated(void)
@@ -216,25 +211,25 @@ void AppEncoders_EncoderLoudness_Rotated(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterLoudness.buttonControl)
+	switch (Device_Cfg_Audio.Loudness.buttonControl)
 	{
 	case SET_GAIN:
-		Check_Loudness_Param_Range(&encoderFilterLoudness.gain, 15);
+		Check_Loudness_Param_Range(&Device_Cfg_Audio.Loudness.gain, 15);
 		break;
 	case SET_CENTER_FREQ:
-		Check_Loudness_Param_Range(&encoderFilterLoudness.centerFreq, 3);
+		Check_Loudness_Param_Range(&Device_Cfg_Audio.Loudness.centerFreq, 3);
 		break;
 	case SET_SOFT_STEP:
-		Check_Loudness_Param_Range(&encoderFilterLoudness.soft_step, 1);
+		Check_Loudness_Param_Range(&Device_Cfg_Audio.Loudness.soft_step, 1);
 		break;
 	case SET_HIGH_BOOST:
-		Check_Loudness_Param_Range(&encoderFilterLoudness.high_boost, 1);
+		Check_Loudness_Param_Range(&Device_Cfg_Audio.Loudness.high_boost, 1);
 		break;
 	default:
-		encoderFilterLoudness.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_GAIN;
 		break;
 	}
-	TDA7719_SetLoudness(encoderFilterLoudness.gain, encoderFilterLoudness.centerFreq, encoderFilterLoudness.high_boost, encoderFilterLoudness.soft_step);
+	TDA7719_SetLoudness(Device_Cfg_Audio.Loudness.gain, Device_Cfg_Audio.Loudness.centerFreq, Device_Cfg_Audio.Loudness.high_boost, Device_Cfg_Audio.Loudness.soft_step);
 }
 
 void AppEncoders_SingleEncoderStop(TIM_HandleTypeDef *htim)
@@ -249,25 +244,25 @@ void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim)
 
 void HAL_Encoders_CheckVolumeRanges(void)
 {
-	if (Device_config_Volumes.volumeMasterFlag == 1)
+	if (Device_Cfg_Audio.volumeMasterFlag == 1)
 	{
-		Device_config_Volumes.tempVolFrontLeft 	= (encoderVolFront.volumeLeft - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolFrontRight 	= (encoderVolFront.volumeRight - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolBackLeft 	= (encoderVolBack.volumeLeft - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolBackRight 	= (encoderVolBack.volumeRight - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
+		Device_Cfg_Audio.tempVolFrontLeft 	= (Device_Cfg_Audio.VolFront.volumeLeft - OFFSET_VOLUME) 	+ (Device_Cfg_Audio.VolFront.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolFrontRight 	= (Device_Cfg_Audio.VolFront.volumeRight - OFFSET_VOLUME) + (Device_Cfg_Audio.VolFront.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolBackLeft 		= (Device_Cfg_Audio.VolBack.volumeLeft - OFFSET_VOLUME) 	+ (Device_Cfg_Audio.VolBack.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolBackRight 	= (Device_Cfg_Audio.VolBack.volumeRight - OFFSET_VOLUME) 	+ (Device_Cfg_Audio.VolBack.volumeLeftRight - OFFSET_VOLUME);
 	}
-	else if (Device_config_Volumes.volumeMasterFlag == 0)
+	else if (Device_Cfg_Audio.volumeMasterFlag == 0)
 	{
-		Device_config_Volumes.tempVolFrontLeft 	= (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeLeft - 79) + (encoderVolFront.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolFrontRight 	= (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeRight - 79) + (encoderVolFront.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolBackLeft 	= (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeLeft - 79) + (encoderVolBack.volumeLeftRight - 79);
-		Device_config_Volumes.tempVolBackRight 	= (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeRight - 79) + (encoderVolBack.volumeLeftRight - 79);
+		Device_Cfg_Audio.tempVolFrontLeft 	= (Device_Cfg_Audio.VolFront.volumeMaster - OFFSET_VOLUME) + (Device_Cfg_Audio.VolFront.volumeLeft - OFFSET_VOLUME) + (Device_Cfg_Audio.VolFront.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolFrontRight 	= (Device_Cfg_Audio.VolFront.volumeMaster - OFFSET_VOLUME) + (Device_Cfg_Audio.VolFront.volumeRight - OFFSET_VOLUME) + (Device_Cfg_Audio.VolFront.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolBackLeft 		= (Device_Cfg_Audio.VolFront.volumeMaster - OFFSET_VOLUME) + (Device_Cfg_Audio.VolBack.volumeLeft - OFFSET_VOLUME) + (Device_Cfg_Audio.VolBack.volumeLeftRight - OFFSET_VOLUME);
+		Device_Cfg_Audio.tempVolBackRight 	= (Device_Cfg_Audio.VolFront.volumeMaster - OFFSET_VOLUME) + (Device_Cfg_Audio.VolBack.volumeRight - OFFSET_VOLUME) + (Device_Cfg_Audio.VolBack.volumeLeftRight - OFFSET_VOLUME);
 	}
 
-	if (Device_config_Volumes.tempVolFrontLeft <= -79) 		Device_config_Volumes.tempVolFrontLeft  = -79;
-	if (Device_config_Volumes.tempVolFrontRight <= -79) 		Device_config_Volumes.tempVolFrontRight = -79;
-	if (Device_config_Volumes.tempVolBackLeft <= -79)			Device_config_Volumes.tempVolBackLeft   = -79;
-	if (Device_config_Volumes.tempVolBackRight <= -79)		Device_config_Volumes.tempVolBackRight  = -79;
+	if (Device_Cfg_Audio.tempVolFrontLeft 	<= -OFFSET_VOLUME) 		Device_Cfg_Audio.tempVolFrontLeft  = -OFFSET_VOLUME;
+	if (Device_Cfg_Audio.tempVolFrontRight 	<= -OFFSET_VOLUME) 		Device_Cfg_Audio.tempVolFrontRight = -OFFSET_VOLUME;
+	if (Device_Cfg_Audio.tempVolBackLeft 		<= -OFFSET_VOLUME)		Device_Cfg_Audio.tempVolBackLeft   = -OFFSET_VOLUME;
+	if (Device_Cfg_Audio.tempVolBackRight 	<= -OFFSET_VOLUME)		Device_Cfg_Audio.tempVolBackRight  = -OFFSET_VOLUME;
 }
 
 // Checks if given value (volume) is given range
@@ -277,7 +272,7 @@ static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_
 	static int16_t TimerDiff1;
 	static uint16_t LastTimerCounter1;
 
-	TimerDiff1 = htim5.Instance->CNT - LastTimerCounter1;
+	TimerDiff1 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_FRONT) - LastTimerCounter1;
 	if (TimerDiff1 >= 4 || TimerDiff1 <= -4)
 	{
 		TimerDiff1 /= 4;
@@ -286,7 +281,8 @@ static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_
 			(*volume) = maxVolume;
 		if ((*volume) < 0)
 			(*volume) = 0;
-		LastTimerCounter1 = htim5.Instance->CNT;
+		LastTimerCounter1 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_FRONT);
+
 	}
 }
 
@@ -297,7 +293,7 @@ static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t
 	static int16_t TimerDiff2;
 	static uint16_t LastTimerCounter2;
 
-	TimerDiff2 = htim3.Instance->CNT - LastTimerCounter2;
+	TimerDiff2 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_BACK) - LastTimerCounter2;
 	if (TimerDiff2 >= 4 || TimerDiff2 <= -4)
 	{
 		TimerDiff2 /= 4;
@@ -306,7 +302,7 @@ static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t
 			(*volume) = maxVolume;
 		if ((*volume) < 0)
 			(*volume) = 0;
-		LastTimerCounter2 = htim3.Instance->CNT;
+		LastTimerCounter2 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_BACK);
 	}
 }
 
@@ -317,7 +313,7 @@ static void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
 
-	TimerDiff3 = htim8.Instance->CNT - LastTimerCounter3;
+	TimerDiff3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_LOUD) - LastTimerCounter3;
 	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
 	{
 		TimerDiff3 /= 4;
@@ -326,7 +322,7 @@ static void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_
 			(*gain) = maxGain;
 		if ((*gain) <= 0)
 			(*gain) = 0;
-		LastTimerCounter3 = htim8.Instance->CNT;
+		LastTimerCounter3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_LOUD);
 	}
 }
 
@@ -337,7 +333,7 @@ static void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t ma
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
 
-	TimerDiff3 = htim2.Instance->CNT - LastTimerCounter3;
+	TimerDiff3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_BASS) - LastTimerCounter3;
 	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
 	{
 		TimerDiff3 /= 4;
@@ -346,7 +342,7 @@ static void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t ma
 			(*gain) = maxGain;
 		if ((*gain) <= 0)
 			(*gain) = 0;
-		LastTimerCounter3 = htim2.Instance->CNT;
+		LastTimerCounter3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_BASS);
 	}
 }
 
@@ -377,7 +373,7 @@ static void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t 
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
 
-	TimerDiff3 = htim1.Instance->CNT - LastTimerCounter3;
+	TimerDiff3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_TREBLE) - LastTimerCounter3;
 	if (TimerDiff3 >= 4 || TimerDiff3 <= -4)
 	{
 		TimerDiff3 /= 4;
@@ -386,6 +382,6 @@ static void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t 
 			(*gain) = maxGain;
 		if ((*gain) <= 0)
 			(*gain) = 0;
-		LastTimerCounter3 = htim1.Instance->CNT;
+		LastTimerCounter3 = __HAL_TIM_GET_COUNTER(ENCODER_VOL_TREBLE);
 	}
 }

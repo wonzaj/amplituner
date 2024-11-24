@@ -17,7 +17,7 @@
  * EXTERN VARIABLES
  ************************************/
 extern osMessageQueueId_t buttonHandlerQueueHandle;
-extern Device_config_Volumes_t Device_config_Volumes;
+extern Device_Cfg_Audio_t Device_Cfg_Audio;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -34,12 +34,6 @@ static uint8_t inc = 0; //97 - 'a'
 SettingsUserMenu_t SettingsUserMenu;
 extern TDA7719_config_t TDA7719_config;
 extern savedUserSettings_t savedUserSettings;
-extern encoderFilter_t encoderFilterTreble;
-extern encoderFilter_t encoderFilterMiddle;
-extern encoderFilter_t encoderFilterBass;
-extern encoderFilter_t encoderFilterLoudness;
-extern encoder_t encoderVolFront;
-extern encoder_t encoderVolBack;
 extern uint32_t SysTick_MiliSeconds;
 extern uint32_t SysTick_Seconds;
 extern uint16_t ADC_SamplesTEST[4];
@@ -111,9 +105,9 @@ static void Buttons_PowerButton_Pressed(void)
 		SSD1322_API_Sleep_On();
 		RDA5807_PowerOff();
 		TDA7719_SetSoftMute(0, 1);
-		EEPROM_Save_FilterSettings(&encoderFilterTreble, &encoderFilterMiddle, &encoderFilterBass, &encoderFilterLoudness);
+		EEPROM_Save_FilterSettings(&Device_Cfg_Audio.Treble, &Device_Cfg_Audio.Middle, &Device_Cfg_Audio.Bass, &Device_Cfg_Audio.Loudness);
 		EEPROM_Save_UserSetting(&savedUserSettings);
-		EEPROM_Save_VolumeSettings(&encoderVolFront, &encoderVolBack);
+		EEPROM_Save_VolumeSettings(&Device_Cfg_Audio.VolFront, &Device_Cfg_Audio.VolBack);
 		HAL_Buttons_IRQ_TurnOff();
 		// Mute high power amplituner section
 	}
@@ -126,9 +120,9 @@ static void Buttons_PowerButton_Pressed(void)
 		RDA5807_Init();
 		TDA7719_init();
 		TDA7719_SetSoftMute(1, 1);
-		EEPROM_Read_FilterSettings(&encoderFilterTreble, &encoderFilterMiddle, &encoderFilterBass, &encoderFilterLoudness);
+		EEPROM_Read_FilterSettings(&Device_Cfg_Audio.Treble, &Device_Cfg_Audio.Middle, &Device_Cfg_Audio.Bass, &Device_Cfg_Audio.Loudness);
 		EEPROM_Read_UserSetting(&savedUserSettings);
-		EEPROM_Read_VolumeSettings(&encoderVolFront, &encoderVolBack);
+		EEPROM_Read_VolumeSettings(&Device_Cfg_Audio.VolFront, &Device_Cfg_Audio.VolBack);
 		HAL_Buttons_IRQ_TurnOn();
 	}
 }
@@ -347,10 +341,10 @@ static void Buttons_EncoderVolFrontButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderVolFront.audioOutputState)
+	switch (Device_Cfg_Audio.VolFront.audioOutputState)
 	{
 	case MASTER:
-		encoderVolFront.audioOutputState = MUTE;
+		Device_Cfg_Audio.VolFront.audioOutputState = MUTE;
 		TDA7719_SetVolume_LeftFront(VOLUME_MUTE, 0);
 		TDA7719_SetVolume_RightFront(VOLUME_MUTE, 0);
 		TDA7719_SetVolume_LeftRear(VOLUME_MUTE, 0);
@@ -358,31 +352,31 @@ static void Buttons_EncoderVolFrontButton_Pressed(void)
 		AppEncoders_SingleEncoderStop(ENCODER_VOL_FRONT);
 		break;
 	case MUTE:
-		encoderVolFront.audioOutputState = MASTER_V2;
-		TDA7719_SetVolume_LeftFront(Device_config_Volumes.tempVolFrontLeft, 0);
-		TDA7719_SetVolume_RightFront(Device_config_Volumes.tempVolFrontRight, 0);
-		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackLeft, 0);
-		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackLeft);
+		Device_Cfg_Audio.VolFront.audioOutputState = MASTER_V2;
+		TDA7719_SetVolume_LeftFront(Device_Cfg_Audio.tempVolFrontLeft, 0);
+		TDA7719_SetVolume_RightFront(Device_Cfg_Audio.tempVolFrontRight, 0);
+		TDA7719_SetVolume_LeftRear(Device_Cfg_Audio.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_Cfg_Audio.tempVolBackLeft, 0);
+		TDA7719_SetVolume_Master(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight, Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackLeft);
 		AppEncoders_SingleEncoderStart(ENCODER_VOL_FRONT);
 		//HAL_TIM_OC_Start_IT(&htim13, TIM_CHANNEL_1);
 		break;
 	case MASTER_V2:
-		encoderVolFront.audioOutputState = NORMAL;
-		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
+		Device_Cfg_Audio.VolFront.audioOutputState = NORMAL;
+		TDA7719_SetVolume_Master(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight, Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
 		//HAL_TIM_OC_Stop_IT(&htim13, TIM_CHANNEL_1);	//zmienić na 5 - 10 sekund
 		break;
 	case NORMAL:
-		encoderVolFront.audioOutputState = ATTE_LEFT;
+		Device_Cfg_Audio.VolFront.audioOutputState = ATTE_LEFT;
 		break;
 	case ATTE_LEFT:
-		encoderVolFront.audioOutputState = ATTE_RIGHT;
+		Device_Cfg_Audio.VolFront.audioOutputState = ATTE_RIGHT;
 		break;
 	case ATTE_RIGHT:
-		encoderVolFront.audioOutputState = MASTER;
+		Device_Cfg_Audio.VolFront.audioOutputState = MASTER;
 		break;
 	default:
-		encoderVolFront.audioOutputState = MASTER;
+		Device_Cfg_Audio.VolFront.audioOutputState = MASTER;
 		break;
 	}
 }
@@ -399,34 +393,34 @@ static void Buttons_EncoderVolBackButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderVolBack.audioOutputState)
+	switch (Device_Cfg_Audio.VolBack.audioOutputState)
 	{
 	case NORMAL:
-		encoderVolBack.audioOutputState = MUTE;
+		Device_Cfg_Audio.VolBack.audioOutputState = MUTE;
 		TDA7719_SetVolume_LeftRear(VOLUME_MUTE, 0);
 		TDA7719_SetVolume_RightRear(VOLUME_MUTE, 0);
 		//HAL_TIM_Encoder_Stop_IT(&htim8, TIM_CHANNEL_ALL);
 		break;
 	case MUTE:
-		encoderVolBack.audioOutputState = NORMAL_V2;
-		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackRight, 0);
+		Device_Cfg_Audio.VolBack.audioOutputState = NORMAL_V2;
+		TDA7719_SetVolume_LeftRear(Device_Cfg_Audio.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_Cfg_Audio.tempVolBackRight, 0);
 		//HAL_TIM_Encoder_Start_IT(&htim8, TIM_CHANNEL_ALL);
 		break;
 	case NORMAL_V2:
-		encoderVolBack.audioOutputState = ATTE_LEFT;
-		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackRight, 0);
+		Device_Cfg_Audio.VolBack.audioOutputState = ATTE_LEFT;
+		TDA7719_SetVolume_LeftRear(Device_Cfg_Audio.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_Cfg_Audio.tempVolBackRight, 0);
 		//HAL_TIM_OC_Start_IT(&htim16, TIM_CHANNEL_1);
 		break;
 	case ATTE_LEFT:
-		encoderVolBack.audioOutputState = ATTE_RIGHT;
+		Device_Cfg_Audio.VolBack.audioOutputState = ATTE_RIGHT;
 		break;
 	case ATTE_RIGHT:
-		encoderVolBack.audioOutputState = NORMAL;
+		Device_Cfg_Audio.VolBack.audioOutputState = NORMAL;
 		break;
 	default:
-		encoderVolBack.audioOutputState = NORMAL;
+		Device_Cfg_Audio.VolBack.audioOutputState = NORMAL;
 		break;
 	}
 }
@@ -443,22 +437,22 @@ static void Buttons_EncoderTrebleButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterTreble.buttonControl)
+	switch (Device_Cfg_Audio.Treble.buttonControl)
 	{
 	case SET_GAIN:
-		encoderFilterTreble.buttonControl = SET_CENTER_FREQ;
+		Device_Cfg_Audio.Treble.buttonControl = SET_CENTER_FREQ;
 		break;
 	case SET_CENTER_FREQ:
-		encoderFilterTreble.buttonControl = SET_SOFT_STEP;
+		Device_Cfg_Audio.Treble.buttonControl = SET_SOFT_STEP;
 		break;
 	case SET_SOFT_STEP:
-		encoderFilterTreble.buttonControl = SET_HIGH_BOOST;
+		Device_Cfg_Audio.Treble.buttonControl = SET_HIGH_BOOST;
 		break;
 	case SET_HIGH_BOOST:
-		encoderFilterTreble.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Treble.buttonControl = SET_GAIN;
 		break;
 	default:
-		encoderFilterTreble.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Treble.buttonControl = SET_GAIN;
 		break;
 	}
 }
@@ -475,19 +469,19 @@ static void Buttons_EncoderBassButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterBass.buttonControl)
+	switch (Device_Cfg_Audio.Bass.buttonControl)
 	{
 	case SET_GAIN:
-		encoderFilterBass.buttonControl = SET_CENTER_FREQ;
+		Device_Cfg_Audio.Bass.buttonControl = SET_CENTER_FREQ;
 		break;
 	case SET_CENTER_FREQ:
-		encoderFilterBass.buttonControl = SET_SOFT_STEP;
+		Device_Cfg_Audio.Bass.buttonControl = SET_SOFT_STEP;
 		break;
 	case SET_SOFT_STEP:
-		encoderFilterBass.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Bass.buttonControl = SET_GAIN;
 		break;
 	default:
-		encoderFilterBass.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Bass.buttonControl = SET_GAIN;
 		break;
 	}
 }
@@ -504,22 +498,22 @@ static void Buttons_EncoderMiddleButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterMiddle.buttonControl)
+	switch (Device_Cfg_Audio.Middle.buttonControl)
 	{
 	case SET_GAIN:
-		encoderFilterMiddle.buttonControl = SET_CENTER_FREQ;
+		Device_Cfg_Audio.Middle.buttonControl = SET_CENTER_FREQ;
 		break;
 	case SET_CENTER_FREQ:
-		encoderFilterMiddle.buttonControl = SET_SOFT_STEP;
+		Device_Cfg_Audio.Middle.buttonControl = SET_SOFT_STEP;
 		break;
 	case SET_SOFT_STEP:
-		encoderFilterMiddle.buttonControl = SET_HIGH_BOOST;
+		Device_Cfg_Audio.Middle.buttonControl = SET_HIGH_BOOST;
 		break;
 	case SET_HIGH_BOOST:
-		encoderFilterMiddle.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Middle.buttonControl = SET_GAIN;
 		break;
 	default:
-		encoderFilterMiddle.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Middle.buttonControl = SET_GAIN;
 		break;
 	}
 }
@@ -549,22 +543,22 @@ static void Buttons_EncoderLoudnessButton_Pressed(void)
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
 	SetSavedDisplay_StartTimer();
 
-	switch (encoderFilterLoudness.buttonControl)
+	switch (Device_Cfg_Audio.Loudness.buttonControl)
 	{
 	case SET_GAIN:
-		encoderFilterLoudness.buttonControl = SET_CENTER_FREQ;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_CENTER_FREQ;
 		break;
 	case SET_CENTER_FREQ:
-		encoderFilterLoudness.buttonControl = SET_SOFT_STEP;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_SOFT_STEP;
 		break;
 	case SET_SOFT_STEP:
-		encoderFilterLoudness.buttonControl = SET_HIGH_BOOST;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_HIGH_BOOST;
 		break;
 	case SET_HIGH_BOOST:
-		encoderFilterLoudness.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_GAIN;
 		break;
 	default:
-		encoderFilterLoudness.buttonControl = SET_GAIN;
+		Device_Cfg_Audio.Loudness.buttonControl = SET_GAIN;
 		break;
 	}
 }

@@ -13,6 +13,7 @@
 //--------------------------------------------------------------
 static void I2C_send(uint8_t SubAddress, uint8_t Data);
 
+extern Device_Cfg_Audio_t Device_Cfg_Audio;
 //--------------------------------------------------------------
 // Local variables
 //--------------------------------------------------------------
@@ -146,11 +147,11 @@ void TDA7719_PowerOff(void)
 void TDA7719_SetVolume_Master(const int16_t VolFrontLeft, const int16_t VolFrontRight, const int16_t VolBackLeft, const int16_t VolBackRight)
 {
 	//write to diffrent TDA7719 register depending on value
-	if ((encoderVolFront.volumeMaster <= 94) && (encoderVolFront.volumeMaster >= 80))
+	if ((Device_Cfg_Audio.VolFront.volumeMaster <= 94) && (Device_Cfg_Audio.VolFront.volumeMaster >= 80))
 	{
-		TDA7719_SetVolume((encoderVolFront.volumeMaster) - 79, 0, 0);
+		TDA7719_SetVolume((Device_Cfg_Audio.VolFront.volumeMaster) - 79, 0, 0);
 	}
-	else if ((encoderVolFront.volumeMaster >= 0) && (encoderVolFront.volumeMaster <= 79))
+	else if ((Device_Cfg_Audio.VolFront.volumeMaster >= 0) && (Device_Cfg_Audio.VolFront.volumeMaster <= 79))
 	{
 		TDA7719_SetVolume_LeftFront((VolFrontLeft), 0);
 		TDA7719_SetVolume_RightFront((VolFrontRight), 0);

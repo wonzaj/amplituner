@@ -15,6 +15,7 @@
  * EXTERN VARIABLES
  ************************************/
 extern SettingsUserMenu_t SettingsUserMenu;
+extern Device_Cfg_Audio_t Device_Cfg_Audio;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -50,10 +51,10 @@ void draw_encoder_volume_front_scale(uint8_t *const buffer)
 	static uint16_t Volume3;
 	static uint8_t i;
 
-	switch (encoderVolFront.audioOutputState)
+	switch (Device_Cfg_Audio.VolFront.audioOutputState)
 	{
 	case MASTER:
-		Volume = map(encoderVolFront.volumeMaster, 0, 94, 5, 230);
+		Volume = map(Device_Cfg_Audio.VolFront.volumeMaster, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume Master", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume, 62, 5);
 		draw_speaker_left(buffer, 3, 20);
@@ -71,7 +72,7 @@ void draw_encoder_volume_front_scale(uint8_t *const buffer)
 		}
 		break;
 	case MASTER_V2:
-		Volume = map(encoderVolFront.volumeMaster, 0, 94, 5, 230);
+		Volume = map(Device_Cfg_Audio.VolFront.volumeMaster, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume Master", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume, 62, 5);
 		draw_speaker_left(buffer, 3, 20);
@@ -85,7 +86,7 @@ void draw_encoder_volume_front_scale(uint8_t *const buffer)
 		}
 		break;
 	case NORMAL:
-		Volume3 = map(encoderVolFront.volumeLeftRight, 0, 94, 5, 230);
+		Volume3 = map(Device_Cfg_Audio.VolFront.volumeLeftRight, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume front", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume3, 62, 5);
 		draw_speaker_left(buffer, 3, 20);
@@ -106,7 +107,7 @@ void draw_encoder_volume_front_scale(uint8_t *const buffer)
 		}
 		break;
 	case ATTE_LEFT:
-		Volume1 = map(encoderVolFront.volumeLeft, 0, 94, 5, 230);
+		Volume1 = map(Device_Cfg_Audio.VolFront.volumeLeft, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume front left", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume1, 62, 5);
 		draw_speaker_left(buffer, 3, 20);
@@ -117,7 +118,7 @@ void draw_encoder_volume_front_scale(uint8_t *const buffer)
 		}
 		break;
 	case ATTE_RIGHT:
-		Volume2 = map(encoderVolFront.volumeRight, 0, 94, 5, 230);
+		Volume2 = map(Device_Cfg_Audio.VolFront.volumeRight, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume front right", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume2, 62, 5);
 		draw_speaker_right(buffer, 243, 20);
@@ -140,10 +141,10 @@ void draw_encoder_volume_back_scale(uint8_t *const buffer)
 	static uint16_t Volume3;
 	static uint8_t i;
 
-	switch (encoderVolBack.audioOutputState)
+	switch (Device_Cfg_Audio.VolBack.audioOutputState)
 	{
 	case NORMAL:
-		Volume3 = map(encoderVolBack.volumeLeftRight, 0, 94, 5, 230);
+		Volume3 = map(Device_Cfg_Audio.VolBack.volumeLeftRight, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume back", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume3, 62, 5);
 		draw_speaker_left(buffer, 10, 43);
@@ -155,7 +156,7 @@ void draw_encoder_volume_back_scale(uint8_t *const buffer)
 		}
 		break;
 	case NORMAL_V2:
-		Volume3 = map(encoderVolBack.volumeLeftRight, 0, 94, 5, 230);
+		Volume3 = map(Device_Cfg_Audio.VolBack.volumeLeftRight, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume back", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume3, 62, 5);
 		draw_speaker_left(buffer, 10, 43);
@@ -176,7 +177,7 @@ void draw_encoder_volume_back_scale(uint8_t *const buffer)
 		}
 		break;
 	case ATTE_LEFT:
-		Volume1 = map(encoderVolBack.volumeLeft, 0, 94, 5, 230);
+		Volume1 = map(Device_Cfg_Audio.VolBack.volumeLeft, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume back left", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume1, 62, 5);
 		draw_speaker_left(buffer, 10, 43);
@@ -187,7 +188,7 @@ void draw_encoder_volume_back_scale(uint8_t *const buffer)
 		}
 		break;
 	case ATTE_RIGHT:
-		Volume2 = map(encoderVolBack.volumeRight, 0, 94, 5, 230);
+		Volume2 = map(Device_Cfg_Audio.VolBack.volumeRight, 0, 94, 5, 230);
 		DisplayGFX_DrawText(buffer, "Volume Back right", 70, 15, 5);
 		draw_rect_filled(buffer, 5, 56, Volume2, 62, 5);
 		draw_speaker_right(buffer, 236, 43);
@@ -205,18 +206,18 @@ void draw_encoder_volume_back_scale(uint8_t *const buffer)
 
 void draw_gain_and_freq_loudness(uint8_t *const buffer, char *input_string)
 {
-	if ((encoderFilterLoudness.gain > 0))
+	if ((Device_Cfg_Audio.Loudness.gain > 0))
 	{
-		if (encoderFilterLoudness.gain > 10)
+		if (Device_Cfg_Audio.Loudness.gain > 10)
 		{
 			input_string[0] = ASCII_PLUS;
-			input_string[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, encoderFilterLoudness.gain);
-			input_string[2] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, encoderFilterLoudness.gain);
+			input_string[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(1, Device_Cfg_Audio.Loudness.gain);
+			input_string[2] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, Device_Cfg_Audio.Loudness.gain);
 		}
 		else
 		{
 			input_string[0] = ASCII_PLUS;
-			input_string[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, encoderFilterLoudness.gain);
+			input_string[1] = ASCII_DIGIT_OFFSET + SplitNumberToDignits(0, Device_Cfg_Audio.Loudness.gain);
 		}
 	}
 	else 	//gain == 0
@@ -227,7 +228,7 @@ void draw_gain_and_freq_loudness(uint8_t *const buffer, char *input_string)
 	strcat(input_string, " dB");
 	DisplayGFX_DrawText(buffer, (char*) input_string, 100, 63, 5);
 
-	switch (encoderFilterLoudness.centerFreq)
+	switch (Device_Cfg_Audio.Loudness.centerFreq)
 	{
 	case 0:		//00 - flat
 		DisplayGFX_DrawText(buffer, "Flat", 100, 40, 5);

@@ -35,16 +35,18 @@ typedef struct
 	int16_t tempVolBackLeft;
 	int16_t tempVolBackRight;
 
-}Device_config_Volumes_t;
+	encoderFilter_t Treble;
+	encoderFilter_t Middle;
+	encoderFilter_t Bass;
+	encoderFilter_t Loudness;
+	encoder_t VolFront;
+	encoder_t VolBack;
+
+}Device_Cfg_Audio_t;
 /************************************
  * EXPORTED VARIABLES
  ************************************/
-extern encoderFilter_t encoderFilterTreble;
-extern encoderFilter_t encoderFilterMiddle;
-extern encoderFilter_t encoderFilterBass;
-extern encoderFilter_t encoderFilterLoudness;
-extern encoder_t encoderVolFront;
-extern encoder_t encoderVolBack;
+
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
