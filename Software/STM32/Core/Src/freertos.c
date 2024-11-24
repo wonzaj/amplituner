@@ -111,6 +111,17 @@ const osMessageQueueAttr_t buttonHandlerQueue_attributes = {
   .mq_mem = &buttonHandlerQueueBuffer,
   .mq_size = sizeof(buttonHandlerQueueBuffer)
 };
+/* Definitions for refreshTimerQueue */
+osMessageQueueId_t refreshTimerQueueHandle;
+uint8_t refreshTimerQueueBuffer[ 16 * sizeof( uint8_t ) ];
+osStaticMessageQDef_t refreshTimerQueueControlBlock;
+const osMessageQueueAttr_t refreshTimerQueue_attributes = {
+  .name = "refreshTimerQueue",
+  .cb_mem = &refreshTimerQueueControlBlock,
+  .cb_size = sizeof(refreshTimerQueueControlBlock),
+  .mq_mem = &refreshTimerQueueBuffer,
+  .mq_size = sizeof(refreshTimerQueueBuffer)
+};
 /* Definitions for RefreshDisplayTimer */
 osTimerId_t RefreshDisplayTimerHandle;
 osStaticTimerDef_t RefreshDisplayTimerControlBlock;
@@ -176,6 +187,9 @@ void MX_FREERTOS_Init(void) {
   /* creation of buttonHandlerQueue */
   buttonHandlerQueueHandle = osMessageQueueNew (16, sizeof(Queue_ButtonEvent_t), &buttonHandlerQueue_attributes);
 
+  /* creation of refreshTimerQueue */
+  refreshTimerQueueHandle = osMessageQueueNew (16, sizeof(uint8_t), &refreshTimerQueue_attributes);
+
   /* USER CODE BEGIN RTOS_QUEUES */
   /* add queues, ... */
   /* USER CODE END RTOS_QUEUES */
@@ -213,9 +227,14 @@ void MX_FREERTOS_Init(void) {
 void StartDefaultTask(void *argument)
 {
   /* USER CODE BEGIN StartDefaultTask */
+	uint32_t temp = 0;
   /* Infinite loop */
   for(;;)
   {
+		if(osMessageQueueGet(refreshTimerQueueHandle, &temp, 0U, 10U) == osOK)
+		{
+			osTimerStart(SavedDisplayTimerHandle, pdMS_TO_TICKS(Display_Controls.AutoChangeToSavedTime_ms));
+		}
 
     osDelay(10);
   }
@@ -237,7 +256,8 @@ void displayTaskFunction(void *argument)
   for(;;)
   {
 	AppDisplay_RefreshDisplayTask();
-    osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
+    //osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
+    osDelay(5);
   }
   /* USER CODE END displayTaskFunction */
 }
@@ -293,7 +313,7 @@ void RefershDisplayTimer_Callback(void *argument)
 void SavedDisplayTimerCb(void *argument)
 {
   /* USER CODE BEGIN SavedDisplayTimerCb */
-
+	AppDisplay_SetDisplayState(AppDisplay_GetSavedDisplayState());
   /* USER CODE END SavedDisplayTimerCb */
 }
 

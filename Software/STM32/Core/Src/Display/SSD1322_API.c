@@ -223,21 +223,6 @@ void SSD1322_API_Send_Buffer(uint8_t *buffer, uint32_t buffer_size)
 	SSD1322_HW_SetPin_CS_HIGH();
 }
 
-//====================== display on standby mode routine ========================//
-/**
- *  @brief
- */
-//void display_on_standby_mode(void)
-//    {
-//	if (Display_Controls.OnStandbyMode_flag == true)
-//	    {
-//		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-//		SSD1322_API_sleep_off();
-//		saved_seconds = sTime.Seconds;
-//		saved_minutes = sTime.Minutes;
-//	    }
-//    }
 //====================== send frame buffer to OLED ========================//
 /**
  *  @brief Sends frame buffer to OLED display.

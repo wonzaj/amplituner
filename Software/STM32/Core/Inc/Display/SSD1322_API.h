@@ -78,6 +78,5 @@ void SSD1322_API_Set_Window(uint8_t start_column, uint8_t end_column, uint8_t st
 uint8_t SSD1322_API_Set_CustomGrayscale(uint8_t* grayscale_tab);
 void SSD1322_API_Set_DefaultGrayscale(void);
 void SSD1322_API_Send_Buffer(uint8_t* buffer, uint32_t buffer_size);
-void display_on_standby_mode(void);
 
 #endif /* SSD1322_API_H */

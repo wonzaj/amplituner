@@ -22,6 +22,8 @@
 //--------------------------------------------------------------
 #define DISPLAY_FPS				5	/* Too high value may affect systems's responsiveness */
 #define DISPLAY_REFRESH_TIME_HZ (1000/DISPLAY_FPS)
+#define DISPLAY_CHANGE_TO_NEXT_SCREEN_TIME	2000
+#define DISPLAY_BACK_FROM_SAVED_TIME_MS		2000
 
 #define PRZECINEK 44
 #define ASCII_DWUKROPEK 58
@@ -134,6 +136,7 @@ typedef struct
 	ScreenState_t 		Screen_State_Saved;
 	uint32_t 			Refresh_Hz;
 	uint32_t 			AutoChangeScreenTime_ms;
+	uint32_t 			AutoChangeToSavedTime_ms;
 	Display_Mode_t 	CurrentDisplayMode;
 
 	_Bool OnStandbyMode_flag;
@@ -151,7 +154,5 @@ void AppDisplay_OnInitTask(void);
 void AppDisplay_RefreshDisplayTask(void);
 void AppDisplay_RefreshDisplay(const ScreenState_t SSD1322_Screen_State);
 void AppDisplay_SaveCurrentDisplayState();
-//void set_saved_display(TIM_HandleTypeDef *htim);
-//void change_display_state(TIM_HandleTypeDef *htim);
 
 #endif /* INC_DISPLAY_OLED_DRAWS_DISPLAY_H_ */

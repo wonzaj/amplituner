@@ -30,12 +30,11 @@
 #define ENCODER_VOL_TREBLE		&htim1
 #define ENCODER_VOL_BASS 			&htim2
 #define ENCODER_VOL_RADIO 		&htim4
-#define ENCODER_VOL_LOUD		&htim8
+#define ENCODER_VOL_LOUD			&htim8
 
 //--------------------------------------------------------------
 // Variables
 //--------------------------------------------------------------
-extern void TIM_state_Cos_tam();
 
 //--------------------------------------------------------------
 // Function declarations

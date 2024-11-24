@@ -49,10 +49,8 @@ extern uint8_t settings_page;
 extern uint8_t saved_seconds;
 extern uint8_t saved_minutes;
 extern char user_name[10];
-extern volatile uint8_t POWER_device_state_flag;
 extern uint8_t UV_meter_front_back;
 extern uint8_t UV_meter_numb_of_chan;
-volatile uint8_t POWER_device_state_flag = 0;
 volatile uint8_t RADIO_IS_ON_front_flag;
 volatile uint8_t RADIO_IS_ON_back_flag;
 /************************************
@@ -347,7 +345,7 @@ static void Buttons_EncoderVolFrontButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderVolFront.audioOutputState)
 	{
@@ -399,7 +397,7 @@ static void Buttons_EncoderVolBackButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderVolBack.audioOutputState)
 	{
@@ -443,7 +441,7 @@ static void Buttons_EncoderTrebleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterTreble.buttonControl)
 	{
@@ -475,7 +473,7 @@ static void Buttons_EncoderBassButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterBass.buttonControl)
 	{
@@ -504,7 +502,7 @@ static void Buttons_EncoderMiddleButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterMiddle.buttonControl)
 	{
@@ -536,7 +534,7 @@ static void Buttons_EncoderRadioButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_RADIO);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 }
 
 static void Buttons_EncoderRadioButton_Released(void)
@@ -549,7 +547,7 @@ static void Buttons_EncoderLoudnessButton_Pressed(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterLoudness.buttonControl)
 	{

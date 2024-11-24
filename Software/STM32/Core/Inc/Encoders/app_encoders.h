@@ -48,6 +48,7 @@ extern encoder_t encoderVolBack;
 /************************************
  * GLOBAL FUNCTION PROTOTYPES
  ************************************/
+void SetSavedDisplay_StartTimer(void);
 void AppEncoders_EncoderVolFront_Rotated(void);
 void AppEncoders_EncoderVolBack_Rotated(void);
 void AppEncoders_EncoderTreble_Rotated(void);
@@ -58,7 +59,7 @@ void AppEncoders_EncoderLoudness_Rotated(void);
 
 void AppEncoders_SingleEncoderStop(TIM_HandleTypeDef *htim);
 void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim);
-void check_volumes_ranges(void);
+void HAL_Encoders_CheckVolumeRanges(void);
 
 #ifdef __cplusplus
 }

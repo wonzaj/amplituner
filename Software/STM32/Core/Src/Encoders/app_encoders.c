@@ -4,6 +4,7 @@
 #include "app_encoders.h"
 #include "hal_encoders.h"
 #include "TDA7719.h"
+#include "cmsis_os2.h"
 //--------------------------------------------------------------
 // Defines
 //--------------------------------------------------------------
@@ -11,6 +12,9 @@
 //--------------------------------------------------------------
 // Variables
 //--------------------------------------------------------------
+extern osMessageQueueId_t refreshTimerQueueHandle;
+static uint32_t RefreshTimer = 0;
+
 encoderFilter_t encoderFilterTreble;
 encoderFilter_t encoderFilterMiddle;
 encoderFilter_t encoderFilterBass;
@@ -18,10 +22,11 @@ encoderFilter_t encoderFilterLoudness;
 encoder_t encoderVolFront;
 encoder_t encoderVolBack;
 
-int32_t licznik = 0;
 
-savedUserSettings_t savedUserSettings;
+savedUserSettings_t savedUserSettings =
+{
 
+};
 Device_config_Volumes_t Device_config_Volumes =
 {
 		.volumeMasterFlag = 0,
@@ -30,7 +35,6 @@ Device_config_Volumes_t Device_config_Volumes =
 //--------------------------------------------------------------
 // external variables
 //--------------------------------------------------------------
-static void Check_and_Set_Volume_back(void);
 static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume);
 static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume);
 static void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain);
@@ -40,11 +44,23 @@ static void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t 
 //--------------------------------------------------------------
 // Function definition
 //--------------------------------------------------------------
+void SetSavedDisplay_StartTimer(void)
+{
+	/* Check for available space */
+	if(osMessageQueueGetSpace(refreshTimerQueueHandle) == 0U)
+	{
+		return;
+	}
+
+	osMessageQueuePut(refreshTimerQueueHandle, &RefreshTimer, 1U, 0U);
+}
+
+
 void AppEncoders_EncoderVolFront_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
-	osTimerStart(timer_id, ticks);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderVolFront.audioOutputState)
 	{
@@ -89,7 +105,7 @@ void AppEncoders_EncoderVolBack_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_BACK);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderVolBack.audioOutputState)
 	{
@@ -121,7 +137,7 @@ void AppEncoders_EncoderTreble_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_TREBLE);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterTreble.buttonControl)
 	{
@@ -144,7 +160,7 @@ void AppEncoders_EncoderBass_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_BASS);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterBass.buttonControl)
 	{
@@ -168,7 +184,7 @@ void AppEncoders_EncoderMiddle_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_MIDDLE);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterMiddle.buttonControl)
 	{
@@ -191,15 +207,14 @@ void AppEncoders_EncoderRadio_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_RADIO);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
-
+	SetSavedDisplay_StartTimer();
 }
 
 void AppEncoders_EncoderLoudness_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_LOUDNESS);
-	//HAL_Timers_RefreshTimer(&htim14, TIM_CHANNEL_1);
+	SetSavedDisplay_StartTimer();
 
 	switch (encoderFilterLoudness.buttonControl)
 	{
@@ -232,7 +247,7 @@ void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim)
 	HAL_Encoder_SingleEncoderStart(htim);
 }
 
-void check_volumes_ranges(void)
+void HAL_Encoders_CheckVolumeRanges(void)
 {
 	if (Device_config_Volumes.volumeMasterFlag == 1)
 	{
@@ -257,7 +272,7 @@ void check_volumes_ranges(void)
 
 // Checks if given value (volume) is given range
 // It also increments or decrements value depending on CNT register upgraded by volume front encoder
-void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume)
+static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume)
 {
 	static int16_t TimerDiff1;
 	static uint16_t LastTimerCounter1;
@@ -277,7 +292,7 @@ void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVo
 
 // Checks if given value (volume) is given range
 // It also increments or decrements value depending on CNT register upgraded by volume back encoder
-void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume)
+static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume)
 {
 	static int16_t TimerDiff2;
 	static uint16_t LastTimerCounter2;
@@ -297,7 +312,7 @@ void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVol
 
 // Checks if given value (loudness attenuator, center freqency, soft step, high boost) is given range
 // It also increments or decrements value depending on CNT register upgraded by loudness encoder
-void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+static void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -317,7 +332,7 @@ void Check_Loudness_Param_Range(volatile int8_t *const gain, const uint8_t maxGa
 
 // Checks if given value (loudness, Bass Q Factor, soft step) is given range
 // It also increments or decrements value depending on CNT register upgraded by bass encoder
-void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+static void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -337,7 +352,7 @@ void Check_Bass_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 
 // Checks if given value (loudness, middle Q Factor, soft step) is given range
 // It also increments or decrements value depending on CNT register upgraded by middle encoder
-void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+static void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;
@@ -357,7 +372,7 @@ void Check_Middle_Param_Range(volatile int8_t *const gain, const uint8_t maxGain
 
 // Checks if given value (loudness, treble Q Factor, soft step) is given range
 // It also increments or decrements value depending on CNT register upgraded by treble encoder
-void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
+static void Check_Treble_Param_Range(volatile int8_t *const gain, const uint8_t maxGain)
 {
 	static int16_t TimerDiff3;
 	static uint16_t LastTimerCounter3;

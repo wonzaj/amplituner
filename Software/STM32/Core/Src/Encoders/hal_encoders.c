@@ -20,9 +20,7 @@ static int32_t Encoder_Middle_Rotate_Value = 0;
  */
 void HAL_TIM_IC_CaptureCallback(TIM_HandleTypeDef *htim)
 {
-//  display_on_standby_mode();
-//  check_volumes_ranges();
-//
+	HAL_Encoders_CheckVolumeRanges();
 
 	/* Volume front encoder */
 	if (htim->Instance == ENCODER_VOL_FRONT_TIMER)

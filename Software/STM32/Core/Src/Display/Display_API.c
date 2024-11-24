@@ -20,11 +20,13 @@ uint8_t Display_Buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 2];	//divided by 2 becau
 
 Display_Controls_t Display_Controls =
 {
-		.Screen_State 			= SCREEN_TIME,
-		.Screen_State_Saved 	= SCREEN_WELCOME,
-		.Refresh_Hz 			= DISPLAY_REFRESH_TIME_HZ,
-		.OnStandbyMode_flag 	= false,
-		.CurrentDisplayMode 	= DISPLAY_NORMAL_MODE,
+		.Screen_State 				= SCREEN_TIME,
+		.Screen_State_Saved 		= SCREEN_WELCOME,
+		.Refresh_Hz 				= DISPLAY_REFRESH_TIME_HZ,
+		.AutoChangeScreenTime_ms 	= DISPLAY_CHANGE_TO_NEXT_SCREEN_TIME,
+		.AutoChangeToSavedTime_ms	= DISPLAY_BACK_FROM_SAVED_TIME_MS,
+		.OnStandbyMode_flag 		= false,
+		.CurrentDisplayMode 		= DISPLAY_NORMAL_MODE,
 };
 
 //--------------------------------------------------------------
