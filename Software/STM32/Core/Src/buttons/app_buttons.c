@@ -11,12 +11,13 @@
  * INCLUDES
  ************************************/
 #include "app_buttons.h"
-
+#include "hal_encoders.h"
 #include "cmsis_os2.h"
 /************************************
  * EXTERN VARIABLES
  ************************************/
 extern osMessageQueueId_t buttonHandlerQueueHandle;
+extern Device_config_Volumes_t Device_config_Volumes;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -39,11 +40,6 @@ extern encoderFilter_t encoderFilterBass;
 extern encoderFilter_t encoderFilterLoudness;
 extern encoder_t encoderVolFront;
 extern encoder_t encoderVolBack;
-extern uint8_t volumeMasterFlag;
-extern int16_t tempVolFrontLeft;
-extern int16_t tempVolFrontRight;
-extern int16_t tempVolBackLeft;
-extern int16_t tempVolBackRight;
 extern uint32_t SysTick_MiliSeconds;
 extern uint32_t SysTick_Seconds;
 extern uint16_t ADC_SamplesTEST[4];
@@ -365,17 +361,17 @@ static void Buttons_EncoderVolFrontButton_Pressed(void)
 		break;
 	case MUTE:
 		encoderVolFront.audioOutputState = MASTER_V2;
-		TDA7719_SetVolume_LeftFront(tempVolFrontLeft, 0);
-		TDA7719_SetVolume_RightFront(tempVolFrontRight, 0);
-		TDA7719_SetVolume_LeftRear(tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(tempVolBackLeft, 0);
-		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight,tempVolBackLeft, tempVolBackLeft);
+		TDA7719_SetVolume_LeftFront(Device_config_Volumes.tempVolFrontLeft, 0);
+		TDA7719_SetVolume_RightFront(Device_config_Volumes.tempVolFrontRight, 0);
+		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackLeft, 0);
+		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackLeft);
 		AppEncoders_SingleEncoderStart(ENCODER_VOL_FRONT);
 		//HAL_TIM_OC_Start_IT(&htim13, TIM_CHANNEL_1);
 		break;
 	case MASTER_V2:
 		encoderVolFront.audioOutputState = NORMAL;
-		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight, tempVolBackLeft, tempVolBackRight);
+		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
 		//HAL_TIM_OC_Stop_IT(&htim13, TIM_CHANNEL_1);	//zmienić na 5 - 10 sekund
 		break;
 	case NORMAL:
@@ -415,14 +411,14 @@ static void Buttons_EncoderVolBackButton_Pressed(void)
 		break;
 	case MUTE:
 		encoderVolBack.audioOutputState = NORMAL_V2;
-		TDA7719_SetVolume_LeftRear(tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(tempVolBackRight, 0);
+		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackRight, 0);
 		//HAL_TIM_Encoder_Start_IT(&htim8, TIM_CHANNEL_ALL);
 		break;
 	case NORMAL_V2:
 		encoderVolBack.audioOutputState = ATTE_LEFT;
-		TDA7719_SetVolume_LeftRear(tempVolBackLeft, 0);
-		TDA7719_SetVolume_RightRear(tempVolBackRight, 0);
+		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackRight, 0);
 		//HAL_TIM_OC_Start_IT(&htim16, TIM_CHANNEL_1);
 		break;
 	case ATTE_LEFT:

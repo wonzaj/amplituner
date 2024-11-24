@@ -119,6 +119,14 @@ const osTimerAttr_t RefreshDisplayTimer_attributes = {
   .cb_mem = &RefreshDisplayTimerControlBlock,
   .cb_size = sizeof(RefreshDisplayTimerControlBlock),
 };
+/* Definitions for SavedDisplayTimer */
+osTimerId_t SavedDisplayTimerHandle;
+osStaticTimerDef_t SavedDisplayTimerControlBlock;
+const osTimerAttr_t SavedDisplayTimer_attributes = {
+  .name = "SavedDisplayTimer",
+  .cb_mem = &SavedDisplayTimerControlBlock,
+  .cb_size = sizeof(SavedDisplayTimerControlBlock),
+};
 
 /* Private function prototypes -----------------------------------------------*/
 /* USER CODE BEGIN FunctionPrototypes */
@@ -130,6 +138,7 @@ void displayTaskFunction(void *argument);
 void buttonHandlerTaskFunction(void *argument);
 void powerLEDRefreshFunction(void *argument);
 void RefershDisplayTimer_Callback(void *argument);
+void SavedDisplayTimerCb(void *argument);
 
 void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 
@@ -154,6 +163,9 @@ void MX_FREERTOS_Init(void) {
   /* Create the timer(s) */
   /* creation of RefreshDisplayTimer */
   RefreshDisplayTimerHandle = osTimerNew(RefershDisplayTimer_Callback, osTimerPeriodic, NULL, &RefreshDisplayTimer_attributes);
+
+  /* creation of SavedDisplayTimer */
+  SavedDisplayTimerHandle = osTimerNew(SavedDisplayTimerCb, osTimerOnce, NULL, &SavedDisplayTimer_attributes);
 
   /* USER CODE BEGIN RTOS_TIMERS */
   /* start timers, add new ones, ... */
@@ -275,6 +287,14 @@ void RefershDisplayTimer_Callback(void *argument)
   /* USER CODE BEGIN RefershDisplayTimer_Callback */
 
   /* USER CODE END RefershDisplayTimer_Callback */
+}
+
+/* SavedDisplayTimerCb function */
+void SavedDisplayTimerCb(void *argument)
+{
+  /* USER CODE BEGIN SavedDisplayTimerCb */
+
+  /* USER CODE END SavedDisplayTimerCb */
 }
 
 /* Private application code --------------------------------------------------*/

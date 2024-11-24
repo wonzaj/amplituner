@@ -11,6 +11,8 @@
 #include "const_grafics.h"
 #include "Display_Draws.h"
 
+extern SettingsUserMenu_t SettingsUserMenu;
+
 //--------------------------------------------------------------
 // Typedefs
 //--------------------------------------------------------------

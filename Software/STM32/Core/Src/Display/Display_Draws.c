@@ -14,7 +14,7 @@
 /************************************
  * EXTERN VARIABLES
  ************************************/
-
+extern SettingsUserMenu_t SettingsUserMenu;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/

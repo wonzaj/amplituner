@@ -2,7 +2,8 @@
 // Includes
 //--------------------------------------------------------------
 #include "app_encoders.h"
-
+#include "hal_encoders.h"
+#include "TDA7719.h"
 //--------------------------------------------------------------
 // Defines
 //--------------------------------------------------------------
@@ -17,21 +18,18 @@ encoderFilter_t encoderFilterLoudness;
 encoder_t encoderVolFront;
 encoder_t encoderVolBack;
 
-uint8_t volumeMasterFlag;
-int16_t tempVolFrontLeft;
-int16_t tempVolFrontRight;
-int16_t tempVolBackLeft;
-int16_t tempVolBackRight;
-
 int32_t licznik = 0;
 
 savedUserSettings_t savedUserSettings;
 
+Device_config_Volumes_t Device_config_Volumes =
+{
+		.volumeMasterFlag = 0,
+};
+
 //--------------------------------------------------------------
 // external variables
 //--------------------------------------------------------------
-extern uint8_t volumeMasterFlag;
-
 static void Check_and_Set_Volume_back(void);
 static void Check_Volume_Range_Front(volatile int8_t *const volume, const uint8_t maxVolume);
 static void Check_Volume_Range_Back(volatile int8_t *const volume, const uint8_t maxVolume);
@@ -46,16 +44,17 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 {
 	AppDisplay_SaveCurrentDisplayState();
 	AppDisplay_SetDisplayState(SCREEN_ENCODER_VOLUME_FRONT);
+	osTimerStart(timer_id, ticks);
 
 	switch (encoderVolFront.audioOutputState)
 	{
 	case MASTER:
 		Check_Volume_Range_Front(&encoderVolFront.volumeMaster, 94);
 		if (encoderVolFront.volumeMaster >= 80)
-			volumeMasterFlag = 1;
+			Device_config_Volumes.volumeMasterFlag = 1;
 		else
-			volumeMasterFlag = 0;
-		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight, tempVolBackLeft, tempVolBackRight);
+			Device_config_Volumes.volumeMasterFlag = 0;
+		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
 		break;
 	case MUTE:
 		//jak wyłącze przerwanie on enkodera to teraz nie bedzie tutaj kod wchodził
@@ -64,22 +63,22 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 	case MASTER_V2:
 		Check_Volume_Range_Front(&encoderVolFront.volumeMaster, 94);
 		if (encoderVolFront.volumeMaster >= 80)
-			volumeMasterFlag = 1;
+			Device_config_Volumes.volumeMasterFlag = 1;
 		else
-			volumeMasterFlag = 0;
-		TDA7719_SetVolume_Master(tempVolFrontLeft, tempVolFrontRight, tempVolBackLeft, tempVolBackRight);
+			Device_config_Volumes.volumeMasterFlag = 0;
+		TDA7719_SetVolume_Master(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight, Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
 		break;
 	case NORMAL:
 		Check_Volume_Range_Front(&encoderVolFront.volumeLeftRight, 79);
-		TDA7719_SetVolumeFront_LeftRight(tempVolFrontLeft, tempVolFrontRight);
+		TDA7719_SetVolumeFront_LeftRight(Device_config_Volumes.tempVolFrontLeft, Device_config_Volumes.tempVolFrontRight);
 		break;
 	case ATTE_LEFT:
 		Check_Volume_Range_Front(&encoderVolFront.volumeLeft, 79);
-		TDA7719_SetVolume_LeftFront(tempVolFrontLeft, 0); //0 - 79
+		TDA7719_SetVolume_LeftFront(Device_config_Volumes.tempVolFrontLeft, 0); //0 - 79
 		break;
 	case ATTE_RIGHT:
 		Check_Volume_Range_Front(&encoderVolFront.volumeRight, 79);
-		TDA7719_SetVolume_RightFront(tempVolFrontRight, 0);
+		TDA7719_SetVolume_RightFront(Device_config_Volumes.tempVolFrontRight, 0);
 		break;
 	default:
 		break;
@@ -96,22 +95,22 @@ void AppEncoders_EncoderVolBack_Rotated(void)
 	{
 	case NORMAL:
 		Check_Volume_Range_Back(&encoderVolBack.volumeLeftRight, 79);
-		TDA7719_SetVolumeBack_LeftRight(tempVolBackLeft, tempVolBackRight);
+		TDA7719_SetVolumeBack_LeftRight(Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
 		break;
 	case MUTE:
 		//no action for encoder
 		break;
 	case NORMAL_V2:
 		Check_Volume_Range_Back(&encoderVolBack.volumeLeftRight, 79);
-		TDA7719_SetVolumeBack_LeftRight(tempVolBackLeft, tempVolBackRight);
+		TDA7719_SetVolumeBack_LeftRight(Device_config_Volumes.tempVolBackLeft, Device_config_Volumes.tempVolBackRight);
 		break;
 	case ATTE_LEFT:
 		Check_Volume_Range_Back(&encoderVolBack.volumeLeft, 79);
-		TDA7719_SetVolume_LeftRear(tempVolBackLeft, 0);
+		TDA7719_SetVolume_LeftRear(Device_config_Volumes.tempVolBackLeft, 0);
 		break;
 	case ATTE_RIGHT:
 		Check_Volume_Range_Back(&encoderVolBack.volumeRight, 79);
-		TDA7719_SetVolume_RightRear(tempVolBackLeft, 0);
+		TDA7719_SetVolume_RightRear(Device_config_Volumes.tempVolBackLeft, 0);
 		break;
 	default:
 		break;
@@ -235,25 +234,25 @@ void AppEncoders_SingleEncoderStart(TIM_HandleTypeDef *htim)
 
 void check_volumes_ranges(void)
 {
-	if (volumeMasterFlag == 1)
+	if (Device_config_Volumes.volumeMasterFlag == 1)
 	{
-		tempVolFrontLeft 	= (encoderVolFront.volumeLeft - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
-		tempVolFrontRight = (encoderVolFront.volumeRight - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
-		tempVolBackLeft 	= (encoderVolBack.volumeLeft - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
-		tempVolBackRight 	= (encoderVolBack.volumeRight - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolFrontLeft 	= (encoderVolFront.volumeLeft - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolFrontRight 	= (encoderVolFront.volumeRight - 79) 	+ (encoderVolFront.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolBackLeft 	= (encoderVolBack.volumeLeft - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolBackRight 	= (encoderVolBack.volumeRight - 79) 	+ (encoderVolBack.volumeLeftRight - 79);
 	}
-	else if (volumeMasterFlag == 0)
+	else if (Device_config_Volumes.volumeMasterFlag == 0)
 	{
-		tempVolFrontLeft = (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeLeft - 79) + (encoderVolFront.volumeLeftRight - 79);
-		tempVolFrontRight = (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeRight - 79) + (encoderVolFront.volumeLeftRight - 79);
-		tempVolBackLeft = (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeLeft - 79) + (encoderVolBack.volumeLeftRight - 79);
-		tempVolBackRight = (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeRight - 79) + (encoderVolBack.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolFrontLeft 	= (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeLeft - 79) + (encoderVolFront.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolFrontRight 	= (encoderVolFront.volumeMaster - 79) + (encoderVolFront.volumeRight - 79) + (encoderVolFront.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolBackLeft 	= (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeLeft - 79) + (encoderVolBack.volumeLeftRight - 79);
+		Device_config_Volumes.tempVolBackRight 	= (encoderVolFront.volumeMaster - 79) + (encoderVolBack.volumeRight - 79) + (encoderVolBack.volumeLeftRight - 79);
 	}
 
-	if (tempVolFrontLeft <= -79) 		tempVolFrontLeft  = -79;
-	if (tempVolFrontRight <= -79) 	tempVolFrontRight = -79;
-	if (tempVolBackLeft <= -79)		tempVolBackLeft   = -79;
-	if (tempVolBackRight <= -79)		tempVolBackRight  = -79;
+	if (Device_config_Volumes.tempVolFrontLeft <= -79) 		Device_config_Volumes.tempVolFrontLeft  = -79;
+	if (Device_config_Volumes.tempVolFrontRight <= -79) 		Device_config_Volumes.tempVolFrontRight = -79;
+	if (Device_config_Volumes.tempVolBackLeft <= -79)			Device_config_Volumes.tempVolBackLeft   = -79;
+	if (Device_config_Volumes.tempVolBackRight <= -79)		Device_config_Volumes.tempVolBackRight  = -79;
 }
 
 // Checks if given value (volume) is given range
