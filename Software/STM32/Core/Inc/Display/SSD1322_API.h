@@ -60,8 +60,6 @@ enum SSD1322_mode_e
 
 //extern TIM_HandleTypeDef htim;
 //extern const GFXfont 	 MACIEK_FONT;
-//extern encoder_t	 encoderVolFront;
-//extern encoder_t 	 encoderVolBack;
 //--------------------------------------------------------------
 // Function declarations
 //--------------------------------------------------------------

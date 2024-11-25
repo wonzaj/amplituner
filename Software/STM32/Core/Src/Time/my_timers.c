@@ -2,8 +2,6 @@
 
 extern uint32_t SysTick_MiliSeconds;
 extern uint32_t SysTick_Seconds;
-extern encoder_t encoderVolFront;
-extern encoder_t encoderVolBack;
 
 /* Timer output compare callback
  * Is used for:

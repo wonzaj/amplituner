@@ -105,9 +105,9 @@ static void Buttons_PowerButton_Pressed(void)
 		SSD1322_API_Sleep_On();
 		RDA5807_PowerOff();
 		TDA7719_SetSoftMute(0, 1);
-		EEPROM_Save_FilterSettings(&Device_Cfg_Audio.Treble, &Device_Cfg_Audio.Middle, &Device_Cfg_Audio.Bass, &Device_Cfg_Audio.Loudness);
-		EEPROM_Save_UserSetting(&savedUserSettings);
-		EEPROM_Save_VolumeSettings(&Device_Cfg_Audio.VolFront, &Device_Cfg_Audio.VolBack);
+		EEPROM_Save_FilterSettings();
+		EEPROM_Save_UserSetting();
+		EEPROM_Save_VolumeSettings();
 		HAL_Buttons_IRQ_TurnOff();
 		// Mute high power amplituner section
 	}
@@ -120,9 +120,9 @@ static void Buttons_PowerButton_Pressed(void)
 		RDA5807_Init();
 		TDA7719_init();
 		TDA7719_SetSoftMute(1, 1);
-		EEPROM_Read_FilterSettings(&Device_Cfg_Audio.Treble, &Device_Cfg_Audio.Middle, &Device_Cfg_Audio.Bass, &Device_Cfg_Audio.Loudness);
-		EEPROM_Read_UserSetting(&savedUserSettings);
-		EEPROM_Read_VolumeSettings(&Device_Cfg_Audio.VolFront, &Device_Cfg_Audio.VolBack);
+		EEPROM_Read_FilterSettings();
+		EEPROM_Read_UserSetting();
+		EEPROM_Read_VolumeSettings();
 		HAL_Buttons_IRQ_TurnOn();
 	}
 }
@@ -716,7 +716,7 @@ static void Save_Station_Freq_1(void)
 		if (button_timer + 2000 <= button_timer1) //if holded for more than 2 secs
 		{
 			savedUserSettings.stationSaved_1 = RDA5807_GetFrequency();
-			EEPROM_Save_UserSetting(&savedUserSettings);
+			EEPROM_Save_UserSetting();
 		}
 
 		if (button_timer + 2000 >= button_timer1) //if holed for less than 2 secs

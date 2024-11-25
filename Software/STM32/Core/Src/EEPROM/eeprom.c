@@ -1,21 +1,76 @@
-#include "EEPROM/eeprom.h"
+/**
+ ********************************************************************************
+ * @file    eeprom1.c
+ * @author  macie
+ * @date    Nov 25, 2024
+ * @brief   
+ ********************************************************************************
+ */
+
+/************************************
+ * INCLUDES
+ ************************************/
+#include "eeprom.h"
+#include "app_encoders.h"
 #include "stdint.h"
 #include "math.h"
 #include "string.h"
-
-/*****************************************************************************************************************************************/
-uint8_t bytes_temp[4];
-
+/************************************
+ * EXTERN VARIABLES
+ ************************************/
 extern savedUserSettings_t 		savedUserSettings;
-extern encoderFilter_t 			encoderFilterTreble;
-extern encoderFilter_t 			encoderFilterMiddle;
-extern encoderFilter_t 			encoderFilterBass;
-extern encoderFilter_t 			encoderFilterLoudness;
-extern encoder_t 					encoderVolFront;
-extern encoder_t 					encoderVolBack;
+extern Device_Cfg_Audio_t 		Device_Cfg_Audio;
+/************************************
+ * PRIVATE MACROS AND DEFINES
+ ************************************/
+#define EEPROM_ADDR 	0xA0
+#define EEPROM_I2C 	&hi2c2
+#define PAGE_SIZE 	64     // in Bytes
+#define PAGE_NUM  		512    // number of pages
+#define PAGE_0			0
+#define PAGE_1  		1
+#define PAGE_2  		2
+#define PAGE_3  		3
+#define PAGE_4  		4
+#define PAGE_5  		5
+#define Byte_0  		0
+#define Byte_1  		1
+#define Byte_2  		2
+#define Byte_3  		3
+#define Byte_4  		4
+#define Byte_5  		5
+#define Byte_6  		6
+#define Byte_7  		7
+#define Byte_8  		8
 
+#define FREQ_OFFSET  870
+/************************************
+ * PRIVATE TYPEDEFS
+ ************************************/
+
+/************************************
+ * STATIC VARIABLES
+ ************************************/
+
+/************************************
+ * GLOBAL VARIABLES
+ ************************************/
+
+/************************************
+ * STATIC FUNCTION PROTOTYPES
+ ************************************/
+static void WriteData(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
+static void ReadData(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size);
+static void PageErase(uint16_t page);
+static void Write_NUM(uint16_t page, uint16_t offset, float fdata);
+static float Read_NUM(uint16_t page, uint16_t offset);
+static uint16_t bytestowrite(uint16_t size, uint16_t offset);
+static float Bytes2float(uint8_t *ftoa_bytes_temp);
+/************************************
+ * STATIC FUNCTIONS
+ ************************************/
 // function to determine the remaining bytes
-uint16_t bytestowrite(uint16_t size, uint16_t offset)
+static uint16_t bytestowrite(uint16_t size, uint16_t offset)
 {
 	if ((size + offset) < PAGE_SIZE)
 		return size;
@@ -23,7 +78,7 @@ uint16_t bytestowrite(uint16_t size, uint16_t offset)
 		return PAGE_SIZE - offset;
 }
 
-void float2Bytes(uint8_t *ftoa_bytes_temp, float float_variable)
+static void float2Bytes(uint8_t *ftoa_bytes_temp, float float_variable)
 {
 	union
 	{
@@ -40,7 +95,7 @@ void float2Bytes(uint8_t *ftoa_bytes_temp, float float_variable)
 
 }
 
-float Bytes2float(uint8_t *ftoa_bytes_temp)
+static float Bytes2float(uint8_t *ftoa_bytes_temp)
 {
 	union
 	{
@@ -67,7 +122,7 @@ float Bytes2float(uint8_t *ftoa_bytes_temp)
  *  @param[in] data is the pointer to the data to write in bytes
  *  @param[in] size is the size of the data
  */
-void EEPROM_Write(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
+static void WriteData(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
 {
 
 	// Find out the number of bit, where the page addressing starts
@@ -110,7 +165,7 @@ void EEPROM_Write(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
  *  @param[in] data is the pointer to the data to write in bytes
  *  @param[in] size is the size of the data
  */
-void EEPROM_Read(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
+static void ReadData(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
 {
 	int paddrposition = log(PAGE_SIZE) / log(2);
 
@@ -138,7 +193,7 @@ void EEPROM_Read(uint16_t page, uint16_t offset, uint8_t *data, uint16_t size)
  *
  *  @param[in] page - number of the start page. Range from 0 to PAGE_NUM-1
  */
-void EEPROM_PageErase(uint16_t page)
+static void PageErase(uint16_t page)
 {
 	// calculate the memory address based on the page number
 	int paddrposition = log(PAGE_SIZE) / log(2);
@@ -160,11 +215,12 @@ void EEPROM_PageErase(uint16_t page)
  * @data is the float/integer value that you want to write
  */
 
-void EEPROM_Write_NUM(uint16_t page, uint16_t offset, float data)
+static void Write_NUM(uint16_t page, uint16_t offset, float data)
 {
+	uint8_t bytes_temp[4] = {0};
 
 	float2Bytes(bytes_temp, data);
-	EEPROM_Write(page, offset, bytes_temp, 4);
+	WriteData(page, offset, bytes_temp, 4);
 }
 
 /* Reads the single Float/Integer values from the EEPROM
@@ -173,98 +229,94 @@ void EEPROM_Write_NUM(uint16_t page, uint16_t offset, float data)
  * @returns the float/integer value
  */
 
-float EEPROM_Read_NUM(uint16_t page, uint16_t offset)
+static float Read_NUM(uint16_t page, uint16_t offset)
 {
 	uint8_t buffer[4];
 
-	EEPROM_Read(page, offset, buffer, 4);
+	ReadData(page, offset, buffer, 4);
 	return (Bytes2float(buffer));
 }
-
-/* Reads the single Float/Integer values from the EEPROM
- * @returns the float/integer value
- */
-void EEPROM_Read_UserSetting(savedUserSettings_t *savedUser)
+/************************************
+ * GLOBAL FUNCTIONS
+ ************************************/
+void EEPROM_Read_UserSetting(void)
 {
-	EEPROM_Read(PAGE_0, Byte_0, (uint8_t*) &savedUser->stationSaved_1, 1);
-	EEPROM_Read(PAGE_0, Byte_1, (uint8_t*) &savedUser->stationSaved_2, sizeof(savedUser->stationSaved_2));
-	EEPROM_Read(PAGE_0, Byte_2, (uint8_t*) &savedUser->stationSaved_3, sizeof(savedUser->stationSaved_3));
-	EEPROM_Read(PAGE_0, Byte_3, (uint8_t*) &savedUser->displayRefreshTime, sizeof(savedUser->displayRefreshTime));
+	ReadData(PAGE_0, Byte_0, (uint8_t*) &savedUserSettings.stationSaved_1, sizeof(savedUserSettings.stationSaved_1));
+	ReadData(PAGE_0, Byte_1, (uint8_t*) &savedUserSettings.stationSaved_2, sizeof(savedUserSettings.stationSaved_2));
+	ReadData(PAGE_0, Byte_2, (uint8_t*) &savedUserSettings.stationSaved_3, sizeof(savedUserSettings.stationSaved_3));
+	ReadData(PAGE_0, Byte_3, (uint8_t*) &savedUserSettings.displayRefreshTime, sizeof(savedUserSettings.displayRefreshTime));
 
-	savedUser->radio_freq = savedUser->radio_freq + FREQ_OFFSET;
-	savedUser->stationSaved_1 = savedUser->stationSaved_1 + FREQ_OFFSET;
-	savedUser->stationSaved_2 = savedUser->stationSaved_2 + FREQ_OFFSET;
+	savedUserSettings.radio_freq 		= savedUserSettings.radio_freq + FREQ_OFFSET;
+	savedUserSettings.stationSaved_1 	= savedUserSettings.stationSaved_1 + FREQ_OFFSET;
+	savedUserSettings.stationSaved_2 	= savedUserSettings.stationSaved_2 + FREQ_OFFSET;
 }
 
-void EEPROM_Save_UserSetting(savedUserSettings_t *savedUser)
+void EEPROM_Save_UserSetting(void)
 {
-	EEPROM_PageErase(PAGE_0);
+	PageErase(PAGE_0);
 
-	savedUser->radio_freq = savedUser->radio_freq - FREQ_OFFSET;
-	savedUser->stationSaved_1 = savedUser->stationSaved_1 - FREQ_OFFSET;
-	savedUser->stationSaved_2 = savedUser->stationSaved_2 - FREQ_OFFSET;
+	savedUserSettings.radio_freq 	= savedUserSettings.radio_freq - FREQ_OFFSET;
+	savedUserSettings.stationSaved_1 = savedUserSettings.stationSaved_1 - FREQ_OFFSET;
+	savedUserSettings.stationSaved_2 = savedUserSettings.stationSaved_2 - FREQ_OFFSET;
 
-	EEPROM_Write(PAGE_0, Byte_0, (uint8_t*) &savedUser->stationSaved_1, 1);
-	EEPROM_Write(PAGE_0, Byte_1, (uint8_t*) &savedUser->stationSaved_2, 1);
-	EEPROM_Write(PAGE_0, Byte_2, (uint8_t*) &savedUser->stationSaved_3, 1);
-	EEPROM_Write(PAGE_0, Byte_3, (uint8_t*) &savedUser->displayRefreshTime, 1);
-	EEPROM_Write(PAGE_0, Byte_4, (uint8_t*) &savedUser->radio_freq, 1);
+	WriteData(PAGE_0, Byte_0, (uint8_t*) &savedUserSettings.stationSaved_1, 1);
+	WriteData(PAGE_0, Byte_1, (uint8_t*) &savedUserSettings.stationSaved_2, 1);
+	WriteData(PAGE_0, Byte_2, (uint8_t*) &savedUserSettings.stationSaved_3, 1);
+	WriteData(PAGE_0, Byte_3, (uint8_t*) &savedUserSettings.displayRefreshTime, 1);
+	WriteData(PAGE_0, Byte_4, (uint8_t*) &savedUserSettings.radio_freq, 1);
 }
 
-void EEPROM_Read_VolumeSettings(encoder_t *encoderVolFront, encoder_t *encoderVolBack)
+void EEPROM_Read_VolumeSettings(void)
 {
-	EEPROM_Read(PAGE_1, Byte_0, (uint8_t*) &encoderVolFront->volumeMaster, sizeof(encoderVolFront->volumeMaster));
-	EEPROM_Read(PAGE_1, Byte_1, (uint8_t*) &encoderVolFront->volumeLeftRight, sizeof(encoderVolFront->volumeLeftRight));
-	EEPROM_Read(PAGE_1, Byte_2, (uint8_t*) &encoderVolFront->volumeRight, sizeof(encoderVolFront->volumeRight));
-	EEPROM_Read(PAGE_1, Byte_3, (uint8_t*) &encoderVolFront->volumeLeft, sizeof(encoderVolFront->volumeLeft));
-	EEPROM_Read(PAGE_1, Byte_4, (uint8_t*) &encoderVolBack->volumeLeftRight, sizeof(encoderVolBack->volumeLeftRight));
-	EEPROM_Read(PAGE_1, Byte_5, (uint8_t*) &encoderVolBack->volumeRight, sizeof(encoderVolBack->volumeRight));
-	EEPROM_Read(PAGE_1, Byte_6, (uint8_t*) &encoderVolBack->volumeLeft, sizeof(encoderVolBack->volumeLeft));
+	ReadData(PAGE_1, Byte_0, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeMaster, sizeof(Device_Cfg_Audio.VolFront.volumeMaster));
+	ReadData(PAGE_1, Byte_1, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeLeftRight, sizeof(Device_Cfg_Audio.VolFront.volumeLeftRight));
+	ReadData(PAGE_1, Byte_2, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeRight, sizeof(Device_Cfg_Audio.VolFront.volumeRight));
+	ReadData(PAGE_1, Byte_3, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeLeft, sizeof(Device_Cfg_Audio.VolFront.volumeLeft));
+	ReadData(PAGE_1, Byte_4, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeLeftRight, sizeof(Device_Cfg_Audio.VolBack.volumeLeftRight));
+	ReadData(PAGE_1, Byte_5, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeRight, sizeof(Device_Cfg_Audio.VolBack.volumeRight));
+	ReadData(PAGE_1, Byte_6, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeLeft, sizeof(Device_Cfg_Audio.VolBack.volumeLeft));
 }
 
-void EEPROM_Save_VolumeSettings(encoder_t *encoderVolFront, encoder_t *encoderVolBack)
+void EEPROM_Save_VolumeSettings(void)
 {
-	EEPROM_PageErase(PAGE_1);
+	PageErase(PAGE_1);
 
-	EEPROM_Write(PAGE_1, Byte_0, (uint8_t*) &encoderVolFront->volumeMaster, 1);
-	EEPROM_Write(PAGE_1, Byte_1, (uint8_t*) &encoderVolFront->volumeLeftRight, 1);
-	EEPROM_Write(PAGE_1, Byte_2, (uint8_t*) &encoderVolFront->volumeRight, 1);
-	EEPROM_Write(PAGE_1, Byte_3, (uint8_t*) &encoderVolFront->volumeLeft, 1);
-	EEPROM_Write(PAGE_1, Byte_4, (uint8_t*) &encoderVolBack->volumeLeftRight, 1);
-	EEPROM_Write(PAGE_1, Byte_5, (uint8_t*) &encoderVolBack->volumeRight, 1);
-	EEPROM_Write(PAGE_1, Byte_6, (uint8_t*) &encoderVolBack->volumeLeft, 1);
+	WriteData(PAGE_1, Byte_0, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeMaster, sizeof(Device_Cfg_Audio.VolFront.volumeMaster));
+	WriteData(PAGE_1, Byte_1, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeLeftRight, sizeof(Device_Cfg_Audio.VolFront.volumeLeftRight));
+	WriteData(PAGE_1, Byte_2, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeRight, sizeof(Device_Cfg_Audio.VolFront.volumeRight));
+	WriteData(PAGE_1, Byte_3, (uint8_t*) &Device_Cfg_Audio.VolFront.volumeLeft, sizeof(Device_Cfg_Audio.VolFront.volumeLeft));
+	WriteData(PAGE_1, Byte_4, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeLeftRight, sizeof(Device_Cfg_Audio.VolBack.volumeLeftRight));
+	WriteData(PAGE_1, Byte_5, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeRight, sizeof(Device_Cfg_Audio.VolBack.volumeRight));
+	WriteData(PAGE_1, Byte_6, (uint8_t*) &Device_Cfg_Audio.VolBack.volumeLeft, sizeof(Device_Cfg_Audio.VolBack.volumeLeft));
 }
 
-void EEPROM_Read_FilterSettings(encoderFilter_t *encoderFilterTreble, encoderFilter_t *encoderFilterMiddle, encoderFilter_t *encoderFilterBass, encoderFilter_t *encoderFilterLoudness)
+void EEPROM_Read_FilterSettings(void)
 {
-	EEPROM_Read(PAGE_2, Byte_0, (uint8_t*) &encoderFilterTreble->gain, 1);
-	EEPROM_Read(PAGE_2, Byte_1, (uint8_t*) &encoderFilterTreble->centerFreq, 1);
-	EEPROM_Read(PAGE_2, Byte_2, (uint8_t*) &encoderFilterMiddle->gain, 1);
-	EEPROM_Read(PAGE_2, Byte_3, (uint8_t*) &encoderFilterMiddle->centerFreq, 1);
-	EEPROM_Read(PAGE_2, Byte_4, (uint8_t*) &encoderFilterBass->gain, 1);
-	EEPROM_Read(PAGE_2, Byte_5, (uint8_t*) &encoderFilterBass->centerFreq, 1);
-	EEPROM_Read(PAGE_2, Byte_6, (uint8_t*) &encoderFilterLoudness->gain, 1);
-	EEPROM_Read(PAGE_2, Byte_6, (uint8_t*) &encoderFilterLoudness->centerFreq,
-			1);
+	ReadData(PAGE_2, Byte_0, (uint8_t*) &Device_Cfg_Audio.Treble.gain, sizeof(Device_Cfg_Audio.Treble.gain));
+	ReadData(PAGE_2, Byte_1, (uint8_t*) &Device_Cfg_Audio.Treble.centerFreq, sizeof(Device_Cfg_Audio.Treble.centerFreq));
+	ReadData(PAGE_2, Byte_2, (uint8_t*) &Device_Cfg_Audio.Middle.gain, sizeof(Device_Cfg_Audio.Middle.gain));
+	ReadData(PAGE_2, Byte_3, (uint8_t*) &Device_Cfg_Audio.Middle.centerFreq, sizeof(Device_Cfg_Audio.Middle.centerFreq));
+	ReadData(PAGE_2, Byte_4, (uint8_t*) &Device_Cfg_Audio.Bass.gain, sizeof(Device_Cfg_Audio.Bass.gain));
+	ReadData(PAGE_2, Byte_5, (uint8_t*) &Device_Cfg_Audio.Bass.centerFreq, sizeof(Device_Cfg_Audio.Bass.centerFreq));
+	ReadData(PAGE_2, Byte_6, (uint8_t*) &Device_Cfg_Audio.Loudness.gain, sizeof(Device_Cfg_Audio.Loudness.gain));
+	ReadData(PAGE_2, Byte_6, (uint8_t*) &Device_Cfg_Audio.Loudness.centerFreq,sizeof(Device_Cfg_Audio.Loudness.centerFreq));
 }
 
-void EEPROM_Save_FilterSettings(encoderFilter_t *encoderFilterTreble, encoderFilter_t *encoderFilterMiddle, encoderFilter_t *encoderFilterBass, encoderFilter_t *encoderFilterLoudness)
+void EEPROM_Save_FilterSettings(void)
 {
-	EEPROM_PageErase(PAGE_2);
+	PageErase(PAGE_2);
 
-	EEPROM_Write(PAGE_2, Byte_0, (uint8_t*) &encoderFilterTreble->gain, sizeof(encoderFilterTreble->gain));
-	EEPROM_Write(PAGE_2, Byte_1, (uint8_t*) &encoderFilterTreble->centerFreq, sizeof(encoderFilterTreble->centerFreq));
-	EEPROM_Write(PAGE_2, Byte_2, (uint8_t*) &encoderFilterMiddle->gain, sizeof(encoderFilterMiddle->gain));
-	EEPROM_Write(PAGE_2, Byte_3, (uint8_t*) &encoderFilterMiddle->centerFreq, sizeof(encoderFilterMiddle->centerFreq));
-	EEPROM_Write(PAGE_2, Byte_4, (uint8_t*) &encoderFilterBass->gain, sizeof(encoderFilterBass->gain));
-	EEPROM_Write(PAGE_2, Byte_5, (uint8_t*) &encoderFilterBass->centerFreq, sizeof(encoderFilterBass->centerFreq));
-	EEPROM_Write(PAGE_2, Byte_6, (uint8_t*) &encoderFilterLoudness->gain, sizeof(encoderFilterLoudness->gain));
-	EEPROM_Write(PAGE_2, Byte_7, (uint8_t*) &encoderFilterLoudness->centerFreq, sizeof(encoderFilterLoudness->centerFreq));
+	WriteData(PAGE_2, Byte_0, (uint8_t*) &Device_Cfg_Audio.Treble.gain, sizeof(Device_Cfg_Audio.Treble.gain));
+	WriteData(PAGE_2, Byte_1, (uint8_t*) &Device_Cfg_Audio.Treble.centerFreq, sizeof(Device_Cfg_Audio.Treble.centerFreq));
+	WriteData(PAGE_2, Byte_2, (uint8_t*) &Device_Cfg_Audio.Middle.gain, sizeof(Device_Cfg_Audio.Middle.gain));
+	WriteData(PAGE_2, Byte_3, (uint8_t*) &Device_Cfg_Audio.Middle.centerFreq, sizeof(Device_Cfg_Audio.Middle.centerFreq));
+	WriteData(PAGE_2, Byte_4, (uint8_t*) &Device_Cfg_Audio.Bass.gain, sizeof(Device_Cfg_Audio.Bass.gain));
+	WriteData(PAGE_2, Byte_5, (uint8_t*) &Device_Cfg_Audio.Bass.centerFreq, sizeof(Device_Cfg_Audio.Bass.centerFreq));
+	WriteData(PAGE_2, Byte_6, (uint8_t*) &Device_Cfg_Audio.Loudness.gain, sizeof(Device_Cfg_Audio.Loudness.gain));
+	WriteData(PAGE_2, Byte_7, (uint8_t*) &Device_Cfg_Audio.Loudness.centerFreq, sizeof(Device_Cfg_Audio.Loudness.centerFreq));
 }
 
-void read_user_settings_on_init(void)
+void EEPROM_ReadUserData(void)
 {
-	EEPROM_Read_UserSetting(&savedUserSettings);
-	EEPROM_Save_VolumeSettings(&encoderVolFront, &encoderVolBack);
-	EEPROM_Save_FilterSettings(&encoderFilterTreble, &encoderFilterMiddle, &encoderFilterBass, &encoderFilterLoudness);
+	EEPROM_Read_UserSetting();
 }
