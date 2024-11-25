@@ -13,6 +13,7 @@
 
 extern SettingsUserMenu_t SettingsUserMenu;
 extern Device_Cfg_Audio_t Device_Cfg_Audio;
+extern RDA5807m_RDS_info_t Radio_RDS_Info;
 
 //--------------------------------------------------------------
 // Typedefs
@@ -21,7 +22,7 @@ uint8_t Display_Buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 2];	//divided by 2 becau
 
 Display_Controls_t Display_Controls =
 {
-		.Screen_State 				= SCREEN_TIME,
+		.Screen_State 				= SCREEN_RADIO,
 		.Screen_State_Saved 		= SCREEN_WELCOME,
 		.Refresh_Hz 				= DISPLAY_REFRESH_TIME_HZ,
 		.AutoChangeScreenTime_ms 	= DISPLAY_CHANGE_TO_NEXT_SCREEN_TIME,
@@ -157,11 +158,11 @@ static void Screen_Radio(uint8_t *const buffer)
 
 	/* draw radio info */
 	DisplayGFX_SelectFont(&FreeSerifBold9pt7b);
-	DisplayGFX_DrawText(buffer, (char *)StationName, 150, 13, 5);
+	DisplayGFX_DrawText(buffer, (char *)Radio_RDS_Info.StationName, 150, 13, 5);
 	DisplayGFX_SelectFont(&MACIEK_FONT);
 	if (prepare_RDS_text((char*) RDStext) == true)
 	{
-		DisplayGFX_DrawText(buffer, (char *)RDStextbuffer, 20, 32, 5); //zwraca stringa
+		DisplayGFX_DrawText(buffer, (char *)Radio_RDS_Info.RDStextbuffer, 20, 32, 5); //zwraca stringa
 		//if(another string avaible == true)
 		{
 			//draw in the same place after 2 sec
@@ -825,34 +826,3 @@ void AppDisplay_SaveCurrentDisplayState(void)
 	}
 
 }
-
-void change_display_state(TIM_HandleTypeDef *htim)
-{
-	ScreenState_t SSD1322_Screen_State_temp = AppDisplay_GetDisplayState();
-
-	if (SettingsUserMenu.RefreshScreenTime != 65535) // change display if timer is set
-	{
-		if ((SSD1322_Screen_State_temp >= SCREEN_TIME) && (SSD1322_Screen_State_temp <= SCREEN_TIME_BOUNCING))
-		{
-			AppDisplay_SetDisplayState(SSD1322_Screen_State_temp + 1);
-
-			if (SCREEN_SETINPUT == SSD1322_Screen_State_temp) SSD1322_Screen_State_temp = SCREEN_TIME;
-			htim->Instance->CNT = 0;
-
-			/* Check if ADC is needed */
-			if ((SSD1322_Screen_State_temp == SCREEN_UVMETER) || (SSD1322_Screen_State_temp == SCREEN_FFT))
-			{
-				//HAL_TIM_Base_Start(&htim6);
-				//HAL_ADC_Start_DMA(&hadc1, (uint32_t*) ADC_SamplesTEST, UV_meter_numb_of_chan);
-				//ADC_IS_ON_flag = true;
-			}
-			else
-			{
-				//HAL_TIM_Base_Stop(&htim6);
-				//HAL_ADC_Stop_DMA(&hadc1);
-				//ADC_IS_ON_flag = false;
-			}
-		}
-	}
-}
-

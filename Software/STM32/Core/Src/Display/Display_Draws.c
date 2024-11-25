@@ -16,6 +16,7 @@
  ************************************/
 extern SettingsUserMenu_t SettingsUserMenu;
 extern Device_Cfg_Audio_t Device_Cfg_Audio;
+extern RDA5807m_RDS_info_t Radio_RDS_Info;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -781,24 +782,29 @@ _Bool prepare_RDS_text(char *RDS_text)
 {
 
 	//if first chars are empty spaces then its not a good string to display
-	if ((RDStextbuffer[0] == ' ') && (RDStextbuffer[1] == ' ') && (RDStextbuffer[2] == ' ') && (RDStextbuffer[3] == ' '))
+	if ((Radio_RDS_Info.RDStextbuffer[0] == ' ') && (Radio_RDS_Info.RDStextbuffer[1] == ' ') && (Radio_RDS_Info.RDStextbuffer[2] == ' ') && (Radio_RDS_Info.RDStextbuffer[3] == ' '))
 	{
 		return false;
 	}
-	if ((RDStextbuffer[0] == 0x00) && (RDStextbuffer[1] == 0x00) && (RDStextbuffer[2] == 0x00) && (RDStextbuffer[3] == 0x00))
+	if ((Radio_RDS_Info.RDStextbuffer[0] == 0x00) && (Radio_RDS_Info.RDStextbuffer[1] == 0x00) && (Radio_RDS_Info.RDStextbuffer[2] == 0x00) && (Radio_RDS_Info.RDStextbuffer[3] == 0x00))
 	{
 		return false;
 	}
 	//checks for end of the string
 	for (uint8_t i = 0; i < 66; i++)
 	{
-		if (RDStextbuffer[i] == ' ' && RDStextbuffer[i + 1] == ' ' && RDStextbuffer[i + 2] == ' ' && RDStextbuffer[i + 3] == ' ' && RDStextbuffer[i + 4] == ' ' && RDStextbuffer[i + 5] == ' ')
+		if (Radio_RDS_Info.RDStextbuffer[i] == ' '
+				&& Radio_RDS_Info.RDStextbuffer[i + 1] == ' '
+				&& Radio_RDS_Info.RDStextbuffer[i + 2] == ' '
+				&& Radio_RDS_Info.RDStextbuffer[i + 3] == ' '
+				&& Radio_RDS_Info.RDStextbuffer[i + 4] == ' '
+				&& Radio_RDS_Info.RDStextbuffer[i + 5] == ' ')
 		{
 
-			RDStextbuffer[i] = 0x00; //add end of the string
+			Radio_RDS_Info.RDStextbuffer[i] = 0x00; //add end of the string
 			if (i > 40)
 			{
-				RDS_text[i - 39] = RDStextbuffer[i];
+				RDS_text[i - 39] = Radio_RDS_Info.RDStextbuffer[i];
 			}
 		}
 

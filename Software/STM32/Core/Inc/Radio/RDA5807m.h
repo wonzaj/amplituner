@@ -37,46 +37,46 @@ void RDA5807_WriteAllRegs(void);
 //--------------------------------------------------------------
 /* I2C Address */
 #define RDASequential 	0x10  //Current Working Communication
-#define RDARandom  	0x11  //To Do Soon
+#define RDARandom  		0x11  //To Do Soon
 
 /* Initialization Options */
-#define StartingFreq 	87.00
-#define EndingFreq 	108.00
-#define DefaultFreq	87.00
+#define StartingFreq 		87.00
+#define EndingFreq 		108.00
+#define DefaultFreq		87.00
 #define StartingVolume 	0x4
 
 /* RDA5807M Function Code  */
 /* Register 0x00H (16Bits) */
-#define RDA_CHIP_ID     0x0058
+#define RDA_CHIP_ID     	0x0058
 /* Register 0x02H (16Bits) */
-#define RDA_DHIZ        0x8000
-#define RDA_MUTE	0x8000
-#define RDA_MONO_ON     0x2000
-#define RDA_MONO_OFF	0xDFFF
-#define RDA_BASS_ON     0x1000
-#define RDA_BASS_OFF	0xEFFF
-#define RDA_RCLK_MODE   0x0800
-#define RDA_RCLK_DIRECT 0x0400
-#define RDA_SEEK_UP     0x0300
-#define RDA_SEEK_DOWN	0x0100
-#define RDA_SEEK_STOP	0xFCFF
-#define RDA_SEEK_WRAP   0x0080
-#define RDA_SEEK_NOWRAP 0xFF7F
-#define RDA_CLK_0327    0x0000
-#define RDA_CLK_1200    0x0010
-#define RDA_CLK_2400    0x0050
-#define RDA_CLK_1300    0x0020
-#define RDA_CLK_2600    0x0060
-#define RDA_CLK_1920    0x0030
-#define RDA_CLK_3840    0x0070
-#define RDA_RDS_ON      0x0008
-#define RDA_RDS_OFF	0xFFF7
-#define RDA_NEW         0x0004
-#define RDA_RESET       0x0002
-#define RDA_POWER       0x0001
+#define RDA_DHIZ        	0x8000
+#define RDA_MUTE			0x8000
+#define RDA_MONO_ON     	0x2000
+#define RDA_MONO_OFF		0xDFFF
+#define RDA_BASS_ON     	0x1000
+#define RDA_BASS_OFF		0xEFFF
+#define RDA_RCLK_MODE   	0x0800
+#define RDA_RCLK_DIRECT 	0x0400
+#define RDA_SEEK_UP     	0x0300
+#define RDA_SEEK_DOWN		0x0100
+#define RDA_SEEK_STOP		0xFCFF
+#define RDA_SEEK_WRAP   	0x0080
+#define RDA_SEEK_NOWRAP 	0xFF7F
+#define RDA_CLK_0327    	0x0000
+#define RDA_CLK_1200    	0x0010
+#define RDA_CLK_2400    	0x0050
+#define RDA_CLK_1300    	0x0020
+#define RDA_CLK_2600    	0x0060
+#define RDA_CLK_1920    	0x0030
+#define RDA_CLK_3840    	0x0070
+#define RDA_RDS_ON      	0x0008
+#define RDA_RDS_OFF		0xFFF7
+#define RDA_NEW         	0x0004
+#define RDA_RESET       	0x0002
+#define RDA_POWER       	0x0001
 /* Register 0x03H (16Bits) */
-#define RDA_TUNE_ON	0x0010
-#define RDA_TUNE_OFF	0xFFEF
+#define RDA_TUNE_ON		0x0010
+#define RDA_TUNE_OFF		0xFFEF
 
 //--------------------------------------------------------------
 // Global Variables
@@ -90,15 +90,37 @@ typedef struct
 	int16_t rdssynchro;
 	int16_t stereo;
 	int16_t freq;
-	int16_t signal;
+	int16_t signal_strength;
 	int16_t fmready;
 	int16_t fmstation;
 	int16_t rdsblockerror;
 
-}RDA5807m_RDS_info_t;
-//--------------------------------------------------------------
+}RDA5807m_info_t;
 
-extern char    StationName[10];    // Station Name. 8 characters
-extern char    RDStextbuffer[66];  // RDS text buffer 64 characters
+typedef struct
+{
+	char StationName[10];    // Station Name. 8 characters
+	char RDStextbuffer[66];  // RDS text buffer 64 characters
+	char RDStext[66];        // RDS text message 64 characters
+	char RDSscrolltext[66];  // RDS scroll text buffer
+	char CTtime[12];         // CT time string formatted as 'CT hh:mm'
+	char c1, c2;		   	 // RDS text characters
+	char PSName[10];    	 // including trailing '\00' character.
+	char PSName1[10];	    // Station Name buffers
+	char PSName2[10];
+	uint8_t mins;			// RDS CT time in minutes transmitted on the minute
+
+}RDA5807m_RDS_info_t;
+
+typedef struct
+{
+	int rdsblockerror, rdssynchro, rdsready, rds, block1, block2, block3, block4;
+	int textAB, lasttextAB, lastTextIDX;
+	int rdsGroupType, rdsTP, rdsPTY;
+	int idx;              // index of rdsText
+	int offset;           // RDS time offset and sign
+
+}RDA5807m_RDS_Config_t;
+//--------------------------------------------------------------
 
 #endif /* INC_RADIO_RDA5807M_H_ */
