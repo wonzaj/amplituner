@@ -62,10 +62,6 @@
 #define TDA7719_IN5 0b101 //radio
 #define TDA7719_IN6 0b110 //microphone
 #define TDA7719_IN7 0b111
-
-extern TDA7719_SetMixSourceTo_t 		SetMixSourceTo;
-extern TDA7719_config_t 				TDA7719_config;
-extern TDA7719_Control_t 				TDA7719_Controls_t;
 //--------------------------------------------------------------
 // Function declaration
 //--------------------------------------------------------------

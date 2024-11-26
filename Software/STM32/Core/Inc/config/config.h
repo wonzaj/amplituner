@@ -118,6 +118,7 @@ typedef struct
     uint8_t AlarmSource_B;
     uint8_t Display_mode;
     uint8_t Power_LED;
+    uint8_t CurrentPage;
     char UserName[10];
 
     enum

@@ -16,8 +16,11 @@
 /************************************
  * EXTERN VARIABLES
  ************************************/
-extern osMessageQueueId_t buttonHandlerQueueHandle;
-extern Device_Cfg_Audio_t Device_Cfg_Audio;
+extern osMessageQueueId_t 	buttonHandlerQueueHandle;
+extern Device_Cfg_Audio_t 	Device_Cfg_Audio;
+extern SettingsUserMenu_t 	SettingsUserMenu;
+extern savedUserSettings_t 	savedUserSettings;
+extern TDA7719_config_t TDA7719_config;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
@@ -29,27 +32,15 @@ extern Device_Cfg_Audio_t Device_Cfg_Audio;
 /************************************
  * STATIC VARIABLES
  ************************************/
-static char Current_letter = 'a';
 static uint8_t inc = 0; //97 - 'a'
-SettingsUserMenu_t SettingsUserMenu;
-extern TDA7719_config_t TDA7719_config;
-extern savedUserSettings_t savedUserSettings;
-extern uint32_t SysTick_MiliSeconds;
-extern uint32_t SysTick_Seconds;
-extern uint16_t ADC_SamplesTEST[4];
-extern volatile uint8_t RADIO_IS_ON_back_flag;
-extern volatile uint8_t RADIO_IS_ON_front_flag;
-extern uint8_t settings_page;
-extern uint8_t saved_seconds;
-extern uint8_t saved_minutes;
-extern char user_name[10];
-extern uint8_t UV_meter_front_back;
-extern uint8_t UV_meter_numb_of_chan;
-volatile uint8_t RADIO_IS_ON_front_flag;
-volatile uint8_t RADIO_IS_ON_back_flag;
 /************************************
  * GLOBAL VARIABLES
  ************************************/
+SettingsUserMenu_t SettingsUserMenu =
+{
+		.UserName = "Maciek",
+		.CurrentPage = PAGE_SETTINGS_1,
+};
 Device_config_t Device_Config =
 {
 		.isTurnedOn = TURNED_ON,
@@ -742,14 +733,14 @@ static void SettingsChange_Selected(void)
 		break;
 	case USER_NAME:
 		SettingsUserMenu.SETTINGS_USER_MENU = DISPLAY_MODE_ON_OFF;
-		settings_page = PAGE_SETTINGS_2;
+		SettingsUserMenu.CurrentPage = PAGE_SETTINGS_2;
 		break;
 	case DISPLAY_MODE_ON_OFF:
 		SettingsUserMenu.SETTINGS_USER_MENU = POWER_LED;
 		break;
 	case POWER_LED:
 		SettingsUserMenu.SETTINGS_USER_MENU = REFRESH_SCREEN_TIME;
-		settings_page = PAGE_SETTINGS_1;
+		SettingsUserMenu.CurrentPage = PAGE_SETTINGS_1;
 		break;
 	default:
 		break;
@@ -804,8 +795,8 @@ static void SettingsChange_Down(void)
 			Display_Controls.OnStandbyMode_flag = true;
 			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-			saved_seconds = sTime.Seconds;
-			saved_minutes = sTime.Minutes;
+			//saved_seconds = sTime.Seconds;
+			//saved_minutes = sTime.Minutes;
 		}
 		else
 		{
@@ -855,10 +846,12 @@ static void SettingsChange_Up(void)
 	}
 		break;
 	case USER_NAME:
+		static char Current_letter = 'a';
+
 		Current_letter++;
 		if (Current_letter == '{')
 			Current_letter = 'a';
-		user_name[inc] = Current_letter;
+		SettingsUserMenu.UserName[inc] = Current_letter;
 		break;
 	case DISPLAY_MODE_ON_OFF:
 		SettingsUserMenu.Display_mode--;
@@ -871,8 +864,8 @@ static void SettingsChange_Up(void)
 			Display_Controls.OnStandbyMode_flag = true;
 			HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 			HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-			saved_seconds = sTime.Seconds;
-			saved_minutes = sTime.Minutes;
+			//saved_seconds = sTime.Seconds;
+			//saved_minutes = sTime.Minutes;
 		}
 		else
 		{
@@ -903,8 +896,9 @@ static void Change_Down_Input(void)
 		break;
 	case JACK_2:
 		TDA7719_config.set_input_front = RADIO;
-		RADIO_IS_ON_front_flag = true;
-		if (RADIO_IS_ON_front_flag == true && RADIO_IS_ON_back_flag == false)
+		Device_Config.isRadioTurnedOn = true;
+		Device_Config.RadioFrontOrBack = true;
+		if (Device_Config.RadioFrontOrBack == true)
 		{
 			RDA5807_Init();
 			RDA5807_PowerOn();
@@ -915,11 +909,8 @@ static void Change_Down_Input(void)
 			break;
 	case RADIO:
 		TDA7719_config.set_input_front = MICROPHONE_USB;
-		RADIO_IS_ON_front_flag = false;
-		if (RADIO_IS_ON_front_flag == false && RADIO_IS_ON_back_flag == false)
-		{
-			RDA5807_PowerOff();
-		}
+		Device_Config.isRadioTurnedOn = false;
+		RDA5807_PowerOff();
 		break;
 	case MICROPHONE_USB:
 		TDA7719_config.set_input_front = BLUETOOTH;
@@ -944,8 +935,9 @@ static void Change_Up_Input(void)
 		break;
 	case JACK_2:
 		TDA7719_config.set_input_back = RADIO;
-		RADIO_IS_ON_back_flag = true;
-		if (RADIO_IS_ON_back_flag == true && RADIO_IS_ON_front_flag == false)
+		Device_Config.isRadioTurnedOn = true;
+		Device_Config.RadioFrontOrBack = true;
+		if (Device_Config.RadioFrontOrBack == true)
 		{
 			RDA5807_Init();
 			RDA5807_PowerOn();
@@ -955,11 +947,8 @@ static void Change_Up_Input(void)
 		break;
 	case RADIO:
 		TDA7719_config.set_input_back = MICROPHONE_USB;
-		RADIO_IS_ON_back_flag = false;
-		if (RADIO_IS_ON_back_flag == false && RADIO_IS_ON_front_flag == false)
-		{
-			RDA5807_PowerOff();
-		}
+		Device_Config.isRadioTurnedOn = false;
+		RDA5807_PowerOff();
 		break;
 	case MICROPHONE_USB:
 		TDA7719_config.set_input_back = BLUETOOTH;

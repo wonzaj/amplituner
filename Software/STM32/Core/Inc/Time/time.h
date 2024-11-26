@@ -55,6 +55,8 @@ extern RTC_typeOfAlarm_t 		RTC_typeOfAlarm_B;
 
 extern _Bool IS_ALARM_SET_A;
 extern _Bool IS_ALARM_SET_B;
+extern _Bool PreviewAlarm;
+extern _Bool alarm_set_A_or_B;
 //--------------------------------------------------------------
 // Function declarations
 //--------------------------------------------------------------
@@ -67,7 +69,7 @@ void Time_ReadAndSet_Alarms(uint8_t up_or_down);
 void SetAlarm(RTC_AlarmTypeDef Alarm_);
 void RTC_Alarm_activated_routine(void);
 
-void Set_Alarm_Mode(RTC_typeOfAlarm_t typeOfAlarm);
+void Set_Alarm_Mode(char* input_buf, RTC_typeOfAlarm_t typeOfAlarm);
 
 
 #endif /* INC_TIME_TIME_H_ */

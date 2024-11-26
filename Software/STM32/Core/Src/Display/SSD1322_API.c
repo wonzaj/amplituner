@@ -3,11 +3,7 @@
 //--------------------------------------------------------------
 #include "SSD1322_API.h"
 
-extern uint8_t saved_seconds;
-extern uint8_t saved_minutes;
 extern volatile _Bool is_display_on_standby_flag;
-//extern RTC_TimeTypeDef sTime;
-//extern RTC_DateTypeDef sDate;
 //====================== command ========================//
 /**
  *  @brief Sends command byte to SSD1322

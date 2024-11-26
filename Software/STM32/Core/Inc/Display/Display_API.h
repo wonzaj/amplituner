@@ -1,14 +1,14 @@
 #ifndef INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 #define INC_DISPLAY_OLED_DRAWS_DISPLAY_H_
 
-#include <audio_visualizer/fft.h>
-#include <audio_visualizer/UVmeter.h>
+#include "fft.h"
+#include "UVmeter.h"
 #include "rtc.h"
 #include "string.h"
 //#include "rng.h"
 #include "stdbool.h"
 #include "stdlib.h"
-
+#include "time.h"
 #include "app_buttons.h"
 #include "TDA7719.h"
 #include "RDA5807m.h"
@@ -49,23 +49,8 @@
 //--------------------------------------------------------------
 // extern variables
 //--------------------------------------------------------------
-extern RTC_TimeTypeDef 	 sTime;
-extern RTC_DateTypeDef 	 sDate;
-extern RTC_DateTypeDef 	 pDate;
-extern RTC_AlarmTypeDef  Alarm_A;
-extern RTC_AlarmTypeDef  Alarm_B;
-extern RTC_AlarmTypeDef  Alarm;
-extern volatile uint8_t RADIO_IS_ON_front_flag;
-extern volatile uint8_t RADIO_IS_ON_back_flag;
 
-extern uint8_t UV_meter_front_back;
-extern uint32_t ADC_SamplesSUM[4];
-extern volatile uint8_t FFT_calc_done;
 extern uint8_t OutFreqArray[21];
-
-extern _Bool alarm_set_A_or_B;
-extern _Bool PreviewAlarm;
-extern char AlarmMode[25];
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------

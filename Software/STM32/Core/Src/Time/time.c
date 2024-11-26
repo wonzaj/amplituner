@@ -14,7 +14,8 @@
 //--------------------------------------------------------------
 _Bool alarm_set_A_or_B = true;
 _Bool PreviewAlarm = true;
-char AlarmMode[25];
+_Bool IS_ALARM_SET_A;
+_Bool IS_ALARM_SET_B;
 
 /* Alarms variables */
 RTC_TimeTypeDef 		sTime;
@@ -181,25 +182,25 @@ void HAL_RTC_AlarmAEventCallback(RTC_HandleTypeDef *hrtc)
 }
 
 //
-void Set_Alarm_Mode(RTC_typeOfAlarm_t typeOfAlarm)
+void Set_Alarm_Mode(char* input_buf, RTC_typeOfAlarm_t typeOfAlarm)
 {
 	// zrobic z napisow consty
 	switch (typeOfAlarm)
 	{
 	case ONLY_ONE_TIME_ALARM:
-		strcpy(AlarmMode, "Jeden raz");
+		strcpy(input_buf, "Jeden raz");
 		break;
 	case ONLY_WEEKENDS_ALARM:
-		strcpy(AlarmMode, "Weekendy");
+		strcpy(input_buf, "Weekendy");
 		break;
 	case EVERYDAY_ALARM:
-		strcpy(AlarmMode, "Codziennie");
+		strcpy(input_buf, "Codziennie");
 		break;
 	case MON_to_FRI_ALARM:
-		strcpy(AlarmMode, "Pon-Pt");
+		strcpy(input_buf, "Pon-Pt");
 		break;
 	case EXACT_DATE_ALRAM:
-		strcpy(AlarmMode, "Konkretny Dzien");
+		strcpy(input_buf, "Konkretny Dzien");
 		break;
 	default:
 		break;

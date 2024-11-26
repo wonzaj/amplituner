@@ -43,9 +43,9 @@ static const char *Disp_changing_str = "Change";
 static const char *Disp_standby_str = "Standby"; //gasi wyświetlacz po 1 min braku aktywności
 static const char *Disp_time_str = "Time"; //co godzine pokazuje zegar przez minute , czyli drugi wyswietlacz
 
-__attribute__((__unused__))static const char *FFT_front_left_str = "Front left";
-__attribute__((__unused__))static const char *FFT_front_right_str = "Front right";
-__attribute__((__unused__))static const char *FFT_back_left_str = "Back left";
-__attribute__((__unused__))static const char *FFT_back_right_str = "Back right";
+static const char *FFT_front_left_str = "Front left";
+static const char *FFT_front_right_str = "Front right";
+static const char *FFT_back_left_str = "Back left";
+static const char *FFT_back_right_str = "Back right";
 
 #endif /* INC_DISPLAY_CONST_GRAFICS_H_ */

@@ -11,9 +11,11 @@
 #include "const_grafics.h"
 #include "Display_Draws.h"
 
-extern SettingsUserMenu_t SettingsUserMenu;
-extern Device_Cfg_Audio_t Device_Cfg_Audio;
-extern RDA5807m_RDS_info_t Radio_RDS_Info;
+extern SettingsUserMenu_t 	SettingsUserMenu;
+extern Device_Cfg_Audio_t 	Device_Cfg_Audio;
+extern RDA5807m_RDS_info_t 	Radio_RDS_Info;
+extern Device_config_t 		Device_Config;
+extern TDA7719_config_t 		TDA7719_config;
 
 //--------------------------------------------------------------
 // Typedefs
@@ -34,13 +36,6 @@ Display_Controls_t Display_Controls =
 //--------------------------------------------------------------
 // Local Variables
 //--------------------------------------------------------------
-_Bool IS_ALARM_SET_A;
-_Bool IS_ALARM_SET_B;
-
-uint8_t settings_page = 0;
-uint8_t saved_seconds = 0;
-uint8_t saved_minutes = 0;
-char user_name[10];
 
 //--------------------------------------------------------------
 // Static functions
@@ -140,13 +135,14 @@ static void Screen_Radio(uint8_t *const buffer)
 	static char RDStext[32];
 	char temp_array_freq[6] = {0};
 
-	if (RADIO_IS_ON_back_flag == true || RADIO_IS_ON_front_flag == true)
+	if (Device_Config.isRadioTurnedOn == true)
 	{
 		RDA5807_Read();
 	}
 	else
 	{
 		RDA5807_RDSinit();
+		// display init radio by selecting input
 	}
 
 	freq_scaled = map(RDA5807_GetFrequency(), RADIO_MIN_FREQ, RADIO_MAX_FREQ, 20, 200);
@@ -315,6 +311,7 @@ static void Screen_SetClock(uint8_t *const buffer)
 static void Screen_SetAlarm(uint8_t *const buffer)
 {
 	char temp_array[10] = {0};
+	char Alarm_mode_temp[25] = {0};
 
 	/* Alaways reset display buffer to zero*/
 	DisplayDriver_FillBufferWithValue(buffer, DISPLAY_BLACK);
@@ -353,8 +350,8 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 
 		/* Drawing alarm mode */
 		DisplayGFX_SelectFont(&FreeSerifItalic9pt7b);
-		Set_Alarm_Mode(RTC_typeOfAlarm);
-		DisplayGFX_DrawText(buffer, (char*) AlarmMode, 5, 60, 5);
+		Set_Alarm_Mode(Alarm_mode_temp, RTC_typeOfAlarm);
+		DisplayGFX_DrawText(buffer, (char*) Alarm_mode_temp, 5, 60, 5);
 	}
 	else if (PreviewAlarm == false)
 	{
@@ -371,8 +368,8 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 				DisplayGFX_SelectFont(&FreeSerif9pt7b);
 				ChangeDateToArrayCharTime(temp_array, Alarm_A.AlarmTime.Hours, Alarm_A.AlarmTime.Minutes, 0, 1);
 				DisplayGFX_DrawText(buffer, (char*) buffer, 2, 30, 5);
-				Set_Alarm_Mode(RTC_typeOfAlarm_A);
-				DisplayGFX_DrawText(buffer, (char*) AlarmMode, 55, 30, 5);
+				Set_Alarm_Mode(Alarm_mode_temp, RTC_typeOfAlarm_A);
+				DisplayGFX_DrawText(buffer, (char*) Alarm_mode_temp, 55, 30, 5);
 			}
 			else if (IS_ALARM_SET_A == false)
 			{
@@ -383,8 +380,8 @@ static void Screen_SetAlarm(uint8_t *const buffer)
 				DisplayGFX_SelectFont(&FreeSerif9pt7b);
 				ChangeDateToArrayCharTime(temp_array, Alarm_B.AlarmTime.Hours, Alarm_B.AlarmTime.Minutes, 0, 1);
 				DisplayGFX_DrawText(buffer, (char*) temp_array, 2, 60, 5);
-				Set_Alarm_Mode(RTC_typeOfAlarm_B);
-				DisplayGFX_DrawText(buffer, (char*) AlarmMode, 55, 60, 5);
+				Set_Alarm_Mode(Alarm_mode_temp, RTC_typeOfAlarm_B);
+				DisplayGFX_DrawText(buffer, (char*) Alarm_mode_temp, 55, 60, 5);
 			}
 			else if (IS_ALARM_SET_B == false)
 			{
@@ -403,7 +400,7 @@ static void Screen_Settings(uint8_t *const buffer)
 	DisplayGFX_SelectFont(&FreeMonoOblique9pt7b);
 	DisplayDriver_FillBufferWithValue(buffer, 0);
 
-	if (settings_page == PAGE_SETTINGS_1)
+	if (SettingsUserMenu.CurrentPage == PAGE_SETTINGS_1)
 	{
 		DisplayGFX_DrawText(buffer, "Screen time:", 15, 15, 5);
 		DisplayGFX_DrawText(buffer, "Alarm A:", 15, 30, 5);
@@ -412,9 +409,9 @@ static void Screen_Settings(uint8_t *const buffer)
 
 		draw_refreshTime(buffer);
 		draw_alarmsSource(buffer);
-		DisplayGFX_DrawText(buffer, (char*) user_name, 125, 60, 5);
+		DisplayGFX_DrawText(buffer, (char*) SettingsUserMenu.UserName, 125, 60, 5);
 	}
-	else if (settings_page == PAGE_SETTINGS_2)
+	else if (SettingsUserMenu.CurrentPage == PAGE_SETTINGS_2)
 	{
 		DisplayGFX_DrawText(buffer, "Display mode:", 15, 15, 5);
 		DisplayGFX_DrawText(buffer, "Power LED:", 15, 30, 5);
@@ -695,17 +692,8 @@ void AppDisplay_RefreshDisplay(const ScreenState_t Screen_State)
 {
 	if (Display_Controls.OnStandbyMode_flag == true)
 	{
-//		HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
-//		HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
-
-		if ((saved_minutes + 1) == 60)
-			saved_minutes = 0; 	// in this case it wait 2 min - work on it
-
-//		if ((saved_seconds == sTime.Seconds) && ((saved_minutes + 1) == sTime.Minutes)) //do it one minute after last action with encoder or button
-		{
-			SSD1322_API_Sleep_On();
-			return;
-		}
+		SSD1322_API_Sleep_On();
+		return;
 	}
 
 	switch (Screen_State)

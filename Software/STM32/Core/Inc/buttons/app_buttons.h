@@ -49,6 +49,8 @@ typedef struct
 {
 	uint8_t isTurnedOn;
 	uint8_t isFFTtoCalculate;
+	uint8_t isRadioTurnedOn;
+	uint8_t RadioFrontOrBack;
 
 }Device_config_t;
 /************************************
