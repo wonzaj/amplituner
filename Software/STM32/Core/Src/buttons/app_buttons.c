@@ -24,7 +24,8 @@ extern TDA7719_config_t TDA7719_config;
 /************************************
  * PRIVATE MACROS AND DEFINES
  ************************************/
-
+#define RADIOSTATION1BUTTONPRESSEDTIME 2000
+#define RADIOSTATION2BUTTONPRESSEDTIME 2000
 /************************************
  * PRIVATE TYPEDEFS
  ************************************/
@@ -33,6 +34,8 @@ extern TDA7719_config_t TDA7719_config;
  * STATIC VARIABLES
  ************************************/
 static uint8_t inc = 0; //97 - 'a'
+static uint32_t RadioStation1ButtonPressedTime = 0;
+static uint32_t RadioStation2ButtonPressedTime = 0;
 /************************************
  * GLOBAL VARIABLES
  ************************************/
@@ -74,8 +77,11 @@ static void Buttons_EncoderRadioButton_Released(void);
 static void Buttons_EncoderLoudnessButton_Pressed(void);
 static void Buttons_EncoderLoudnessButton_Released(void);
 
-static void Save_Station_Freq_1(void);
-static void Save_Station_Freq_2(void);
+static void SetOrSaveStationFreq_1_Pressed(void);
+static void SetOrSaveStationFreq_1_Released(void);
+static void SetOrSaveStationFreq_2_Pressed(void);
+static void SetOrSaveStationFreq_2_Released(void);
+
 static void SettingsChange_Down(void);
 static void SettingsChange_Up(void);
 static void Change_Down_Input(void);
@@ -241,7 +247,7 @@ static void Buttons_UserButton3_Pressed(void)
 	case SCREEN_TIME:
 		break;
 	case SCREEN_RADIO:
-		Save_Station_Freq_1(); // zmienić nazwe, wrzucić do odpowiedniego modulu i tutaj do przeniesienia do released button
+		SetOrSaveStationFreq_1_Pressed();
 		break;
 	case SCREEN_WAKEUP:
 		break;
@@ -275,7 +281,16 @@ static void Buttons_UserButton3_Pressed(void)
 
 static void Buttons_UserButton3_Released(void)
 {
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
+	switch (Current_Screen_State)
+	{
+	case SCREEN_RADIO:
+		SetOrSaveStationFreq_1_Released();
+		break;
+	default:
+		break;
+	}
 }
 
 //User button 4
@@ -288,7 +303,7 @@ static void Buttons_UserButton4_Pressed(void)
 	case SCREEN_TIME:
 		break;
 	case SCREEN_RADIO:
-		Save_Station_Freq_2();
+		SetOrSaveStationFreq_2_Pressed();
 		break;
 	case SCREEN_WAKEUP:
 		break;
@@ -323,7 +338,16 @@ static void Buttons_UserButton4_Pressed(void)
 
 static void Buttons_UserButton4_Released(void)
 {
+	ScreenState_t Current_Screen_State = AppDisplay_GetDisplayState();
 
+	switch (Current_Screen_State)
+	{
+	case SCREEN_RADIO:
+		SetOrSaveStationFreq_2_Released();
+		break;
+	default:
+		break;
+	}
 }
 
 static void Buttons_EncoderVolFrontButton_Pressed(void)
@@ -663,57 +687,48 @@ void AppButtons_EventHandler(void)
 	}
 }
 
-static void Save_Station_Freq_2(void)
+static void SetOrSaveStationFreq_1_Pressed(void)
 {
-	static uint32_t button_tim;
-	static uint32_t button_tim1;
+	RadioStation1ButtonPressedTime = HAL_GetTick();
+}
 
-	if (HAL_GPIO_ReadPin(USER_BUTTON_4_GPIO_Port, USER_BUTTON_4_Pin) == GPIO_PIN_RESET)
+static void SetOrSaveStationFreq_1_Released(void)
+{
+	uint32_t released_button_time = HAL_GetTick();
+
+	if((released_button_time - RadioStation1ButtonPressedTime) >= RADIOSTATION1BUTTONPRESSEDTIME)
 	{
-		button_tim = HAL_GetTick();
+		if (Device_Config.isRadioTurnedOn == true)
+		{
+			savedUserSettings.stationSaved_1 = RDA5807_GetFrequency();
+		}
 	}
-
-	if (HAL_GPIO_ReadPin(USER_BUTTON_4_GPIO_Port, USER_BUTTON_4_Pin) == GPIO_PIN_SET)
+	else if((released_button_time - RadioStation1ButtonPressedTime) <= RADIOSTATION1BUTTONPRESSEDTIME)
 	{
-		button_tim1 = HAL_GetTick();
-
-		if (button_tim + 2000 <= button_tim1) //if holded for more than 2 secs
-		{
-			savedUserSettings.stationSaved_2 = RDA5807_GetFrequency();
-		}
-
-		if (button_tim + 2000 >= button_tim1) //if holed for less than 2 secs
-		{
-			RDA5807_SetFrequency(savedUserSettings.stationSaved_2);
-		}
+		RDA5807_SetFrequency(savedUserSettings.stationSaved_1);
 	}
 }
 
 //
-static void Save_Station_Freq_1(void)
+static void SetOrSaveStationFreq_2_Pressed(void)
 {
-	static uint32_t button_timer;
-	static uint32_t button_timer1;
+	RadioStation2ButtonPressedTime = HAL_GetTick();
+}
 
-	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin) == GPIO_PIN_RESET)
+static void SetOrSaveStationFreq_2_Released(void)
+{
+	uint32_t released_button_time = HAL_GetTick();
+
+	if((released_button_time - RadioStation2ButtonPressedTime) >= RADIOSTATION2BUTTONPRESSEDTIME)
 	{
-		button_timer = HAL_GetTick();
+		if (Device_Config.isRadioTurnedOn == true)
+		{
+			savedUserSettings.stationSaved_2 = RDA5807_GetFrequency();
+		}
 	}
-
-	if (HAL_GPIO_ReadPin(USER_BUTTON_3_GPIO_Port, USER_BUTTON_3_Pin) == GPIO_PIN_SET)
+	else if((released_button_time - RadioStation1ButtonPressedTime) <= RADIOSTATION2BUTTONPRESSEDTIME)
 	{
-		button_timer1 = HAL_GetTick();
-
-		if (button_timer + 2000 <= button_timer1) //if holded for more than 2 secs
-		{
-			savedUserSettings.stationSaved_1 = RDA5807_GetFrequency();
-			EEPROM_Save_UserSetting();
-		}
-
-		if (button_timer + 2000 >= button_timer1) //if holed for less than 2 secs
-		{
-			RDA5807_SetFrequency(savedUserSettings.stationSaved_1);
-		}
+		RDA5807_SetFrequency(savedUserSettings.stationSaved_2);
 	}
 }
 
