@@ -27,10 +27,11 @@ uint8_t TDA7719_registers[TDA7719_Registers_size];
 //Function used for prototyping and initialing preamp on startup of MCU
 void TDA7719_init(void)
 {
-	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0x7) | (0b0 & 0x7);		//Main source selector - input IN1
-	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0x8) | ((0 << 3) & 0x8);	//MD1/2 confg for main selector - MD2
-	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0x10) | ((0 << 4) & 0x10); 	// main source input gain select - +3dB
-	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0xE0) | ((0b010 << 5) & 0xE0); 	// CFG2
+	TDA7719_registers[TDA7719_INPUT] = 0b01000000;
+//	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00000111) | (0b0 & 0x7);		//Main source selector - input IN1
+//	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00001000) | ((0 << 3) & 0x8);	//MD1/2 confg for main selector - MD2
+//	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00010000) | ((0 << 4) & 0x10); 	// main source input gain select - +3dB
+//	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b11100000) | ((0b010 << 5) & 0xE0); 	// CFG2
 	I2C_send(TDA7719_INPUT, TDA7719_registers[TDA7719_INPUT]);
 
 	TDA7719_registers[TDA7719_INPUT_2] = (TDA7719_registers[TDA7719_INPUT_2] & ~0x7) | (2 & 0x7);		//second source selector - IN2

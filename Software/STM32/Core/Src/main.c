@@ -131,6 +131,7 @@ int main(void)
   RDA5807_Init();
   RDA5807_PowerOn();
   HAL_Encoders_Init();
+  TDA7719_init();
   /* USER CODE END 2 */
 
   /* Init scheduler */
