@@ -47,6 +47,7 @@
                 "})"
             ".catch(err => console.error('Error fetching state:', err));"
     "}"
+""
     "function togglePower() {"
         "const button = document.getElementById('powerButton');"
         "const currentState = button.classList.contains('on') ? 'OFF' : 'ON';"
@@ -54,10 +55,12 @@
         "    method: 'POST',"
          "   headers: { 'Content-Type': 'application/json' },"
           "  body: JSON.stringify({ power: currentState })"
-        "}).then(() => fetchState());"
-    "}"
-    "setInterval(fetchState, 2000);"
-        "</script>"
+        }).then(() => fetchState());
+    }
+
+    // Regularne odpytywanie ESP o stan
+    setInterval(fetchState, 2000);
+</script>
         "  </script>"
         "</head>"
         "<body>"

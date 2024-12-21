@@ -21,6 +21,7 @@
         "esp_http_server.h": "c",
         "functional": "cpp",
         "*.tcc": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "cjson.h": "c"
     }
 }
