@@ -1,0 +1,26 @@
+{
+    "C_Cpp.intelliSenseEngine": "default",
+    "idf.adapterTargetName": "esp32c6",
+    "idf.customExtraPaths": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\xtensa-esp-elf-gdb\\14.2_20240403\\xtensa-esp-elf-gdb\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\riscv32-esp-elf-gdb\\14.2_20240403\\riscv32-esp-elf-gdb\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\xtensa-esp-elf\\esp-13.2.0_20240530\\xtensa-esp-elf\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\riscv32-esp-elf\\esp-13.2.0_20240530\\riscv32-esp-elf\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\esp32ulp-elf\\2.38_20240113\\esp32ulp-elf\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\cmake\\3.30.2\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20241016\\openocd-esp32\\bin;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\ninja\\1.12.1;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\idf-exe\\1.0.3;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\ccache\\4.10.2\\ccache-4.10.2-windows-x86_64;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\dfu-util\\0.11\\dfu-util-0.11-win64;c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\esp-rom-elfs\\20240305",
+    "idf.customExtraVars": {
+        "OPENOCD_SCRIPTS": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\openocd-esp32\\v0.12.0-esp32-20241016/openocd-esp32/share/openocd/scripts",
+        "IDF_CCACHE_ENABLE": "1",
+        "ESP_ROM_ELF_DIR": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\tools\\esp-rom-elfs\\20240305/"
+    },
+    "idf.espIdfPathWin": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf",
+    "idf.openOcdConfigs": [
+        "interface/ftdi/esp32_devkitj_v1.cfg",
+        "target/esp32.cfg"
+    ],
+    "idf.portWin": "COM18",
+    "idf.pythonBinPathWin": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools\\python_env\\idf5.3_py3.11_env\\Scripts\\python.exe",
+    "idf.toolsPathWin": "c:\\Users\\macie\\esp\\v5.3.2\\esp-idf\\tools",
+    "idf.flashType": "UART",
+    "files.associations": {
+        "esp_wifi.h": "c",
+        "esp_http_server.h": "c",
+        "functional": "cpp",
+        "*.tcc": "cpp",
+        "list": "cpp"
+    }
+}
