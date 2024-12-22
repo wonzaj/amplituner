@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Amplituner</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin-top: 50px; }
+        button { padding: 15px 30px; font-size: 20px; border: none; border-radius: 5px; cursor: pointer; }
+        .on { background-color: green; color: white; }
+        .off { background-color: red; color: white; }
+        #volumeControl { margin: 20px auto; width: 200px; height: 200px; }
+    </style>
+    <link rel="stylesheet" href="roundslider.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="roundslider.min.js"></script>
+</head>
+<body>
+    <h1>Amplituner</h1>
+    <button id="powerButton" class="off" onclick="togglePower()">OFF</button>
+    <h2>Volume</h2>
+    <div id="volumeControl"></div>
+
+    <script>
+        // Funkcja do odpytywania stanu urządzenia
+        function fetchState() {
+            fetch('/state')
+                .then(response => response.json())
+                .then(data => {
+                    const button = document.getElementById('powerButton');
+                    const volume = document.getElementById('volumeValue');
+                    if (data.power === 'ON') {
+                        button.classList.remove('off');
+                        button.classList.add('on');
+                        button.innerText = 'ON';
+                    } else {
+                        button.classList.remove('on');
+                        button.classList.add('off');
+                        button.innerText = 'OFF';
+                    }
+                    volume.innerText = data.volume || 50; // domyślnie 50% jeśli brak danych
+                    $("#volumeControl").roundSlider("setValue", data.volume || 50);
+                })
+                .catch(err => console.error('Error fetching state:', err));
+        }
+
+        // Funkcja do przełączania stanu włącz/wyłącz
+        function togglePower() {
+            const button = document.getElementById('powerButton');
+            const currentState = button.classList.contains('on') ? 'OFF' : 'ON';
+            fetch('/power', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ power: currentState })
+            }).then(() => fetchState());
+        }
+
+        // Funkcja do aktualizacji głośności
+        function updateVolume(event) {
+            const newVolume = event.value; // Wartość z RoundSlider
+            document.getElementById('volumeValue').innerText = newVolume;
+            fetch('/volume', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ volume: newVolume })
+            });
+        }
+
+        // Inicjalizacja RoundSlider
+        $(document).ready(function() {
+            $("#volumeControl").roundSlider({
+                radius: 100,
+                width: 15,
+                handleSize: "+8",
+                handleShape: "dot",
+                sliderType: "min-range",
+                value: 50,
+                min: 0,
+                max: 100,
+                change: updateVolume
+            });
+
+            // Regularne odpytywanie ESP o stan
+            setInterval(fetchState, 2000);
+        });
+    </script>
+</body>
+</html>
