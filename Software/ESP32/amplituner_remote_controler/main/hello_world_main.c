@@ -23,6 +23,13 @@
 #include "html/www_page.h"
 #include "cJSON.h"
 
+#include "driver/uart.h"
+
+#define UART_NUM UART_NUM_1
+#define UART_TX_PIN 17 // TX
+#define UART_RX_PIN 16 // RX
+#define BUF_SIZE 1024
+
 extern const uint8_t roundslider_css_start[] asm("_binary_roundslider_css_start");
 extern const uint8_t roundslider_css_end[] asm("_binary_roundslider_css_end");
 
@@ -189,10 +196,51 @@ void start_webserver(void)
     }
 }
 
+void uart_task(void *pvParameters) 
+{
+    uint8_t data[BUF_SIZE];
+    while (1) 
+    {
+        int length = uart_read_bytes(UART_NUM, data, BUF_SIZE, 20 / portTICK_PERIOD_MS);
+        if (length > 0) 
+        {
+            data[length] = '\0'; 
+            ESP_LOGI("UART", "Received: %s", data);
+
+            if (strncmp((char *)data, "VOLUME:", 7) == 0) 
+            {
+                int new_volume = atoi((char *)data + 7); 
+                volume_level = new_volume; 
+                ESP_LOGI("UART", "Set volume to: %d", volume_level);
+            }
+        }
+        vTaskDelay(10 / portTICK_PERIOD_MS); 
+    }
+}
+
+void init_uart() 
+{
+    const uart_config_t uart_config = 
+    {
+        .baud_rate = 9600,
+        .data_bits = UART_DATA_8_BITS,
+        .parity = UART_PARITY_DISABLE,
+        .stop_bits = UART_STOP_BITS_1,
+        .flow_ctrl = UART_HW_FLOWCTRL_DISABLE
+    };
+    uart_param_config(UART_NUM, &uart_config);
+    uart_set_pin(UART_NUM, UART_TX_PIN, UART_RX_PIN, UART_PIN_NO_CHANGE, UART_PIN_NO_CHANGE);
+    uart_driver_install(UART_NUM, BUF_SIZE, 0, 0, NULL, 0);
+
+    xTaskCreate(uart_task, "uart_task", 2048, NULL, 10, NULL);
+}
+
+
 void app_main(void)
 {
     esp_task_wdt_deinit();
     
+    init_uart();
     wifi_init();      
     start_webserver();   
 

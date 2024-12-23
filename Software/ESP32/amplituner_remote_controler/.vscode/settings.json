@@ -22,6 +22,8 @@
         "functional": "cpp",
         "*.tcc": "cpp",
         "list": "cpp",
-        "cjson.h": "c"
+        "cjson.h": "c",
+        "uart.h": "c",
+        "uart_types.h": "c"
     }
 }
