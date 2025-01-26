@@ -17,7 +17,10 @@ extern Device_Cfg_Audio_t Device_Cfg_Audio;
 // Local variables
 //--------------------------------------------------------------
 TDA7719_SetMixSourceTo_t 	SetMixSourceTo;
-TDA7719_config_t 				TDA7719_config;
+TDA7719_config_t 				TDA7719_config =
+{
+		.set_input_front = BLUETOOTH,
+};
 TDA7719_Control_t 			TDA7719_Controls_t;
 
 uint8_t TDA7719_registers[TDA7719_Registers_size];
@@ -27,7 +30,7 @@ uint8_t TDA7719_registers[TDA7719_Registers_size];
 //Function used for prototyping and initialing preamp on startup of MCU
 void TDA7719_init(void)
 {
-	TDA7719_registers[TDA7719_INPUT] = 0b01000000;
+	TDA7719_registers[TDA7719_INPUT] = 0b01000010;
 //	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00000111) | (0b0 & 0x7);		//Main source selector - input IN1
 //	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00001000) | ((0 << 3) & 0x8);	//MD1/2 confg for main selector - MD2
 //	TDA7719_registers[TDA7719_INPUT] = (TDA7719_registers[TDA7719_INPUT] & ~0b00010000) | ((0 << 4) & 0x10); 	// main source input gain select - +3dB
@@ -84,39 +87,40 @@ void TDA7719_init(void)
 	I2C_send(TDA7719_SOFT_2 , TDA7719_registers[TDA7719_SOFT_2]);
 
 
-	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x30) | ((0b1111 << 4) & 0x30);	//Loudness attenuation - 0dB
-	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x40) | ((0 << 6) & 0x40);	//Center frequency - Flat
-	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x80) | ((0 << 7) & 0x80);	//High boost - OFF
-	I2C_send(TDA7719_LOUD , TDA7719_registers[TDA7719_LOUD]);
+//	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x30) | ((0b1111 << 4) & 0x30);	//Loudness attenuation - 0dB
+//	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x40) | ((0 << 6) & 0x40);	//Center frequency - Flat
+//	TDA7719_registers[TDA7719_LOUD] = (TDA7719_registers[TDA7719_LOUD] & ~0x80) | ((0 << 7) & 0x80);	//High boost - OFF
+//	I2C_send(TDA7719_LOUD , TDA7719_registers[TDA7719_LOUD]);
 
 
-	TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x1F) | ((0b11100 << 0) & 0x1F);	//Volume gain/attenuation - 0dB
-	TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x40) | ((0 << 6) & 0x40);		//Output gain - 0dB
-	TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x80) | ((1 << 7) & 0x80);		//soft step action - wait
+	//TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x1F) | ((0b00000 << 0) & 0x1F);	//Volume gain/attenuation - 0dB
+	//TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x40) | ((0 << 6) & 0x40);		//Output gain - 0dB
+	//TDA7719_registers[TDA7719_VOL] = (TDA7719_registers[TDA7719_VOL] & ~0x80) | ((1 << 7) & 0x80);		//soft step action - wait
+	TDA7719_registers[TDA7719_VOL] = 0b11001111;
 	I2C_send(TDA7719_VOL , TDA7719_registers[TDA7719_VOL]);
 
 
-	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x1F) | ((0b11111 << 0) & 0x1F);//Treble filter gain/attenuation - 0dB
-	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x60) | ((0b11 << 5) & 0x60);	//treble center freq - 12.5kHz
-	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x80) | ((1 << 7) & 0x80);	//Soft step action - wait
-	I2C_send(TDA7719_TRBLE , TDA7719_registers[TDA7719_TRBLE]);
+//	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x1F) | ((0b11111 << 0) & 0x1F);//Treble filter gain/attenuation - 0dB
+//	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x60) | ((0b11 << 5) & 0x60);	//treble center freq - 12.5kHz
+//	TDA7719_registers[TDA7719_TRBLE] = (TDA7719_registers[TDA7719_TRBLE] & ~0x80) | ((1 << 7) & 0x80);	//Soft step action - wait
+//	I2C_send(TDA7719_TRBLE , TDA7719_registers[TDA7719_TRBLE]);
+//
+//	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x1F) | ((0b11111 << 0) & 0x1F);//Middle filter gain/attenuation - 0dB
+//	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x60) | ((0b11 << 5) & 0x60);	//middle q factor - 0.75
+//	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x80) | ((1 << 7) & 0x80);	//soft step action - wait
+//	I2C_send(TDA7719_MIDDLE , TDA7719_registers[TDA7719_MIDDLE]);
+//
+//	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x1F) | ((0b11111 << 0) & 0x1F);	//Bass filter gain/attenuation - 0dB
+//	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x60) | ((0b11 << 5) & 0x60);	//Bass Q factor - 1.25
+//	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x80) | ((1 << 7) & 0x80);	//Soft step action - wait
+//	I2C_send(TDA7719_BASS , TDA7719_registers[TDA7719_BASS]);
 
-	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x1F) | ((0b11111 << 0) & 0x1F);//Middle filter gain/attenuation - 0dB
-	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x60) | ((0b11 << 5) & 0x60);	//middle q factor - 0.75
-	TDA7719_registers[TDA7719_MIDDLE] = (TDA7719_registers[TDA7719_MIDDLE] & ~0x80) | ((1 << 7) & 0x80);	//soft step action - wait
-	I2C_send(TDA7719_MIDDLE , TDA7719_registers[TDA7719_MIDDLE]);
-
-	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x1F) | ((0b11111 << 0) & 0x1F);	//Bass filter gain/attenuation - 0dB
-	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x60) | ((0b11 << 5) & 0x60);	//Bass Q factor - 1.25
-	TDA7719_registers[TDA7719_BASS] = (TDA7719_registers[TDA7719_BASS] & ~0x80) | ((1 << 7) & 0x80);	//Soft step action - wait
-	I2C_send(TDA7719_BASS , TDA7719_registers[TDA7719_BASS]);
-
-	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x3) | ((0 << 0) & 0x3);	//Subwoofer Cut-off frequency - Flat
-	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x4) | ((0 << 2) & 0x4);	//Subwoofer output phase - 0deg
-	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x18) | ((0 << 3) & 0x18);	//Middle Center Frequency - 500Hz
-	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x60) | ((0 << 5) & 0x60);	//Bass center Frequency - 60 Hz
-	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x80) | ((0 << 7) & 0x80);	//Bass DC mode - OFF
-	I2C_send(TDA7719_SUB_M_B , TDA7719_registers[TDA7719_SUB_M_B]);
+//	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x3) | ((0 << 0) & 0x3);	//Subwoofer Cut-off frequency - Flat
+//	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x4) | ((0 << 2) & 0x4);	//Subwoofer output phase - 0deg
+//	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x18) | ((0 << 3) & 0x18);	//Middle Center Frequency - 500Hz
+//	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x60) | ((0 << 5) & 0x60);	//Bass center Frequency - 60 Hz
+//	TDA7719_registers[TDA7719_SUB_M_B] = (TDA7719_registers[TDA7719_SUB_M_B] & ~0x80) | ((0 << 7) & 0x80);	//Bass DC mode - OFF
+//	I2C_send(TDA7719_SUB_M_B , TDA7719_registers[TDA7719_SUB_M_B]);
 
 	TDA7719_registers[TDA7719_ATT_LF] = (TDA7719_registers[TDA7719_ATT_LF] & ~0x7F) | ((0 << 0) & 0x7F);	//speaker attenuation left front - 0dB
 	TDA7719_registers[TDA7719_ATT_LF] = (TDA7719_registers[TDA7719_ATT_LF] & ~0x80) | ((1 << 7) & 0x80);	//Soft step action - wait
@@ -136,6 +140,13 @@ void TDA7719_init(void)
 
 	//subwoofer gain/attenuation - left
 	//subwoofer gain/attenuation - right
+	TDA7719_SetLoudness(Device_Cfg_Audio.Loudness.gain, Device_Cfg_Audio.Loudness.centerFreq, Device_Cfg_Audio.Loudness.high_boost, Device_Cfg_Audio.Loudness.soft_step);
+	TDA7719_SetTreble(Device_Cfg_Audio.Treble.gain, Device_Cfg_Audio.Treble.gain, Device_Cfg_Audio.Treble.soft_step);
+	TDA7719_SetMiddle(Device_Cfg_Audio.Middle.gain, Device_Cfg_Audio.Middle.centerFreq, Device_Cfg_Audio.Middle.soft_step);
+	TDA7719_SetBass(Device_Cfg_Audio.Bass.gain, Device_Cfg_Audio.Bass.centerFreq, Device_Cfg_Audio.Bass.soft_step);
+	TDA7719_SetVolume_Master(Device_Cfg_Audio.tempVolFrontLeft, Device_Cfg_Audio.tempVolFrontRight, Device_Cfg_Audio.tempVolBackLeft, Device_Cfg_Audio.tempVolBackRight);
+	TDA7719_SetMainInput(TDA7719_config.set_input_front);
+	TDA7719_SetSecondInput(TDA7719_config.set_input_back);
 }
 
 void TDA7719_PowerOff(void)

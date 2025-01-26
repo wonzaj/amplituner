@@ -10,6 +10,7 @@
 #include "Display_API.h"
 #include "const_grafics.h"
 #include "Display_Draws.h"
+#include <time.h>
 
 extern SettingsUserMenu_t 	SettingsUserMenu;
 extern Device_Cfg_Audio_t 	Device_Cfg_Audio;
@@ -24,7 +25,7 @@ uint8_t Display_Buffer[DISPLAY_WIDTH * DISPLAY_HEIGHT / 2];	//divided by 2 becau
 
 Display_Controls_t Display_Controls =
 {
-		.Screen_State 				= SCREEN_RADIO,
+		.Screen_State 				= SCREEN_TIME_BOUNCING,
 		.Screen_State_Saved 		= SCREEN_WELCOME,
 		.Refresh_Hz 				= DISPLAY_REFRESH_TIME_HZ,
 		.AutoChangeScreenTime_ms 	= DISPLAY_CHANGE_TO_NEXT_SCREEN_TIME,
@@ -505,29 +506,104 @@ static void Screen_SetInput(uint8_t *const buffer)
 		default:
 		break;
 	    }
-	TDA7719_config.set_input_front = TDA7719_config.audio_source;
+	//TDA7719_config.set_input_front = TDA7719_config.audio_source;
 
 	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 //
+
+#define DISPLAY_WIDTH 256
+#define DISPLAY_HEIGHT 64
+#define RECT_WIDTH 50
+#define RECT_HEIGHT 15
+#define MIN_X 0
+#define MAX_X 188
+#define MIN_Y 12
+#define MAX_Y 63
+
+typedef struct
+{
+    uint8_t current_x;
+    uint8_t current_y;
+    uint8_t target_x;
+    uint8_t target_y;
+    uint8_t last_side;
+} Rectangle;
+
+void generate_target_coordinates(Rectangle *rect) {
+    uint32_t side;
+    do {
+        side = rand() % 4;
+    } while (side == rect->last_side);
+
+    rect->last_side = side;
+
+    switch (side) {
+        case 0:
+            rect->target_x = rand() % (MAX_X - MIN_X + 1) + MIN_X;
+            rect->target_y = MIN_Y;
+            break;
+
+        case 1:
+            rect->target_x = rand() % (MAX_X - MIN_X + 1) + MIN_X;
+            rect->target_y = MAX_Y;
+            break;
+
+        case 2:
+            rect->target_x = MIN_X;
+            rect->target_y = rand() % (MAX_Y - MIN_Y + 1) + MIN_Y;
+            break;
+
+        case 3:
+            rect->target_x = MAX_X;
+            rect->target_y = rand() % (MAX_Y - MIN_Y + 1) + MIN_Y;
+            break;
+    }
+}
+
+void move_rectangle(Rectangle *rect)
+{
+    if (rect->current_x < rect->target_x) {
+        rect->current_x++;
+    } else if (rect->current_x > rect->target_x) {
+        rect->current_x--;
+    }
+
+    if (rect->current_y < rect->target_y) {
+        rect->current_y++;
+    } else if (rect->current_y > rect->target_y) {
+        rect->current_y--;
+    }
+
+    if (rect->current_x == rect->target_x && rect->current_y == rect->target_y)
+    {
+        generate_target_coordinates(rect);
+    }
+}
 static void Screen_TimeBouncing(uint8_t *const buffer)
 {
-	static uint32_t random_x_from = 0; 	//number beetwen 0...254
-	static uint32_t random_y_from = 20; 	//nubmer beetwen 0...63
-	static uint32_t random_x_to = 0; 	//number beetwen 0...254
-	static uint32_t random_y_to = 0; 	//nubmer beetwen 0...63
-	//static volatile uint8_t bouncing_flag;
+    static uint8_t first_time = 0;
+    static Rectangle rect;
+    char temp_array[10] = {0};
+
+    if(first_time == 0)
+    {
+        rect.current_x = MIN_X;
+        rect.current_y = MIN_Y;
+        rect.last_side = -1;
+        generate_target_coordinates(&rect);
+        srand(time(NULL));
+        first_time = 1;
+    }
 
 	HAL_RTC_GetTime(&hrtc, &sTime, RTC_FORMAT_BIN);
 	HAL_RTC_GetDate(&hrtc, &sDate, RTC_FORMAT_BIN);
 	DisplayGFX_SelectFont(&FreeSansBold9pt7b);
-
-	if (get_random_coords(&random_x_to, &random_y_to) == true)
-	{
-		make_array(buffer, random_x_from, random_y_from, random_x_to, random_y_to, 5);
-		random_x_from = random_x_to;
-		random_y_from = random_y_to;
-	}
+	DisplayDriver_FillBufferWithValue(buffer, 0);
+    move_rectangle(&rect);
+	ChangeDateToArrayCharTime(temp_array, sTime.Hours, sTime.Minutes, sTime.Seconds, 0);
+	DisplayGFX_DrawText(buffer, (char*) temp_array, rect.current_x, rect.current_y, 5);
+	DisplayDriver_TX_ImageBuff(buffer, 0, 0);
 }
 //
 //Screen_draw_signal_oscyloscope();

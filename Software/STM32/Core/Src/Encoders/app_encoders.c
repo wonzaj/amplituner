@@ -25,6 +25,28 @@ savedUserSettings_t savedUserSettings =
 
 Device_Cfg_Audio_t Device_Cfg_Audio =
 {
+		.VolFront.volumeMaster 		= OFFSET_VOLUME,
+		.VolFront.volumeLeftRight 	= OFFSET_VOLUME,
+		.VolFront.volumeLeft 		= OFFSET_VOLUME,
+		.VolFront.volumeRight 		= OFFSET_VOLUME,
+		.VolFront.audioOutputState 	= MASTER,
+
+		.VolBack.audioOutputState 	= NORMAL,
+		.VolBack.volumeLeftRight 	= OFFSET_VOLUME,
+		.VolBack.volumeLeft 		= OFFSET_VOLUME,
+		.VolBack.volumeRight 		= OFFSET_VOLUME,
+
+		.Loudness.buttonControl = SET_GAIN,
+		.Loudness.gain = 0,
+		.Loudness.centerFreq 	= 0,
+		.Loudness.soft_step 	= 0,
+		.Loudness.high_boost	= 0,
+
+		.Treble.gain = 0,
+		.Treble.buttonControl = SET_GAIN,
+
+		.Middle.gain = 0,
+		.Middle.buttonControl = SET_GAIN,
 
 };
 //--------------------------------------------------------------
@@ -61,7 +83,7 @@ void AppEncoders_EncoderVolFront_Rotated(void)
 	{
 	case MASTER:
 		Check_Volume_Range_Front(&Device_Cfg_Audio.VolFront.volumeMaster, ENCODER_MAX_VOLUME_FRONT_MASTER);
-		if (Device_Cfg_Audio.VolFront.volumeMaster >= 80)
+		if (Device_Cfg_Audio.VolFront.volumeMaster >= ENCODER_MAX_VOLUME_FRONT_LEFTRIGHT + 1)
 			Device_Cfg_Audio.volumeMasterFlag = 1;
 		else
 			Device_Cfg_Audio.volumeMasterFlag = 0;

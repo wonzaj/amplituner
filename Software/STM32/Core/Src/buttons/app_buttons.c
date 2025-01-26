@@ -13,6 +13,7 @@
 #include "app_buttons.h"
 #include "hal_encoders.h"
 #include "cmsis_os2.h"
+#include "FreeRTOS.h"
 /************************************
  * EXTERN VARIABLES
  ************************************/
@@ -102,9 +103,7 @@ static void Buttons_PowerButton_Pressed(void)
 		SSD1322_API_Sleep_On();
 		RDA5807_PowerOff();
 		TDA7719_SetSoftMute(0, 1);
-		EEPROM_Save_FilterSettings();
-		EEPROM_Save_UserSetting();
-		EEPROM_Save_VolumeSettings();
+		EEPROM_SaveDeviceDataAtTurnOff();
 		HAL_Buttons_IRQ_TurnOff();
 		// Mute high power amplituner section
 	}
@@ -117,9 +116,7 @@ static void Buttons_PowerButton_Pressed(void)
 		RDA5807_Init();
 		TDA7719_init();
 		TDA7719_SetSoftMute(1, 1);
-		EEPROM_Read_FilterSettings();
-		EEPROM_Read_UserSetting();
-		EEPROM_Read_VolumeSettings();
+		EEPROM_ReadDeviceDataAtStart();
 		HAL_Buttons_IRQ_TurnOn();
 	}
 }
@@ -224,7 +221,6 @@ static void Buttons_UserButton2_Pressed(void)
 		//jeżeli brak podpiętego USB to komunikat żeby podłączyć z formatowanie FatFS
 		break;
 	case SCREEN_SETINPUT:
-
 		break;
 	default:
 		AppDisplay_SetDisplayState(SCREEN_TIME);
@@ -918,12 +914,13 @@ static void Change_Down_Input(void)
 			RDA5807_Init();
 			RDA5807_PowerOn();
 			RDA5807_SetFrequency(savedUserSettings.radio_freq);
+			RDA5807_Volume(8);
 			break;
 		}
 		else
 			break;
 	case RADIO:
-		TDA7719_config.set_input_front = MICROPHONE_USB;
+		TDA7719_config.set_input_front = BLUETOOTH;
 		Device_Config.isRadioTurnedOn = false;
 		RDA5807_PowerOff();
 		break;
@@ -933,7 +930,12 @@ static void Change_Down_Input(void)
 	default:
 		break;
 	}
+
+	TDA7719_SetSoftMute(false, 3);
+	osDelay(pdMS_TO_TICKS(10));
 	TDA7719_SetMainInput(TDA7719_config.set_input_front);
+	osDelay(pdMS_TO_TICKS(10));
+	TDA7719_SetSoftMute(true, 3);
 
 }
 

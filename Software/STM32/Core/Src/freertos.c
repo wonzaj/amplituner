@@ -256,8 +256,8 @@ void displayTaskFunction(void *argument)
   for(;;)
   {
 	AppDisplay_RefreshDisplayTask();
-    //osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
-    osDelay(5);
+    osDelay(pdMS_TO_TICKS(Display_Controls.Refresh_Hz));
+    //osDelay(5);
   }
   /* USER CODE END displayTaskFunction */
 }

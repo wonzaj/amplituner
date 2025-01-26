@@ -128,6 +128,7 @@ int main(void)
   MX_TIM11_Init();
   MX_TIM13_Init();
   /* USER CODE BEGIN 2 */
+  //EEPROM_ReadDeviceDataAtStart();
   RDA5807_Init();
   RDA5807_PowerOn();
   HAL_Encoders_Init();

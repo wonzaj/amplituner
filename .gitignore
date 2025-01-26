@@ -7,6 +7,8 @@ software/STM32/.settings/
 software/STM32/Debug/
 
 #   ESP32 Software section
+Software/ESP32/amplituner_remote_controler/build/
+Software/ESP32/amplituner_remote_controler/CMakeFiles/
 
 #   Hardware section
 Hardware/kicad/block diagram/block-sch/block-sch-backups/

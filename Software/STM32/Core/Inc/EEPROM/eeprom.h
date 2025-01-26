@@ -41,7 +41,8 @@ void EEPROM_Save_VolumeSettings(void);
 void EEPROM_Read_VolumeSettings(void);
 void EEPROM_Save_FilterSettings(void);
 void EEPROM_Read_FilterSettings(void);
-void EEPROM_ReadUserData(void);
+void EEPROM_ReadDeviceDataAtStart(void);
+void EEPROM_SaveDeviceDataAtTurnOff(void);
 
 #ifdef __cplusplus
 }

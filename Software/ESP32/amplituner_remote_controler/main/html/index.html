@@ -9,9 +9,9 @@
         .off { background-color: red; color: white; }
         #volumeControl { margin: 20px auto; width: 200px; height: 200px; }
     </style>
-    <link rel="stylesheet" href="roundslider.min.css">
+    <link rel="stylesheet" href="roundslider.css">
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="roundslider.min.js"></script>
+    <script src="roundslider.js"></script>
 </head>
 <body>
     <h1>Amplituner</h1>
@@ -70,12 +70,14 @@
                 radius: 100,
                 width: 15,
                 handleSize: "+8",
-                handleShape: "dot",
+                handleShape: "square",
                 sliderType: "min-range",
                 value: 50,
                 min: 0,
                 max: 100,
-                change: updateVolume
+                change: updateVolume,
+                circleShape: "pie",
+                startAngle: 315
             });
 
             // Regularne odpytywanie ESP o stan
@@ -84,3 +86,5 @@
     </script>
 </body>
 </html>
+https://www.kittl.com
+https://uiverse.io
